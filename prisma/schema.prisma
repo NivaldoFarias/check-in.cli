@@ -8,14 +8,14 @@ datasource db {
 }
 
 model Patient {
-  id          BigInt     @id @default(autoincrement())
+  id          BigInt          @id @default(autoincrement())
   full_name   String
   social_name String
-  insurance   String
+  insurance   enum_insurances
   birthdate   DateTime
-  code        String     @db.VarChar(8)
-  createdAt   DateTime   @default(now())
-  updatedAt   DateTime   @default(now())
+  code        String?         @unique @db.VarChar(8)
+  createdAt   DateTime        @default(now())
+  updatedAt   DateTime        @default(now())
   Schedule    Schedule[]
   Registry    Registry[]
   Address     Address[]
@@ -58,13 +58,13 @@ model Schedule {
 }
 
 model Registry {
-  id                BigInt @id @default(autoincrement())
+  id                BigInt  @id @default(autoincrement())
   gender            String
   assigned_at_birth String
-  rg                String
+  rg                String  @unique
   personal_number   String
-  household_number  String
-  cpf               String @db.VarChar(11)
+  household_number  String?
+  cpf               String  @unique @db.VarChar(11)
   patient_id        BigInt
 
   patient Patient @relation(fields: [patient_id], references: [id])
@@ -73,10 +73,10 @@ model Registry {
 }
 
 model Address {
-  id           BigInt @id @default(autoincrement())
+  id           BigInt  @id @default(autoincrement())
   street       String
   number       String
-  complement   String
+  complement   String?
   neighborhood String
   city         String
   state        String

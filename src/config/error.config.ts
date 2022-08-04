@@ -1,16 +1,9 @@
 class AppError {
-  log: string;
   statusCode: number;
   message: string;
-  details: string | {} | string[];
+  details: string | {};
 
-  constructor(
-    log: string,
-    statusCode: number,
-    message: string,
-    details: string | {} | string[],
-  ) {
-    this.log = log;
+  constructor(statusCode: number, message: string, details: string | {}) {
     this.statusCode = statusCode;
     this.message = message;
     this.details = details;
