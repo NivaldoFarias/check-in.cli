@@ -1,0 +1,130 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Patient {
+  id          BigInt     @id @default(autoincrement())
+  full_name   String
+  social_name String
+  insurance   String
+  birthdate   DateTime
+  code        String     @db.VarChar(8)
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @default(now())
+  Schedule    Schedule[]
+  Registry    Registry[]
+  Address     Address[]
+
+  @@map("patients")
+}
+
+model Practitioner {
+  id        Int        @id @default(autoincrement())
+  full_name String
+  createdAt DateTime   @default(now())
+  Schedule  Schedule[]
+
+  @@map("practitioners")
+}
+
+model Clinic {
+  id        BigInt     @id @default(autoincrement())
+  label     String
+  createdAt DateTime   @default(now())
+  Schedule  Schedule[]
+
+  @@map("clinics")
+}
+
+model Schedule {
+  id              BigInt   @id @default(autoincrement())
+  date            DateTime
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @default(now())
+  practitioner_id Int
+  patient_id      BigInt
+  clinic_id       BigInt
+
+  practitioner Practitioner @relation(fields: [practitioner_id], references: [id])
+  patient      Patient      @relation(fields: [patient_id], references: [id])
+  clinic       Clinic       @relation(fields: [clinic_id], references: [id])
+
+  @@map("schedules")
+}
+
+model Registry {
+  id                BigInt @id @default(autoincrement())
+  gender            String
+  assigned_at_birth String
+  rg                String
+  personal_number   String
+  household_number  String
+  cpf               String @db.VarChar(11)
+  patient_id        BigInt
+
+  patient Patient @relation(fields: [patient_id], references: [id])
+
+  @@map("registries")
+}
+
+model Address {
+  id           BigInt @id @default(autoincrement())
+  street       String
+  number       String
+  complement   String
+  neighborhood String
+  city         String
+  state        String
+  country      String
+  postal_code  String
+  patient_id   BigInt
+
+  patient Patient @relation(fields: [patient_id], references: [id])
+
+  @@map("addresses")
+}
+
+enum enum_insurances {
+  ALLIANZ_SAUDE          @map("allianz_saude")
+  AMEPLAN_SAUDE          @map("ameplan_saude")
+  AMIL_FACIL             @map("amil_facil")
+  AMIL_SAUDE             @map("amil_saude")
+  ATIVIA                 @map("ativia")
+  BIOSAUDE               @map("biosaude")
+  BIOVIDA_SAUDE          @map("biovida_saude")
+  BLUE_MED_SAUDE         @map("blue_med_saude")
+  BRADESCO_SAUDE         @map("bradesco_saude")
+  CALSSES_LABORIOSAS     @map("classes_laboriosas")
+  CUIDAR_ME              @map("cuidar_me")
+  CRUZ_AZUL_SAUDE        @map("cruz_azul_saue")
+  GS_SAUDE               @map("gs_saude")
+  GOLDEN_CROSS           @map("golden_cross")
+  HAPVIDA                @map("hapvida")
+  HEALTH_SANTARIS        @map("health_santaris")
+  INTERCLINICAS_SAUDE    @map("interclinicas_saude")
+  KIPP_SAUDE             @map("kipp_saude")
+  MEDICAL_HEALTH         @map("medical_health")
+  MEDSENIOR              @map("medsenior")
+  MED_TOUR_SAUDE         @map("med_tour_saude")
+  NOTRE_DAME_INTERMEDICA @map("notre_dame_intermedica")
+  PLANSAUDE              @map("plansaude")
+  PLENA_SAUDE            @map("plena_saude")
+  PORTO_SEGURO_SAUDE     @map("porto_seguro_saude")
+  PREVENT_SENIOR         @map("prevent_senior")
+  QSAUDE                 @map("qsaude")
+  SANTA_HELENA_SAUDE     @map("santa_helena_saude")
+  SAO_CRISTOVAO_SAUDE    @map("sao_cristovao_saude")
+  SAO_MIGUEL_SAUDE       @map("sao_miguel_saude")
+  SEGUROPS_UNIMED        @map("segurops_unimed")
+  SOMPO_SAUDE            @map("sompo_saude")
+  SUL_AMERICA_SAUDE      @map("sul_america_saude")
+  TOTAL_MEDCARE_SAUDE    @map("total_medcare_saude")
+  TRASMONTANO_SAUDE      @map("trasmontano_saude")
+  UNIHOSP_SAUDE          @map("unihosp_saude")
+  UNIMED_NACIONAL        @map("unimed_nacional")
+}

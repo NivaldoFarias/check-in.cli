@@ -15,7 +15,11 @@
 npm-debug.log*
 
 # local env files
-.env*.local
+.env**
+!.env.example
 
 # typescript
 *.tsbuildinfo
+
+# wakatime
+.wakatime**
