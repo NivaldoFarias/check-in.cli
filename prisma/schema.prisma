@@ -12,7 +12,7 @@ model Patient {
   full_name   String
   social_name String
   insurance   enum_insurances
-  birthdate   DateTime
+  birthdate   String          @db.VarChar(10)
   code        String?         @unique @db.VarChar(8)
   createdAt   DateTime        @default(now())
   updatedAt   DateTime        @default(now())
