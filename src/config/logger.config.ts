@@ -1,9 +1,11 @@
 import pino, { stdTimeFunctions } from 'pino';
+import pretty from 'pino-pretty';
 
-const logger = pino({
-  timestamp: stdTimeFunctions.isoTime,
+const stream = pretty({
+  colorize: true,
   messageKey: 'message',
-  level: process.env.NODE_ENV === 'production' ? 'info' : 'debug',
+  timestampKey: 'timestamp',
 });
+const logger = pino({ timestamp: stdTimeFunctions.isoTime }, stream);
 
 export default logger;

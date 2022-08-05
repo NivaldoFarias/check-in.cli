@@ -1,3 +1,10 @@
+import {
+  PrismaClientInitializationError,
+  PrismaClientKnownRequestError,
+  PrismaClientRustPanicError,
+  PrismaClientUnknownRequestError,
+  PrismaClientValidationError,
+} from '@prisma/client/runtime';
 import './../config/setup.config';
 
 const env = {
@@ -26,4 +33,11 @@ const database = {
   INT4_MAX: 2147483647,
 };
 
-export { env, regex, time, database };
+const PrismaErrors =
+  PrismaClientValidationError ||
+  PrismaClientInitializationError ||
+  PrismaClientKnownRequestError ||
+  PrismaClientRustPanicError ||
+  PrismaClientUnknownRequestError;
+
+export { env, regex, time, database, PrismaErrors };

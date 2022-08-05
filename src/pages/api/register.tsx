@@ -26,6 +26,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
     );
   }
 
+  common.code = createCode();
   await client.patient.create({
     data: {
       ...common,
@@ -35,6 +36,13 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
   });
 
   return res.status(201).send('Created');
+}
+
+function createCode() {
+  const code = Math.floor(Math.random() * 99999999) + 1;
+  const str = code.toString().padStart(8, '0');
+
+  return str;
 }
 
 export default exceptionHandler(handler);

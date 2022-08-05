@@ -8,51 +8,50 @@ datasource db {
 }
 
 model Patient {
-  id          BigInt          @id @default(autoincrement())
-  full_name   String
-  social_name String
-  insurance   enum_insurances
-  birthdate   String          @db.VarChar(10)
-  code        String?         @unique @db.VarChar(8)
-  createdAt   DateTime        @default(now())
-  updatedAt   DateTime        @default(now())
-  Schedule    Schedule[]
-  Registry    Registry[]
-  Address     Address[]
+  id           BigInt          @id @default(autoincrement())
+  full_name    String
+  social_name  String
+  code         String          @unique @db.VarChar(8)
+  insurance    enum_insurances
+  birthdate    String          @db.VarChar(10)
+  created_at   DateTime        @default(now())
+  last_updated DateTime        @default(now())
+  Address      Address[]
+  Registry     Registry[]
+  Schedule     Schedule[]
 
   @@map("patients")
 }
 
 model Practitioner {
-  id        Int        @id @default(autoincrement())
-  full_name String
-  createdAt DateTime   @default(now())
-  Schedule  Schedule[]
+  id         Int        @id @default(autoincrement())
+  full_name  String
+  created_at DateTime   @default(now())
+  Schedule   Schedule[]
 
   @@map("practitioners")
 }
 
 model Clinic {
-  id        BigInt     @id @default(autoincrement())
-  label     String
-  createdAt DateTime   @default(now())
-  Schedule  Schedule[]
+  id         BigInt     @id @default(autoincrement())
+  label      String
+  created_at DateTime   @default(now())
+  Schedule   Schedule[]
 
   @@map("clinics")
 }
 
 model Schedule {
-  id              BigInt   @id @default(autoincrement())
+  id              BigInt       @id @default(autoincrement())
   date            DateTime
-  createdAt       DateTime @default(now())
-  updatedAt       DateTime @default(now())
   practitioner_id Int
   patient_id      BigInt
   clinic_id       BigInt
-
-  practitioner Practitioner @relation(fields: [practitioner_id], references: [id])
-  patient      Patient      @relation(fields: [patient_id], references: [id])
-  clinic       Clinic       @relation(fields: [clinic_id], references: [id])
+  created_at      DateTime     @default(now())
+  last_updated    DateTime     @default(now())
+  clinic          Clinic       @relation(fields: [clinic_id], references: [id])
+  patient         Patient      @relation(fields: [patient_id], references: [id])
+  practitioner    Practitioner @relation(fields: [practitioner_id], references: [id])
 
   @@map("schedules")
 }
@@ -66,8 +65,7 @@ model Registry {
   household_number  String?
   cpf               String  @unique @db.VarChar(11)
   patient_id        BigInt
-
-  patient Patient @relation(fields: [patient_id], references: [id])
+  patient           Patient @relation(fields: [patient_id], references: [id])
 
   @@map("registries")
 }
@@ -83,8 +81,7 @@ model Address {
   country      String
   postal_code  String
   patient_id   BigInt
-
-  patient Patient @relation(fields: [patient_id], references: [id])
+  patient      Patient @relation(fields: [patient_id], references: [id])
 
   @@map("addresses")
 }
