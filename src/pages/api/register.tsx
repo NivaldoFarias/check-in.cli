@@ -26,7 +26,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
     );
   }
 
-  common.code = createCode();
+  registry.code = createCode();
   await client.patient.create({
     data: {
       ...common,
