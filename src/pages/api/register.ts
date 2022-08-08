@@ -1,12 +1,12 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
-import type { RegisterRequest } from '../../../types/patient';
+import type { RegisterRequest } from '../../types/patient';
 import bcrypt from 'bcrypt';
 
-import exceptionHandler from '../../../utils/exception.util';
-import { env } from '../../../utils/constants.util';
+import exceptionHandler from '../../utils/exception.util';
+import { env } from '../../utils/constants.util';
 
-import AppError from '../../../config/error.config';
-import client from '../../../config/database.config';
+import AppError from '../../config/error.config';
+import client from '../../config/database.config';
 
 async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method !== 'POST') {
@@ -26,7 +26,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
     );
   }
 
-  const encrypted = bcrypt.hashSync(common.password, env.SALT_ROUNDS);
+  const encrypted = bcrypt.hashSync(common.password, env.BCRYPT_SALT_ROUNDS);
   const code = createCode();
 
   registry.code = code;
