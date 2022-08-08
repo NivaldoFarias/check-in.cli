@@ -6,4 +6,9 @@ type RegisterRequest = {
   address: Prisma.AddressUncheckedCreateWithoutPatientInput;
 };
 
-export { RegisterRequest };
+type LoginRequest = {
+  cpf: string | undefined;
+  password: string | undefined;
+};
+
+export { RegisterRequest, LoginRequest };

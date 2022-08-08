@@ -12,6 +12,8 @@ const env = {
   JWT_SECRET: process.env.JWT_SECRET || 'secret',
   JWT_EXPIRES_IN: process.env.JWT_EXPIRES_IN || '1d',
   JWT_ALGORITHM: process.env.JWT_ALGORITHM || 'HS256',
+  NEXTAUTH_SECRET: process.env.NEXTAUTH_SECRET || 'secret',
+  NEXTAUTH_EXPIRES_IN: Number(process.env.NEXTAUTH_EXPIRES_IN) || 86400,
   CRYPTR_SECRET: process.env.CRYPTR_SECRET || 'secret',
 };
 

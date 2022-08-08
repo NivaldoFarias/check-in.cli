@@ -1,10 +1,12 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
+import type { RegisterRequest } from '../../../types/patient';
+import bcrypt from 'bcrypt';
 
-import { RegisterRequest } from '../../types/patient';
-import exceptionHandler from '../../utils/exception.util';
+import exceptionHandler from '../../../utils/exception.util';
+import { env } from '../../../utils/constants.util';
 
-import AppError from '../../config/error.config';
-import client from '../../config/database.config';
+import AppError from '../../../config/error.config';
+import client from '../../../config/database.config';
 
 async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method !== 'POST') {
@@ -15,9 +17,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
     );
   }
 
-  const body: RegisterRequest = req.body;
-  const { common, registry, address } = body;
-
+  const { common, registry, address }: RegisterRequest = req.body;
   if (!common || !registry || !address) {
     throw new AppError(
       400,
@@ -26,7 +26,11 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
     );
   }
 
-  registry.code = createCode();
+  const encrypted = bcrypt.hashSync(common.password, env.SALT_ROUNDS);
+  const code = createCode();
+
+  registry.code = code;
+  common.password = encrypted;
   await client.patient.create({
     data: {
       ...common,
