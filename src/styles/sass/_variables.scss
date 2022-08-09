@@ -1,14 +1,17 @@
-$primary: rgb(238, 38, 35);
-$secondary: rgb(23, 44, 75);
-$alt-secondary: rgb(79, 190, 218);
-$tertiary: rgb(250, 131, 127);
-$alt-tertiary: rgb(170, 200, 243);
-$background: rgb(21, 30, 44);
-$alt-background: rgb(255, 255, 255);
+$primary: rgb(37, 99, 102);
+$alt-primary: rgb(29, 80, 82);
+
+$secondary: rgb(255, 236, 219);
+$alt-secondary: rgb(246, 236, 228);
+
+$tertiary: rgb(248, 191, 135);
+$alt-tertiary: rgb(250, 131, 127);
+
 $contrast: #c0f5bf;
 $high-contrast: #c6c6c6;
 $bar-primary: rgb(82, 100, 174);
 $btn-shadow-color: rgb(56, 42, 138);
+$lesser-info-color: rgb(177, 169, 191);
 
 $success: rgb(62, 224, 153);
 $alert: rgb(224, 62, 133);
@@ -22,8 +25,6 @@ $default-box-shadow: -2px 7px 7px rgba(0, 0, 0, 0.15);
 $footer-box-shadow: 0px -2px 7px rgba(255, 255, 255, 0.1);
 $default-border-radius: 8px;
 
-$cmd-font: 'Source Code Pro', monospace;
-$code-font: 'JetBrains Mono', monospace;
-$products-font: 'Azeret Mono', monospace;
-$default-font: 'Varela Round', sans-serif;
-$lesser-info-color: rgb(177, 169, 191);
+$primary-font: 'Kumbh Sans', sans-serif;
+$secondary-font: 'Josefin Sans', sans-serif;
+$tertiary-font: 'Ubuntu Mono', monospace;

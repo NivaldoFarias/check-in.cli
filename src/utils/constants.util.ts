@@ -5,7 +5,6 @@ import {
   PrismaClientUnknownRequestError,
   PrismaClientValidationError,
 } from '@prisma/client/runtime';
-import './../config/setup.config';
 
 const env = {
   NODE_ENV: process.env.NODE_ENV || 'development',
