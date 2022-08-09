@@ -19,9 +19,9 @@ async function auth(req: NextApiRequest, res: NextApiResponse) {
       maxAge: env.NEXTAUTH_EXPIRES_IN,
     },
     pages: {
-      signIn: '/auth/login',
+      signIn: '/auth/check-in',
       signOut: '/auth/logout',
-      error: '/auth/login',
+      error: '/auth/check-in',
       verifyRequest: '/auth/verify-request',
     },
     callbacks: {},
