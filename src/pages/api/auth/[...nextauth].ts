@@ -3,15 +3,16 @@ import { PrismaAdapter } from '@next-auth/prisma-adapter';
 import NextAuth, { NextAuthOptions } from 'next-auth';
 import bcrypt from 'bcrypt';
 
-import client from '../../../config/database.config';
+import prisma from '../../../config/database.config';
 import AppError from '../../../config/error.config';
 import { env } from '../../../utils/constants.util';
 import { NextApiRequest, NextApiResponse } from 'next';
 import exceptionHandler from '../../../utils/exception.util';
+import logger from '../../../config/logger.config';
 
 async function auth(req: NextApiRequest, res: NextApiResponse) {
   const options: NextAuthOptions = {
-    adapter: PrismaAdapter(client),
+    adapter: PrismaAdapter(prisma),
     secret: env.NEXTAUTH_SECRET,
     session: {
       strategy: 'jwt',
@@ -41,9 +42,18 @@ async function auth(req: NextApiRequest, res: NextApiResponse) {
           },
         },
         authorize: async (credentials) => {
+          logger.info('credentials');
+          if (req.method !== 'POST') {
+            throw new AppError(
+              405,
+              'Method not allowed',
+              'Endpoint only accepts POST requests',
+            );
+          }
+
           const { cpf, password } = credentials ?? {};
 
-          const patient = await client.patient.findUnique({
+          const patient = await prisma.patient.findUnique({
             where: { cpf },
           });
           if (!patient) {
@@ -71,6 +81,7 @@ async function auth(req: NextApiRequest, res: NextApiResponse) {
       }),
     ],
   };
+
   return await NextAuth(req, res, options);
 }
 

@@ -1,18 +1,12 @@
 import { PrismaClient } from '@prisma/client';
-
-import logger from './logger.config';
-import './setup.config';
-
-const client = new PrismaClient();
-connectToDatabase();
-
-export default client;
-
-async function connectToDatabase() {
-  try {
-    await client.$connect();
-    logger.trace({ database: 'Connected to database' });
-  } catch (error) {
-    logger.error(error);
-  }
+import { env } from '../utils/constants.util';
+declare global {
+  // eslint-disable-next-line no-var
+  var prisma: PrismaClient | undefined;
 }
+
+const prisma = global.prisma || new PrismaClient({ log: ['query'] });
+
+if (env.NODE_ENV !== 'production') global.prisma = prisma;
+
+export default prisma;

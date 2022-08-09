@@ -8,6 +8,7 @@ import {
 import './../config/setup.config';
 
 const env = {
+  NODE_ENV: process.env.NODE_ENV || 'development',
   BCRYPT_SALT_ROUNDS: Number(process.env.SALT_ROUNDS) || 10,
   NEXTAUTH_SECRET: process.env.NEXTAUTH_SECRET || 'secret',
   NEXTAUTH_EXPIRES_IN: Number(process.env.NEXTAUTH_EXPIRES_IN) || 86400,

@@ -6,6 +6,9 @@ const stream = pretty({
   messageKey: 'message',
   timestampKey: 'timestamp',
 });
-const logger = pino({ timestamp: stdTimeFunctions.isoTime }, stream);
+const logger = pino(
+  { timestamp: stdTimeFunctions.isoTime, messageKey: 'message' },
+  stream,
+);
 
 export default logger;

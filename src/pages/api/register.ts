@@ -6,7 +6,7 @@ import exceptionHandler from '../../utils/exception.util';
 import { env } from '../../utils/constants.util';
 
 import AppError from '../../config/error.config';
-import client from '../../config/database.config';
+import prisma from '../../config/database.config';
 
 async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method !== 'POST') {
@@ -18,7 +18,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
   }
 
   const { common, registry, address }: RegisterRequest = req.body;
-  if (!common || !registry || !address) {
+  if (!common || !registry || !address || !common.password) {
     throw new AppError(
       400,
       'Bad Request',
@@ -31,7 +31,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
 
   registry.code = code;
   common.password = encrypted;
-  await client.patient.create({
+  await prisma.patient.create({
     data: {
       ...common,
       Registry: { create: registry },
