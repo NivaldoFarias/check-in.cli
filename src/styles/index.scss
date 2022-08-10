@@ -185,7 +185,11 @@ body {
 
   &-container {
     @include flex(column, center, center, 95px);
-    margin-top: 220px;
+    @media only screen and (min-width: 740px) {
+      flex-direction: row;
+    }
+
+    margin-top: 20vh;
     height: 100%;
     font-family: $primary-font;
 
@@ -194,11 +198,13 @@ body {
       font-weight: 500;
     }
     .title-card {
+      width: 100%;
       color: $tertiary;
       text-align: center;
       text-shadow: $font-shadow;
 
-      font-size: 5.2rem;
+      white-space: nowrap;
+      font-size: clamp(4.5rem, 5vw, 8rem);
       font-weight: 300;
     }
     .input-section input {
