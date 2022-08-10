@@ -44,6 +44,8 @@ body {
       display: block;
       padding: 10px 10px 10px 5px;
       width: 300px;
+      font-size: 1.2rem;
+
       text-shadow: $font-shadow;
 
       border: none;
@@ -60,7 +62,7 @@ body {
     }
     label {
       position: absolute;
-      top: 5px;
+      top: 10px;
       left: 10px;
 
       color: $secondary;
@@ -74,6 +76,11 @@ body {
       }
     }
     /* active state */
+    input:focus ~ label,
+    input:valid ~ label {
+      top: -18px;
+      color: $tertiary;
+    }
     input #placeholder {
       transition: background-color 5000s ease-in-out 0s;
       -webkit-text-fill-color: $secondary !important;
@@ -84,7 +91,7 @@ body {
     input:-webkit-autofill:active,
     input:-webkit-autofill:first-line {
       transition: background-color 5000s ease-in-out 0s;
-      -webkit-text-fill-color: white !important;
+      -webkit-text-fill-color: $secondary !important;
     }
     /* BOTTOM BARS ================================= */
     .bar {
@@ -101,7 +108,7 @@ body {
       width: 0;
 
       content: '';
-      background: $primary;
+      background: $tertiary;
       transition: 0.2s ease all;
     }
     .bar:before {
@@ -133,13 +140,41 @@ body {
     }
     @keyframes input-highlighter {
       from {
-        background: $primary;
+        background: $tertiary;
       }
       to {
         width: 0;
         background: transparent;
       }
     }
+  }
+}
+.styled-btn {
+  position: relative;
+  left: 0px;
+  top: 0px;
+
+  padding: 8px 0;
+  height: fit-content;
+  width: 100%;
+
+  color: white;
+  font-size: 1em;
+  font-weight: 500;
+  letter-spacing: 2px;
+  font-family: $primary-font;
+
+  border-radius: 5px;
+  border: 1px solid $low-contrast-secondary;
+  transition: all 0.3s ease-in-out 0s;
+  box-shadow: $low-contrast-tertiary 2px 4px 0px 0px;
+  background-color: $low-contrast;
+
+  &.clicked {
+    left: 2px;
+    top: 4px;
+
+    box-shadow: white 0px 0px 0px 0px;
   }
 }
 #check-in-page {
@@ -149,11 +184,15 @@ body {
   width: 100vw;
 
   &-container {
-    @include flex(column, center, center, 75px);
-    margin-top: 70px;
+    @include flex(column, center, center, 95px);
+    margin-top: 220px;
     height: 100%;
     font-family: $primary-font;
 
+    a {
+      color: $alt-secondary;
+      font-weight: 500;
+    }
     .title-card {
       color: $tertiary;
       text-align: center;
@@ -162,9 +201,26 @@ body {
       font-size: 5.2rem;
       font-weight: 300;
     }
-    a {
-      color: $alt-secondary;
-      font-weight: 500;
+    .input-section input {
+      letter-spacing: 3px;
+    }
+    .alert-text-cpf {
+      position: absolute;
+      top: 50px;
+      left: 40px;
+
+      height: min-content;
+      width: 100%;
+
+      text-align: left;
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: $alert;
+      transition: all 0.3s ease-in-out;
+
+      &.color-transparent {
+        color: transparent;
+      }
     }
   }
   .background-image {

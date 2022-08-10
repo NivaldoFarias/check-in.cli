@@ -1,13 +1,14 @@
 import type { ChangeEvent, FormEvent } from 'react';
-import { signIn } from 'next-auth/react';
 import { useState } from 'react';
+import { signIn } from 'next-auth/react';
 import Image from 'next/image';
 import Link from 'next/link';
 
-import { getRandomInt } from '../../utils/functions.util';
-import LoadingDots from '../../components/loading';
+import { validate } from 'gerador-validador-cpf';
 
 import backgroundImage from '../../../public/background-alt.svg';
+import { getRandomInt } from '../../utils/functions.util';
+import LoadingDots from '../../components/loading';
 
 function CheckIn() {
   const [formData, setFormData] = useState({
@@ -34,11 +35,14 @@ function CheckIn() {
 
   function buildCheckInPage() {
     const validateForm =
-      formData.cpf?.length === 11 &&
+      formData.cpf?.length === 14 &&
       formData.password?.length > 6 &&
       !hasSubmitted
         ? ''
         : 'disabled';
+
+    const alertText =
+      formData.cpf.length === 14 ? `CPF inválido` : `Insira apenas números`;
 
     return (
       <main id='check-in-page-container'>
@@ -49,18 +53,22 @@ function CheckIn() {
               type='text'
               value={formData.cpf}
               name='cpf'
-              onChange={handleInputChange}
+              maxLength={14}
+              onChange={handleCPFInput}
               required
+              className='input-cpf-field'
             />
             <span className='highlight'></span>
             <span className='bar'></span>
             <label>CPF</label>
           </section>
+          <p className={showAlertText()}>{alertText}</p>
           <section className='input-section'>
             <input
               type='password'
               value={formData.password}
               name='password'
+              maxLength={20}
               onChange={handleInputChange}
               required
             />
@@ -88,8 +96,45 @@ function CheckIn() {
       signIn('credentials', { redirect: false, password: 'password' });
     }
 
+    function handleCPFInput(e: ChangeEvent<HTMLInputElement>) {
+      const { value } = e.target;
+
+      if (value.length === 4 || value.length === 8) {
+        setFormData({
+          ...formData,
+          cpf:
+            value.slice(0, -1) +
+            '.' +
+            (value.slice(-1) === '.' ? '' : value.slice(-1)),
+        });
+      } else if (value.length === 12) {
+        setFormData({
+          ...formData,
+          cpf:
+            value.slice(0, -1) +
+            '-' +
+            (value.slice(-1) === '-' ? '' : value.slice(-1)),
+        });
+      } else {
+        setFormData({ ...formData, cpf: value });
+      }
+    }
+
     function handleInputChange(e: ChangeEvent<HTMLInputElement>) {
       setFormData({ ...formData, [e.target.name]: e.target.value });
+    }
+
+    function showAlertText() {
+      const cpfRegex = /^[0-9.-\s]*$/;
+      const validCpf =
+        formData.cpf.length === 14 ? validate(formData.cpf) : true;
+      const transparent = cpfRegex.test(formData.cpf)
+        ? validCpf
+          ? 'color-transparent'
+          : ''
+        : '';
+
+      return `alert-text-cpf ${transparent}`;
     }
   }
 }
