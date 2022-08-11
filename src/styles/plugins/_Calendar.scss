@@ -1,0 +1,128 @@
+// souce: react-calendar/dist/Calendar.css
+
+.react-calendar {
+  width: clamp(250px, 275px, 350px);
+  background: $secondary;
+  border: 1px solid #a0a096;
+  font-family: $secondary-font;
+  line-height: 1.125em;
+
+  &--doubleView {
+    width: 700px;
+  }
+  &--doubleView &__viewContainer {
+    display: flex;
+    margin: -0.5em;
+  }
+  &--doubleView &__viewContainer > * {
+    width: 50%;
+    margin: 0.5em;
+  }
+  *,
+  *:before,
+  *:after {
+    -moz-box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+    box-sizing: border-box;
+  }
+  button {
+    margin: 0;
+    border: 0;
+    outline: none;
+
+    &:enabled:hover {
+      cursor: pointer;
+    }
+  }
+  &__navigation {
+    display: flex;
+    height: 44px;
+    margin-bottom: 1em;
+
+    button {
+      min-width: 44px;
+      background: none;
+
+      &:disabled {
+        background-color: #f0f0f0;
+      }
+      &:enabled:hover,
+      &:enabled:focus {
+        background-color: #e6e6e6;
+      }
+    }
+  }
+  &__month-view__weekdays {
+    text-align: center;
+    text-transform: uppercase;
+    font-weight: bold;
+    font-size: 0.75em;
+
+    &__weekday {
+      padding: 0.5em;
+
+      abbr {
+        outline: none;
+        text-decoration: none;
+      }
+    }
+  }
+  &__month-view__weekNumbers &__tile {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.75em;
+    font-weight: bold;
+  }
+  &__month-view__days__day--weekend {
+    color: #d10000;
+  }
+  &__month-view__days__day--neighboringMonth {
+    color: #757575;
+  }
+  &__year-view &__tile,
+  &__decade-view &__tile,
+  &__century-view &__tile {
+    padding: 2em 0.5em;
+  }
+  &__tile {
+    max-width: 100%;
+    padding: 10px 6.6667px;
+    background: none;
+    text-align: center;
+    line-height: 16px;
+
+    &:disabled {
+      background-color: rgba(0, 0, 0, 0.15);
+    }
+    &:enabled:hover,
+    &:enabled:focus {
+      background-color: #e6e6e6;
+    }
+    &--now {
+      background: #ffff76;
+    }
+    &--now:enabled:hover,
+    &--now:enabled:focus {
+      background: #ffffa9;
+    }
+    &--hasActive {
+      background: #76baff;
+    }
+    &--hasActive:enabled:hover,
+    &--hasActive:enabled:focus {
+      background: #a9d4ff;
+    }
+    &--active {
+      background: #006edc;
+      color: white;
+    }
+    &--active:enabled:hover,
+    &--active:enabled:focus {
+      background: #1087ff;
+    }
+  }
+  &--selectRange &__tile--hover {
+    background-color: #e6e6e6;
+  }
+}

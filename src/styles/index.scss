@@ -2,6 +2,9 @@
 @import './sass/variables';
 @import './sass/mixins';
 
+@import './plugins/DatePicker';
+@import './plugins/Calendar';
+
 body {
   height: 100vh;
   width: 100vw;
@@ -13,7 +16,7 @@ body {
   height: fit-content;
   width: 100%;
 
-  button {
+  .submit-btn {
     @include flex(initial, center, center, initial);
     margin-top: 10px;
     width: 280px;
@@ -44,15 +47,15 @@ body {
       display: block;
       padding: 10px 10px 10px 5px;
       width: 300px;
-      font-size: 1.2rem;
 
+      color: $secondary;
+      font-size: 1.2rem;
+      letter-spacing: 1px;
       text-shadow: $font-shadow;
 
       border: none;
       background-color: transparent;
       border-bottom: 1px solid $secondary;
-
-      color: $secondary;
     }
     input:hover {
       cursor: text;
@@ -177,19 +180,16 @@ body {
     box-shadow: white 0px 0px 0px 0px;
   }
 }
-#check-in-page {
+.auth-page {
   @include flex(column, center, center, initial);
   position: relative;
-  height: 100vh;
-  width: 100vw;
+  height: 100%;
+  width: 100%;
 
-  &-container {
+  &__container {
     @include flex(column, center, center, 95px);
-    @media only screen and (min-width: 740px) {
-      flex-direction: row;
-    }
 
-    margin-top: 20vh;
+    padding-top: 25vh;
     height: 100%;
     font-family: $primary-font;
 
@@ -198,28 +198,28 @@ body {
       font-weight: 500;
     }
     .title-card {
+      position: relative;
+      z-index: -1;
+
       width: 100%;
       color: $tertiary;
       text-align: center;
       text-shadow: $font-shadow;
 
       white-space: nowrap;
-      font-size: clamp(4.5rem, 5vw, 8rem);
+      font-size: clamp(4.8rem, 5vw, 8rem);
       font-weight: 300;
-    }
-    .input-section input {
-      letter-spacing: 3px;
     }
     .alert-text-cpf {
       position: absolute;
       top: 50px;
-      left: 40px;
+      left: 2px;
 
       height: min-content;
       width: 100%;
 
       text-align: left;
-      font-size: 0.9rem;
+      font-size: 0.92rem;
       font-weight: 600;
       color: $alert;
       transition: all 0.3s ease-in-out;
@@ -227,11 +227,33 @@ body {
       &.color-transparent {
         color: transparent;
       }
+
+      @media only screen and (min-width: 740px) {
+        flex-direction: row;
+      }
+    }
+    .input-spacedout-field {
+      letter-spacing: 3px !important;
     }
   }
   .background-image {
     pointer-events: none;
     position: fixed !important;
+  }
+}
+#check-in-page {
+  height: 100vh;
+}
+#register-page {
+  padding-bottom: 80px;
+  overflow-y: scroll;
+
+  .input-section {
+    font-size: 1.2rem;
+
+    label {
+      top: 15px;
+    }
   }
 }
 #loading-dots {

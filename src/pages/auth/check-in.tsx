@@ -20,7 +20,7 @@ function CheckIn() {
   const checkInPage = buildCheckInPage();
 
   return (
-    <div id='check-in-page'>
+    <div id='check-in-page' className='auth-page'>
       <Image
         className='background-image'
         objectFit='cover'
@@ -34,10 +34,9 @@ function CheckIn() {
   );
 
   function buildCheckInPage() {
+    const validCpf = formData.cpf.length === 14 ? validate(formData.cpf) : true;
     const validateForm =
-      formData.cpf?.length === 14 &&
-      formData.password?.length > 6 &&
-      !hasSubmitted
+      validCpf && formData.password?.length > 6 && !hasSubmitted
         ? ''
         : 'disabled';
 
@@ -45,7 +44,7 @@ function CheckIn() {
       formData.cpf.length === 14 ? `CPF inválido` : `Insira apenas números`;
 
     return (
-      <main id='check-in-page-container'>
+      <main className='auth-page__container'>
         <h1 className='title-card'>Check-in</h1>
         <form className='form-group' onSubmit={handleSubmit}>
           <section className='input-section'>
@@ -56,13 +55,13 @@ function CheckIn() {
               maxLength={14}
               onChange={handleCPFInput}
               required
-              className='input-cpf-field'
+              className='input-spacedout-field'
             />
             <span className='highlight'></span>
             <span className='bar'></span>
             <label>CPF</label>
+            <p className={showAlertText()}>{alertText}</p>
           </section>
-          <p className={showAlertText()}>{alertText}</p>
           <section className='input-section'>
             <input
               type='password'
@@ -71,6 +70,7 @@ function CheckIn() {
               maxLength={20}
               onChange={handleInputChange}
               required
+              className='input-spacedout-field'
             />
             <span className='highlight'></span>
             <span className='bar'></span>
@@ -79,7 +79,7 @@ function CheckIn() {
           <button className={validateForm} type='submit'>
             {hasSubmitted ? <LoadingDots /> : 'Entrar'}
           </button>
-          <Link className='register-link' href='/register'>
+          <Link className='register-link' href='/auth/register'>
             Ainda não possuo cadastro
           </Link>
         </form>
@@ -126,9 +126,8 @@ function CheckIn() {
 
     function showAlertText() {
       const cpfRegex = /^[0-9.-\s]*$/;
-      const validCpf =
-        formData.cpf.length === 14 ? validate(formData.cpf) : true;
-      const transparent = cpfRegex.test(formData.cpf)
+      const containsOnlyNumbers = cpfRegex.test(formData.cpf);
+      const transparent = containsOnlyNumbers
         ? validCpf
           ? 'color-transparent'
           : ''

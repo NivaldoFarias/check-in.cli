@@ -1,0 +1,115 @@
+// source: react-date-picker/dist/DatePicker.css
+
+.react-date-picker {
+  width: clamp(100px, 220px, 100%);
+  display: inline-flex;
+  position: relative;
+  -moz-box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+  box-sizing: border-box;
+
+  *,
+  *:before,
+  *:after {
+    -moz-box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+    box-sizing: border-box;
+  }
+  &--disabled {
+    background-color: #f0f0f0;
+    color: #6d6d6d;
+  }
+  &__wrapper {
+    @include flex(row, space-between, center, initial);
+    width: 100%;
+    border-bottom: thin solid $secondary;
+  }
+  &__inputGroup {
+    @include flex(row, initial, center, initial);
+    width: clamp(92px, 100%, 120px);
+    padding: 0 2px;
+    box-sizing: content-box;
+
+    &__divider {
+      padding: 1px 0;
+      white-space: pre;
+      color: $secondary;
+    }
+    &__input {
+      min-width: fit-content;
+      height: 100%;
+      position: relative;
+      padding: 0 2px;
+      border: 0;
+      background: none;
+      font: inherit;
+      appearance: none;
+
+      color: $secondary;
+      text-align: center;
+      font-size: 1.1rem;
+      letter-spacing: 3px;
+
+      &::-webkit-outer-spin-button,
+      &::-webkit-inner-spin-button {
+        -webkit-appearance: none;
+        margin: 0;
+      }
+      &:invalid {
+        background: rgba(255, 0, 0, 0.1);
+      }
+      &--hasLeadingZero {
+        margin-left: -0.54em;
+        padding-left: calc(1px + 0.54em);
+      }
+    }
+  }
+  &__clear-button {
+    margin-left: 25px;
+    font-size: 1.3rem;
+    color: $tertiary;
+
+    &:enabled:hover,
+    &:enabled:focus {
+      color: $idle;
+    }
+  }
+  &__calendar-button {
+    font-size: 1.5rem;
+    color: $secondary;
+  }
+  &__button {
+    border: 0;
+    background: transparent;
+    padding: 4px 6px;
+
+    &:enabled {
+      cursor: pointer;
+    }
+    &:enabled:hover &__icon,
+    &:enabled:focus &__icon {
+      stroke: #0078d7;
+    }
+    &:disabled &__icon {
+      stroke: #6d6d6d;
+    }
+    svg {
+      display: inherit;
+    }
+  }
+  &__calendar {
+    width: 350px;
+    max-width: 100vw;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    z-index: 1;
+
+    &--closed {
+      display: none;
+    }
+    .react-calendar {
+      border-width: thin;
+    }
+  }
+}
