@@ -90,8 +90,8 @@
     &:enabled:focus &__icon {
       stroke: #0078d7;
     }
-    &:disabled &__icon {
-      stroke: #6d6d6d;
+    &:disabled {
+      color: #6d6d6d;
     }
     svg {
       display: inherit;

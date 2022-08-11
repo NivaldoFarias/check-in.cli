@@ -6,7 +6,7 @@ import Link from 'next/link';
 
 import { validate } from 'gerador-validador-cpf';
 import { AiTwotoneCalendar } from 'react-icons/ai';
-import { CgRedo } from 'react-icons/cg';
+import { CgRedo, CgPlayForwards, CgPlayTrackNext } from 'react-icons/cg';
 import DatePicker from 'react-date-picker/dist/entry.nostyle';
 
 import backgroundImage from '../../../public/background-alt.svg';
@@ -46,6 +46,27 @@ function Register() {
       formData.cpf.length === 14 ? `CPF inválido` : `Insira apenas números`;
     const MAX_BIRTHDATE = new Date();
     const MIN_BIRTHDATE = new Date(MAX_BIRTHDATE.getFullYear() - 100, 1, 1);
+
+    function BirthdatePicker() {
+      return (
+        <DatePicker
+          locale='pt-br'
+          name='birthdate'
+          value={birthdate}
+          minDate={MIN_BIRTHDATE}
+          maxDate={MAX_BIRTHDATE}
+          clearIcon={<CgRedo />}
+          prevLabel={<CgPlayTrackNext className='nav-icon prev' />}
+          prev2Label={<CgPlayForwards className='nav-icon double-prev' />}
+          nextLabel={<CgPlayTrackNext className='nav-icon next' />}
+          next2Label={<CgPlayForwards className='nav-icon double-next' />}
+          calendarIcon={<AiTwotoneCalendar />}
+          onChange={handleDateChange}
+          onCalendarOpen={handleCalendarOpen}
+          required
+        />
+      );
+    }
 
     return (
       <main className='auth-page__container'>
@@ -105,18 +126,7 @@ function Register() {
             <label>CPF</label>
             <p className={showAlertText()}>{alertText}</p>
           </section>
-          <DatePicker
-            locale='pt-br'
-            name='birthdate'
-            value={birthdate}
-            minDate={MIN_BIRTHDATE}
-            maxDate={MAX_BIRTHDATE}
-            clearIcon={<CgRedo />}
-            calendarIcon={<AiTwotoneCalendar />}
-            onChange={handleDateChange}
-            onCalendarOpen={handleCalendarOpen}
-            required
-          />
+          <BirthdatePicker />
           <button className={validateForm()} type='submit'>
             {hasSubmitted ? <LoadingDots /> : 'Cadastrar'}
           </button>

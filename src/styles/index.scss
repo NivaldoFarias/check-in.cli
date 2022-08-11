@@ -241,6 +241,15 @@ body {
     position: fixed !important;
   }
 }
+.nav-icon {
+  font-size: 1.5rem;
+  color: $alt-primary;
+
+  &.prev,
+  &.double-prev {
+    transform: rotate(180deg);
+  }
+}
 #check-in-page {
   height: 100vh;
 }
