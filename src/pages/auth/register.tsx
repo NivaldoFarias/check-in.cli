@@ -8,6 +8,7 @@ import { validate } from 'gerador-validador-cpf';
 import { AiTwotoneCalendar } from 'react-icons/ai';
 import { CgRedo, CgPlayForwards, CgPlayTrackNext } from 'react-icons/cg';
 import DatePicker from 'react-date-picker/dist/entry.nostyle';
+import type { ViewCallbackProperties } from 'react-calendar';
 
 import backgroundImage from '../../../public/background-alt.svg';
 import { getRandomInt } from '../../utils/functions.util';
@@ -61,8 +62,10 @@ function Register() {
           nextLabel={<CgPlayTrackNext className='nav-icon next' />}
           next2Label={<CgPlayForwards className='nav-icon double-next' />}
           calendarIcon={<AiTwotoneCalendar />}
+          defaultView={'decade'}
+          activeStartDate={new Date(2000, 1, 1)}
           onChange={handleDateChange}
-          onCalendarOpen={handleCalendarOpen}
+          onViewChange={handleViewChange}
           required
         />
       );
@@ -190,8 +193,9 @@ function Register() {
       setBirthdate(date);
     }
 
-    function handleCalendarOpen() {
-      if (!birthdate) setBirthdate(new Date(2000, 0, 1));
+    function handleViewChange(props: ViewCallbackProperties) {
+      const { action, activeStartDate, value, view } = props;
+      console.log(action, activeStartDate, value, view);
     }
 
     function showAlertText() {

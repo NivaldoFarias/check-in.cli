@@ -37,8 +37,8 @@ function CheckIn() {
     const validCpf = formData.cpf.length === 14 ? validate(formData.cpf) : true;
     const validateForm =
       validCpf && formData.password?.length > 6 && !hasSubmitted
-        ? ''
-        : 'disabled';
+        ? 'submit-btn'
+        : 'submit-btn disabled';
 
     const alertText =
       formData.cpf.length === 14 ? `CPF inválido` : `Insira apenas números`;

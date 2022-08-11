@@ -4,17 +4,7 @@
   width: clamp(100px, 220px, 100%);
   display: inline-flex;
   position: relative;
-  -moz-box-sizing: border-box;
-  -webkit-box-sizing: border-box;
-  box-sizing: border-box;
 
-  *,
-  *:before,
-  *:after {
-    -moz-box-sizing: border-box;
-    -webkit-box-sizing: border-box;
-    box-sizing: border-box;
-  }
   &--disabled {
     background-color: #f0f0f0;
     color: #6d6d6d;
@@ -50,6 +40,10 @@
       font-size: 1.1rem;
       letter-spacing: 3px;
 
+      &:hover {
+        cursor: pointer;
+        color: $alt-tertiary;
+      }
       &::-webkit-outer-spin-button,
       &::-webkit-inner-spin-button {
         -webkit-appearance: none;
@@ -77,24 +71,31 @@
   &__calendar-button {
     font-size: 1.5rem;
     color: $secondary;
+
+    &:enabled:hover,
+    &:enabled:focus {
+      color: $idle;
+    }
   }
   &__button {
     border: 0;
     background: transparent;
     padding: 4px 6px;
 
-    &:enabled {
-      cursor: pointer;
-    }
-    &:enabled:hover &__icon,
-    &:enabled:focus &__icon {
-      stroke: #0078d7;
-    }
     &:disabled {
       color: #6d6d6d;
     }
+    &:enabled,
+    &:hover {
+      cursor: pointer;
+    }
     svg {
       display: inherit;
+      cursor: pointer;
+
+      * {
+        pointer-events: none;
+      }
     }
   }
   &__calendar {
