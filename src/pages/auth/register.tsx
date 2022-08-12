@@ -10,6 +10,7 @@ import backgroundImage from '../../../public/background-alt.svg';
 import { getRandomInt } from '../../utils/functions.util';
 import LoadingDots from '../../components/loading';
 import BirthdatePicker from '../../components/Calendar';
+import Insurance from '../../components/Insurances';
 
 function Register() {
   const [formData, setFormData] = useState({
@@ -104,6 +105,10 @@ function Register() {
             <p className='input-date-section__label'>Data de nascimento</p>
             <span className='input-date-section__divider'></span>
             <BirthdatePicker />
+          </section>
+          <section className='input-insurance-section'>
+            <p className='input-insurance-section__label'>Convênio</p>
+            <Insurance />
           </section>
           <button className={validateForm()} type='submit'>
             {hasSubmitted ? <LoadingDots /> : 'Cadastrar'}
