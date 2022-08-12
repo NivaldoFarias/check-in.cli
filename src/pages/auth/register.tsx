@@ -5,14 +5,11 @@ import Image from 'next/image';
 import Link from 'next/link';
 
 import { validate } from 'gerador-validador-cpf';
-import { AiTwotoneCalendar } from 'react-icons/ai';
-import { CgRedo, CgPlayForwards, CgPlayTrackNext } from 'react-icons/cg';
-import DatePicker from 'react-date-picker/dist/entry.nostyle';
-import type { ViewCallbackProperties } from 'react-calendar';
 
 import backgroundImage from '../../../public/background-alt.svg';
 import { getRandomInt } from '../../utils/functions.util';
 import LoadingDots from '../../components/loading';
+import BirthdatePicker from '../../components/Calendar';
 
 function Register() {
   const [formData, setFormData] = useState({
@@ -22,8 +19,7 @@ function Register() {
     insurance: '',
     birthdate: '',
   });
-  const [birthdate, setBirthdate] = useState(new Date());
-  const [hasSubmitted, setHasSubmitted] = useState(false);
+  const [hasSubmitted, setHasSubmitted] = useState<Boolean>(false);
 
   const RegisterPage = buildRegisterPage();
 
@@ -45,31 +41,6 @@ function Register() {
     const validCpf = formData.cpf.length === 14 ? validate(formData.cpf) : true;
     const alertText =
       formData.cpf.length === 14 ? `CPF inválido` : `Insira apenas números`;
-    const MAX_BIRTHDATE = new Date();
-    const MIN_BIRTHDATE = new Date(MAX_BIRTHDATE.getFullYear() - 100, 1, 1);
-
-    function BirthdatePicker() {
-      return (
-        <DatePicker
-          locale='pt-br'
-          name='birthdate'
-          value={birthdate}
-          minDate={MIN_BIRTHDATE}
-          maxDate={MAX_BIRTHDATE}
-          clearIcon={<CgRedo />}
-          prevLabel={<CgPlayTrackNext className='nav-icon prev' />}
-          prev2Label={<CgPlayForwards className='nav-icon double-prev' />}
-          nextLabel={<CgPlayTrackNext className='nav-icon next' />}
-          next2Label={<CgPlayForwards className='nav-icon double-next' />}
-          calendarIcon={<AiTwotoneCalendar />}
-          defaultView={'decade'}
-          activeStartDate={new Date(2000, 1, 1)}
-          onChange={handleDateChange}
-          onViewChange={handleViewChange}
-          required
-        />
-      );
-    }
 
     return (
       <main className='auth-page__container'>
@@ -129,7 +100,11 @@ function Register() {
             <label>CPF</label>
             <p className={showAlertText()}>{alertText}</p>
           </section>
-          <BirthdatePicker />
+          <section className='input-date-section'>
+            <p className='input-date-section__label'>Data de nascimento</p>
+            <span className='input-date-section__divider'></span>
+            <BirthdatePicker />
+          </section>
           <button className={validateForm()} type='submit'>
             {hasSubmitted ? <LoadingDots /> : 'Cadastrar'}
           </button>
@@ -187,15 +162,6 @@ function Register() {
 
     function handleInputChange(e: ChangeEvent<HTMLInputElement>) {
       setFormData({ ...formData, [e.target.name]: e.target.value });
-    }
-
-    function handleDateChange(date: Date) {
-      setBirthdate(date);
-    }
-
-    function handleViewChange(props: ViewCallbackProperties) {
-      const { action, activeStartDate, value, view } = props;
-      console.log(action, activeStartDate, value, view);
     }
 
     function showAlertText() {

@@ -1,7 +1,7 @@
 // source: react-date-picker/dist/DatePicker.css
 
 .react-date-picker {
-  width: clamp(100px, 220px, 100%);
+  width: clamp(100px, 300px, 300px);
   display: inline-flex;
   position: relative;
 
@@ -59,7 +59,7 @@
     }
   }
   &__clear-button {
-    margin-left: 25px;
+    margin-left: 30%;
     font-size: 1.3rem;
     color: $tertiary;
 
