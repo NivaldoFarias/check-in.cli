@@ -105,6 +105,7 @@ function Register() {
             <p className='input-date-section__label'>Data de nascimento</p>
             <span className='input-date-section__divider'></span>
             <BirthdatePicker />
+            <span className='input-date-section__divider'></span>
           </section>
           <section className='input-insurance-section'>
             <p className='input-insurance-section__label'>Convênio</p>

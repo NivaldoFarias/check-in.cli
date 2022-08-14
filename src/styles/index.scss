@@ -273,12 +273,13 @@ body {
     @include flex(column, initial, flex-start, initial);
 
     &__label {
+      width: 100%;
       margin-bottom: 10px;
-      padding-left: 10px;
 
       color: $secondary;
       font-size: 1.3rem;
       letter-spacing: 1px;
+      text-align: center;
       text-shadow: $font-shadow;
       font-family: $primary-font;
     }

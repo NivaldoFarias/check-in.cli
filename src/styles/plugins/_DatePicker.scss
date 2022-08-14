@@ -1,6 +1,7 @@
 // source: react-date-picker/dist/DatePicker.css
 
 .react-date-picker {
+  padding: 3px 0;
   width: clamp(100px, 300px, 300px);
   display: inline-flex;
   position: relative;
@@ -12,7 +13,6 @@
   &__wrapper {
     @include flex(row, space-between, center, initial);
     width: 100%;
-    border-bottom: thin solid $secondary;
   }
   &__inputGroup {
     @include flex(row, initial, center, initial);
@@ -48,9 +48,6 @@
       &::-webkit-inner-spin-button {
         -webkit-appearance: none;
         margin: 0;
-      }
-      &:invalid {
-        background: rgba(255, 0, 0, 0.1);
       }
       &--hasLeadingZero {
         margin-left: -0.54em;

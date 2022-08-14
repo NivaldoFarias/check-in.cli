@@ -1,44 +1,27 @@
 import { useState } from 'react';
-import Dropdown from 'react-dropdown';
+import Select from 'react-select';
 
 function Insurance() {
-  const [insurance, setInsurance] = useState<string>();
+  const [insurance, setInsurance] = useState();
   const options = [
-    { value: 'one', label: 'One' },
-    { value: 'two', label: 'Two', className: 'myOptionClassName' },
-    {
-      type: 'group',
-      name: 'group1',
-      items: [
-        { value: 'three', label: 'Three', className: 'myOptionClassName' },
-        { value: 'four', label: 'Four' },
-      ],
-    },
-    {
-      type: 'group',
-      name: 'group2',
-      items: [
-        { value: 'five', label: 'Five' },
-        { value: 'six', label: 'Six' },
-      ],
-    },
+    { value: 'chocolate', label: 'Chocolate' },
+    { value: 'strawberry', label: 'Strawberry' },
+    { value: 'vanilla', label: 'Vanilla' },
   ];
 
   return (
     <>
-      <Dropdown
+      <Select
         options={options}
-        onChange={handleChange}
-        value={insurance}
+        defaultValue={insurance}
+        isClearable={true}
+        isSearchable={true}
+        tabSelectsValue={true}
+        backspaceRemovesValue={true}
         placeholder='Select an option'
       />
     </>
   );
-
-  function handleChange(e: any) {
-    e.preventDefault();
-    setInsurance(e.target.value);
-  }
 }
 
 export default Insurance;
