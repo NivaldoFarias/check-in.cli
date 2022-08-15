@@ -331,6 +331,9 @@ body {
   .select-insurance {
     width: 300px;
 
+    > span {
+      cursor: pointer;
+    }
     &__control {
       outline: none;
       border: none;
@@ -340,8 +343,32 @@ body {
       box-shadow: none;
       background-color: transparent;
     }
+    &__menu {
+      color: $alt-primary;
+      text-shadow: $font-shadow;
+      border: 1px solid $alert;
+      background-color: $secondary;
+    }
+    &__option {
+      &:hover {
+        cursor: pointer;
+      }
+      &--is-selected {
+        color: initial;
+        background-color: $tertiary;
+      }
+      &--is-focused {
+        color: $alert;
+        background-color: initial;
+      }
+      &--is-selected.select-insurance__option--is-focused {
+        color: $primary;
+        background-color: $tertiary;
+      }
+    }
     &__value-container {
-      cursor: text;
+      cursor: pointer;
+      text-shadow: $font-shadow;
 
       > * {
         pointer-events: none;
