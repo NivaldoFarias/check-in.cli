@@ -1,8 +1,8 @@
 import { FocusEvent, MouseEvent, useState } from 'react';
 import Select, { components, DropdownIndicatorProps } from 'react-select';
-import type { Props, ControlProps } from 'react-select';
+import type { ControlProps } from 'react-select';
 
-function Insurance(props: Props<any>) {
+function Insurance() {
   const [insurance, setInsurance] = useState<any>();
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const options = [
@@ -77,7 +77,6 @@ function Insurance(props: Props<any>) {
   return (
     <>
       <Select
-        {...props}
         options={options}
         components={{ Control, DropdownIndicator }}
         defaultValue={insurance}
