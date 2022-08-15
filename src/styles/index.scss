@@ -92,12 +92,13 @@ body {
         -webkit-text-fill-color: $secondary !important;
       }
     }
-    label {
+    .label-text {
       position: absolute;
       top: 10px;
       left: 10px;
 
       color: $secondary;
+      font-weight: 400;
       text-shadow: $font-shadow;
 
       pointer-events: none;
@@ -218,10 +219,12 @@ body {
       height: min-content;
       width: 100%;
 
-      text-align: left;
-      font-size: 0.92rem;
-      font-weight: 600;
       color: $alert;
+      text-align: left;
+      font-weight: 600;
+      font-size: 0.92rem;
+
+      pointer-events: none;
       transition: all 0.3s ease-in-out;
 
       &.color-transparent {
@@ -289,13 +292,90 @@ body {
       top: -13px;
       color: $tertiary;
     }
+    &__label {
+      margin-bottom: 10px;
+      padding-left: 10px;
+
+      color: $tertiary;
+      font-size: 1.3rem;
+      font-weight: 400;
+      text-shadow: $font-shadow;
+    }
   }
   .input-date-field {
+    padding-bottom: 7px;
+
+    font-weight: 400;
+    font-size: 1.3rem;
+    font-family: $primary-font;
+
     ~ label {
       top: -13px;
     }
+    &::-webkit-datetime-edit-day-field:focus,
+    &::-webkit-datetime-edit-month-field:focus,
+    &::-webkit-datetime-edit-year-field:focus {
+      color: $alert;
+      background-color: initial;
+      transition: all 200ms ease-in-out 0s;
+    }
+
     &::-webkit-calendar-picker-indicator {
       filter: invert(100%);
+
+      &:hover {
+        cursor: pointer;
+      }
+    }
+  }
+  .select-insurance {
+    width: 300px;
+
+    &__control {
+      outline: none;
+      border: none;
+      border-radius: 0px;
+      border-bottom: 1px solid $secondary;
+
+      box-shadow: none;
+      background-color: transparent;
+    }
+    &__value-container {
+      cursor: text;
+
+      > * {
+        pointer-events: none;
+      }
+    }
+    &__input-container,
+    &__placeholder,
+    &__indicator,
+    &__single-value,
+    &__clear-indicator {
+      color: $secondary;
+    }
+    &__indicator,
+    &__clear-indicator {
+      transition: all 100ms ease-in-out 0s;
+
+      &:hover {
+        color: $alert;
+
+        > svg {
+          pointer-events: all;
+          cursor: pointer;
+        }
+        * {
+          pointer-events: none;
+        }
+      }
+      &-separator {
+        background-color: $alt-secondary;
+      }
+    }
+    &__single-value {
+      font-weight: 400;
+      letter-spacing: 2px;
     }
   }
 }

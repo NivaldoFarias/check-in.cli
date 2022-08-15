@@ -1,6 +1,5 @@
 import { ChangeEvent, FocusEvent, FormEvent, useRef } from 'react';
 import { useState } from 'react';
-import { signIn } from 'next-auth/react';
 import Image from 'next/image';
 import Link from 'next/link';
 
@@ -24,7 +23,9 @@ function Register() {
     insurance: '',
     birthdate: '',
   });
-  const [hasSubmitted, setHasSubmitted] = useState<Boolean>(false);
+  const [hasSubmitted, setHasSubmitted] = useState<boolean>(false);
+  const [countDateInputs, setCountDateInputs] = useState<number>(0);
+
   const inputRef = useRef<InputRef>({
     cpf: null,
     full_name: null,
@@ -53,8 +54,7 @@ function Register() {
     const validCpf = formData.cpf.length === 14 ? validate(formData.cpf) : true;
     const alertCpf =
       formData.cpf.length === 14 ? `CPF inválido` : `Insira apenas números`;
-    const alertBirthdate =
-      formData.birthdate.length === 10 ? `` : `Insira uma data válida`;
+    const alertBirthdate = `Insira uma data válida`;
 
     return (
       <main className='auth-page__container'>
@@ -75,7 +75,7 @@ function Register() {
             />
             <span className='highlight'></span>
             <span className='bar'></span>
-            <label>Nome Completo</label>
+            <label className='label-text'>Nome Completo</label>
           </section>
           <section className='input-section'>
             <input
@@ -92,7 +92,7 @@ function Register() {
             />
             <span className='highlight'></span>
             <span className='bar'></span>
-            <label>Nome Social</label>
+            <label className='label-text'>Nome Social</label>
           </section>
           <section className='input-section'>
             <input
@@ -109,7 +109,7 @@ function Register() {
             />
             <span className='highlight'></span>
             <span className='bar'></span>
-            <label>Convênio</label>
+            <label className='label-text'>Convênio</label>
           </section>
           <section className='input-section'>
             <input
@@ -126,7 +126,7 @@ function Register() {
             />
             <span className='highlight'></span>
             <span className='bar'></span>
-            <label>CPF</label>
+            <label className='label-text'>CPF</label>
             <p className={showAlertCpf()}>{alertCpf}</p>
           </section>
           <section className='input-section'>
@@ -145,11 +145,11 @@ function Register() {
             />
             <span className='highlight'></span>
             <span className='bar'></span>
-            <label>Data de nascimento</label>
+            <label className='label-text'>Data de nascimento</label>
             <p className={showAlertBirthdate()}>{alertBirthdate}</p>
           </section>
-          <section className='input-insurance-section'>
-            <p className='input-insurance-section__label'>Convênio</p>
+          <section className='input-section'>
+            <p className='input-section__label'>Convênio</p>
             <Insurance />
           </section>
           <button className={validateForm()} type='submit'>
@@ -176,11 +176,7 @@ function Register() {
     function handleSubmit(e: FormEvent) {
       e.preventDefault();
       setHasSubmitted(true);
-      setTimeout(handleSignIn, getRandomInt(750, 2000));
-    }
-
-    function handleSignIn() {
-      signIn('credentials', { redirect: false, password: 'password' });
+      setTimeout(() => null, getRandomInt(750, 2000));
     }
 
     function handleCPFInput(e: ChangeEvent<HTMLInputElement>) {
@@ -208,6 +204,7 @@ function Register() {
     }
 
     function handleBirthdateInput(e: ChangeEvent<HTMLInputElement>) {
+      setCountDateInputs(countDateInputs + 1);
       const { value } = e.target;
 
       if (value.length === 3 || value.length === 6) {
@@ -258,20 +255,22 @@ function Register() {
       const millenium = input[0];
       const century = input[1];
       const decade = input[2];
-      console.log(
-        millenium === '1' || millenium === '2',
-        (century === '9' && millenium === '1') ||
-          (millenium === '2' && century === '0'),
-        ((decade === '0' || decade === '1') && millenium === '2') ||
-          millenium === '1',
-        new Date(input),
-      );
-      const birthdateRegex =
-        /^(0?[1-9]|[12][0-9]|3[01])[\/\-](0?[1-9]|1[012])[\/\-]\d{4}$/;
+      const year = input[3];
 
-      const validInput = birthdateRegex.test(input);
-      const transparent =
-        validInput || !input.length ? 'color-transparent' : '';
+      const validNineteenthCentury = millenium === '1' && century === '9';
+      const validTwentiethCentury =
+        millenium === '2' &&
+        century === '0' &&
+        (decade === '0' ||
+          decade === '1' ||
+          (decade === '2' && (year === '0' || year === '1' || year === '2')));
+      const isInputSet = countDateInputs >= 4;
+
+      const validInput =
+        (isInputSet && (validNineteenthCentury || validTwentiethCentury)) ||
+        !isInputSet;
+
+      const transparent = validInput ? 'color-transparent' : '';
 
       return `alert-text birthday-alert ${transparent}`;
     }
