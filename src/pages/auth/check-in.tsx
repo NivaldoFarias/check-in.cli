@@ -133,7 +133,7 @@ function CheckIn() {
           : ''
         : '';
 
-      return `alert-text-cpf ${transparent}`;
+      return `alert-text cpf-alert ${transparent}`;
     }
   }
 }

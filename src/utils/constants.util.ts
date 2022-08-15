@@ -1,11 +1,3 @@
-import {
-  PrismaClientInitializationError,
-  PrismaClientKnownRequestError,
-  PrismaClientRustPanicError,
-  PrismaClientUnknownRequestError,
-  PrismaClientValidationError,
-} from '@prisma/client/runtime';
-
 const env = {
   NODE_ENV: process.env.NODE_ENV || 'development',
   BCRYPT_SALT_ROUNDS: Number(process.env.SALT_ROUNDS) || 10,
@@ -20,22 +12,14 @@ const regex = {
 };
 
 const time = {
-  CURRENT_MONTH: Number(new Date().getMonth().toString()) + 1,
-  CURRENT_YEAR: Number(new Date().getFullYear().toString().slice(2)),
-  CURRRENT_DATE: Number(
-    new Date().toISOString().slice(0, 19).replace('T', ' '),
-  ),
+  CURRENT_MONTH: (Number(new Date().getMonth().toString()) + 1).toString(),
+  CURRENT_YEAR: new Date().getFullYear().toString(),
+  CURRRENT_DATE: new Date(Date.now()).toISOString().split('T')[0],
+  MIN_DATE: '1900-01-01',
 };
 
 const database = {
   INT4_MAX: 2147483647,
 };
 
-const PrismaErrors =
-  PrismaClientValidationError ||
-  PrismaClientInitializationError ||
-  PrismaClientKnownRequestError ||
-  PrismaClientRustPanicError ||
-  PrismaClientUnknownRequestError;
-
-export { env, regex, time, database, PrismaErrors };
+export { env, regex, time, database };

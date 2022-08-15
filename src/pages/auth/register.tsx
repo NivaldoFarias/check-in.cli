@@ -1,4 +1,4 @@
-import type { ChangeEvent, FormEvent } from 'react';
+import { ChangeEvent, FocusEvent, FormEvent, useRef } from 'react';
 import { useState } from 'react';
 import { signIn } from 'next-auth/react';
 import Image from 'next/image';
@@ -9,8 +9,12 @@ import { validate } from 'gerador-validador-cpf';
 import backgroundImage from '../../../public/background-alt.svg';
 import { getRandomInt } from '../../utils/functions.util';
 import LoadingDots from '../../components/loading';
-import BirthdatePicker from '../../components/Calendar';
 import Insurance from '../../components/Insurances';
+import { time } from '../../utils/constants.util';
+
+type InputRef = {
+  [x: string]: HTMLInputElement | null;
+};
 
 function Register() {
   const [formData, setFormData] = useState({
@@ -21,6 +25,13 @@ function Register() {
     birthdate: '',
   });
   const [hasSubmitted, setHasSubmitted] = useState<Boolean>(false);
+  const inputRef = useRef<InputRef>({
+    cpf: null,
+    full_name: null,
+    social_name: null,
+    insurance: null,
+    birthdate: null,
+  });
 
   const RegisterPage = buildRegisterPage();
 
@@ -40,8 +51,10 @@ function Register() {
 
   function buildRegisterPage() {
     const validCpf = formData.cpf.length === 14 ? validate(formData.cpf) : true;
-    const alertText =
+    const alertCpf =
       formData.cpf.length === 14 ? `CPF inválido` : `Insira apenas números`;
+    const alertBirthdate =
+      formData.birthdate.length === 10 ? `` : `Insira uma data válida`;
 
     return (
       <main className='auth-page__container'>
@@ -50,10 +63,14 @@ function Register() {
           <section className='input-section'>
             <input
               type='text'
-              value={formData.full_name}
-              name='full_name'
               maxLength={20}
+              name='full_name'
+              className='input-field'
+              value={formData.full_name}
+              ref={(element) => (inputRef.current['full_name'] = element)}
               onChange={handleInputChange}
+              onFocus={handleInputFocus}
+              onBlur={handleInputBlur}
               required
             />
             <span className='highlight'></span>
@@ -62,11 +79,15 @@ function Register() {
           </section>
           <section className='input-section'>
             <input
+              ref={(element) => (inputRef.current['social_name'] = element)}
               type='text'
               value={formData.social_name}
               name='social_name'
               maxLength={25}
               onChange={handleInputChange}
+              onFocus={handleInputFocus}
+              onBlur={handleInputBlur}
+              className='input-field'
               required
             />
             <span className='highlight'></span>
@@ -75,11 +96,15 @@ function Register() {
           </section>
           <section className='input-section'>
             <input
+              ref={(element) => (inputRef.current['insurance'] = element)}
               type='text'
               value={formData.insurance}
               name='insurance'
               maxLength={30}
               onChange={handleInputChange}
+              onFocus={handleInputFocus}
+              onBlur={handleInputBlur}
+              className='input-field'
               required
             />
             <span className='highlight'></span>
@@ -89,23 +114,39 @@ function Register() {
           <section className='input-section'>
             <input
               type='text'
-              value={formData.cpf}
               name='cpf'
               maxLength={14}
+              value={formData.cpf}
+              className='input-field input-spacedout-field'
+              ref={(element) => (inputRef.current['cpf'] = element)}
               onChange={handleCPFInput}
+              onFocus={handleInputFocus}
+              onBlur={handleInputBlur}
               required
-              className='input-cpf-field'
             />
             <span className='highlight'></span>
             <span className='bar'></span>
             <label>CPF</label>
-            <p className={showAlertText()}>{alertText}</p>
+            <p className={showAlertCpf()}>{alertCpf}</p>
           </section>
-          <section className='input-date-section'>
-            <p className='input-date-section__label'>Data de nascimento</p>
-            <span className='input-date-section__divider'></span>
-            <BirthdatePicker />
-            <span className='input-date-section__divider'></span>
+          <section className='input-section'>
+            <input
+              type='date'
+              name='birthdate'
+              min={time.MIN_DATE}
+              max={time.CURRRENT_DATE}
+              value={formData.birthdate}
+              ref={(element) => (inputRef.current['birthdate'] = element)}
+              className='input-field input-field--focused input-spacedout-field input-date-field'
+              onChange={handleBirthdateInput}
+              onFocus={handleInputFocus}
+              onBlur={handleInputBlur}
+              required
+            />
+            <span className='highlight'></span>
+            <span className='bar'></span>
+            <label>Data de nascimento</label>
+            <p className={showAlertBirthdate()}>{alertBirthdate}</p>
           </section>
           <section className='input-insurance-section'>
             <p className='input-insurance-section__label'>Convênio</p>
@@ -166,11 +207,41 @@ function Register() {
       }
     }
 
+    function handleBirthdateInput(e: ChangeEvent<HTMLInputElement>) {
+      const { value } = e.target;
+
+      if (value.length === 3 || value.length === 6) {
+        setFormData({
+          ...formData,
+          birthdate:
+            value.slice(0, -1) +
+            '/' +
+            (value.slice(-1) === '/' ? '' : value.slice(-1)),
+        });
+      } else {
+        setFormData({ ...formData, birthdate: value });
+      }
+    }
+
     function handleInputChange(e: ChangeEvent<HTMLInputElement>) {
       setFormData({ ...formData, [e.target.name]: e.target.value });
     }
 
-    function showAlertText() {
+    function handleInputFocus(e: FocusEvent<HTMLInputElement>) {
+      if (e.target.name === 'birthdate') return null;
+      return inputRef.current[e.target.name]?.classList.add(
+        'input-field--focused',
+      );
+    }
+
+    function handleInputBlur(e: FocusEvent<HTMLInputElement>) {
+      if (e.target.name === 'birthdate') return null;
+      return inputRef.current[e.target.name]?.classList.remove(
+        'input-field--focused',
+      );
+    }
+
+    function showAlertCpf() {
       const cpfRegex = /^[0-9.-\s]*$/;
       const containsOnlyNumbers = cpfRegex.test(formData.cpf);
       const transparent = containsOnlyNumbers
@@ -179,7 +250,30 @@ function Register() {
           : ''
         : '';
 
-      return `alert-text-cpf ${transparent}`;
+      return `alert-text cpf-alert ${transparent}`;
+    }
+
+    function showAlertBirthdate() {
+      const input = formData.birthdate;
+      const millenium = input[0];
+      const century = input[1];
+      const decade = input[2];
+      console.log(
+        millenium === '1' || millenium === '2',
+        (century === '9' && millenium === '1') ||
+          (millenium === '2' && century === '0'),
+        ((decade === '0' || decade === '1') && millenium === '2') ||
+          millenium === '1',
+        new Date(input),
+      );
+      const birthdateRegex =
+        /^(0?[1-9]|[12][0-9]|3[01])[\/\-](0?[1-9]|1[012])[\/\-]\d{4}$/;
+
+      const validInput = birthdateRegex.test(input);
+      const transparent =
+        validInput || !input.length ? 'color-transparent' : '';
+
+      return `alert-text birthday-alert ${transparent}`;
     }
   }
 }

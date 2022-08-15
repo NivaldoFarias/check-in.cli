@@ -44,7 +44,7 @@ body {
     font-size: 1.4rem;
     font-family: $primary-font;
 
-    input {
+    .input-field {
       display: block;
       padding: 10px 10px 10px 5px;
       width: 300px;
@@ -57,12 +57,40 @@ body {
       border: none;
       background-color: transparent;
       border-bottom: 1px solid $secondary;
-    }
-    input:hover {
-      cursor: text;
-    }
-    input:focus {
-      outline: none;
+
+      &:hover {
+        cursor: text;
+      }
+      &--focused {
+        outline: none;
+
+        /* active state */
+        ~ .bar:before,
+        ~ .bar:after {
+          width: 50%;
+        }
+        ~ .highlight {
+          animation: input-highlighter 0.3s ease;
+        }
+      }
+      /* active state */
+      &--focused ~ label,
+      &:valid ~ label {
+        top: -18px;
+        color: $tertiary;
+      }
+      &:-webkit-autofill,
+      &:-webkit-autofill:hover,
+      &:-webkit-autofill:focus,
+      &:-webkit-autofill:active,
+      &:-webkit-autofill:first-line {
+        transition: background-color 5000s ease-in-out 0s;
+        -webkit-text-fill-color: $secondary !important;
+      }
+      #placeholder {
+        transition: background-color 5000s ease-in-out 0s;
+        -webkit-text-fill-color: $secondary !important;
+      }
     }
     label {
       position: absolute;
@@ -79,53 +107,29 @@ body {
         font-weight: bold;
       }
     }
-    /* active state */
-    input:focus ~ label,
-    input:valid ~ label {
-      top: -18px;
-      color: $tertiary;
-    }
-    input #placeholder {
-      transition: background-color 5000s ease-in-out 0s;
-      -webkit-text-fill-color: $secondary !important;
-    }
-    input:-webkit-autofill,
-    input:-webkit-autofill:hover,
-    input:-webkit-autofill:focus,
-    input:-webkit-autofill:active,
-    input:-webkit-autofill:first-line {
-      transition: background-color 5000s ease-in-out 0s;
-      -webkit-text-fill-color: $secondary !important;
-    }
-    /* BOTTOM BARS ================================= */
     .bar {
       position: relative;
       display: block;
       width: 300px;
-    }
-    .bar:before,
-    .bar:after {
-      position: absolute;
-      bottom: 1px;
 
-      height: 2px;
-      width: 0;
+      &:before,
+      &:after {
+        position: absolute;
+        bottom: 1px;
 
-      content: '';
-      background: $tertiary;
+        height: 2px;
+        width: 0;
+
+        content: '';
+        background: $tertiary;
+      }
+      &:before {
+        left: 50%;
+      }
+      &:after {
+        right: 50%;
+      }
     }
-    .bar:before {
-      left: 50%;
-    }
-    .bar:after {
-      right: 50%;
-    }
-    /* active state */
-    input:focus ~ .bar:before,
-    input:focus ~ .bar:after {
-      width: 50%;
-    }
-    /* HIGHLIGHTER ================================== */
     .highlight {
       position: absolute;
       top: 25%;
@@ -136,10 +140,6 @@ body {
 
       opacity: 0.5;
       pointer-events: none;
-    }
-    /* active state */
-    input:focus ~ .highlight {
-      animation: input-highlighter 0.3s ease;
     }
     @keyframes input-highlighter {
       from {
@@ -210,7 +210,7 @@ body {
       font-size: clamp(4.8rem, 5vw, 8rem);
       font-weight: 300;
     }
-    .alert-text-cpf {
+    .alert-text {
       position: absolute;
       top: 50px;
       left: 2px;
@@ -250,6 +250,27 @@ body {
     transform: rotate(180deg);
   }
 }
+.input-date-section {
+  @include flex(column, initial, flex-start, initial);
+
+  &__label {
+    width: 100%;
+    margin-bottom: 10px;
+
+    color: $secondary;
+    font-size: 1.3rem;
+    letter-spacing: 1px;
+    text-align: center;
+    text-shadow: $font-shadow;
+    font-family: $primary-font;
+  }
+  &__divider {
+    position: relative;
+    display: block;
+    width: 300px;
+    border-bottom: 1px solid $secondary;
+  }
+}
 #check-in-page {
   height: 100vh;
 }
@@ -263,31 +284,18 @@ body {
     label {
       top: 14px;
     }
-    input:focus ~ label,
-    input:valid ~ label {
+    .input-field:focus ~ label,
+    .input-field:valid ~ label {
       top: -13px;
       color: $tertiary;
     }
   }
-  .input-date-section {
-    @include flex(column, initial, flex-start, initial);
-
-    &__label {
-      width: 100%;
-      margin-bottom: 10px;
-
-      color: $secondary;
-      font-size: 1.3rem;
-      letter-spacing: 1px;
-      text-align: center;
-      text-shadow: $font-shadow;
-      font-family: $primary-font;
+  .input-date-field {
+    ~ label {
+      top: -13px;
     }
-    &__divider {
-      position: relative;
-      display: block;
-      width: 300px;
-      border-bottom: 1px solid $secondary;
+    &::-webkit-calendar-picker-indicator {
+      filter: invert(100%);
     }
   }
 }
