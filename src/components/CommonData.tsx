@@ -3,10 +3,10 @@ import {
   FocusEvent,
   FormEvent,
   useContext,
+  useState,
   useEffect,
   useRef,
 } from 'react';
-import { useState } from 'react';
 
 import { HiOutlineViewList } from 'react-icons/hi';
 import { MdCalendarViewDay } from 'react-icons/md';
@@ -49,6 +49,36 @@ function CommonData(props: any) {
       } else setHeight(0);
     }
   }, [expandSection, modalIsOpen]);
+
+  const commonDataComponent = buildCommonDataComponent();
+
+  return (
+    <section className='section-container'>
+      <div className='section-header'>
+        <h2 className='section-header__subtitle' onClick={toggleSection}>
+          Dados Básicos
+        </h2>
+        {expandSection ? (
+          <MdCalendarViewDay
+            onClick={toggleSection}
+            className='section-header__icon'
+          />
+        ) : (
+          <HiOutlineViewList
+            onClick={toggleSection}
+            className='section-header__icon'
+          />
+        )}
+      </div>
+      <div className='register-data-section' style={{ height }}>
+        {commonDataComponent}
+      </div>
+    </section>
+  );
+
+  function toggleSection() {
+    setSectionState(!expandSection);
+  }
 
   function buildCommonDataComponent() {
     const alertCpf =
@@ -240,36 +270,6 @@ function CommonData(props: any) {
     function updateValue(value: string) {
       setFormData({ ...formData, insurance: value });
     }
-  }
-
-  const commonDataComponent = buildCommonDataComponent();
-
-  return (
-    <section className='section-container'>
-      <div className='section-header'>
-        <h2 className='section-header__subtitle' onClick={toggleSection}>
-          Dados Básicos
-        </h2>
-        {expandSection ? (
-          <MdCalendarViewDay
-            onClick={toggleSection}
-            className='section-header__icon'
-          />
-        ) : (
-          <HiOutlineViewList
-            onClick={toggleSection}
-            className='section-header__icon'
-          />
-        )}
-      </div>
-      <div className='register-data-section' style={{ height }}>
-        {commonDataComponent}
-      </div>
-    </section>
-  );
-
-  function toggleSection() {
-    setSectionState(!expandSection);
   }
 }
 

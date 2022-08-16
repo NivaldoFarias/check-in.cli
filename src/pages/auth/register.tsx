@@ -8,6 +8,7 @@ import backgroundImage from '../../../public/background-alt.svg';
 import DataContext from '../../contexts/DataContext';
 import CommonData from '../../components/CommonData';
 import LoadingDots from '../../components/Loading';
+import RegistryData from '../../components/registryData';
 
 function Register() {
   const [validCpf, setValidCpf] = useState<boolean>(true);
@@ -41,6 +42,7 @@ function Register() {
       <main className='auth-page__container'>
         <h1 className='title-card'>Cadastro</h1>
         <CommonData validCpf={validCpf} />
+        <RegistryData />
         <div className='footer-section'>
           <button className={validateForm()} type='submit'>
             {hasSubmitted ? <LoadingDots /> : 'Cadastrar'}
