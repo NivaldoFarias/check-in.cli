@@ -1,11 +1,15 @@
-import { FocusEvent, MouseEvent, useState } from 'react';
-import Select, { components, DropdownIndicatorProps } from 'react-select';
+import { FocusEvent, MouseEvent, useContext, useRef } from 'react';
+import Select, {
+  components,
+  DropdownIndicatorProps,
+  InputProps,
+} from 'react-select';
 import type { ControlProps } from 'react-select';
+import DataContext from '../contexts/DataContext';
 
-function Insurance() {
-  const [insurance, setInsurance] = useState<any>();
-  const [isOpen, setIsOpen] = useState<boolean>(false);
+function Insurance({ updateValue }: { updateValue: (value: string) => void }) {
   const options = [
+    { value: 'PRIVATE', label: 'Particular (sem convênio)' },
     { value: 'ALLIANZ_SAUDE', label: 'Allianz Saúde' },
     { value: 'AMEPLAN_SAUDE', label: 'Ameplan Saúde' },
     { value: 'AMIL_FACIL', label: 'Amil Fácil' },
@@ -44,6 +48,11 @@ function Insurance() {
     { value: 'UNIMED_NACIONAL', label: 'Unimed Nacional' },
   ];
 
+  const { modalIsOpen: isOpen, setModalIsOpen: setIsOpen } =
+    useContext(DataContext);
+
+  const inputRef = useRef<any>(null);
+
   const Control = (props: ControlProps) => {
     const { children } = props;
 
@@ -55,6 +64,7 @@ function Insurance() {
 
     function handleClick(e: MouseEvent<HTMLElement>) {
       e.preventDefault();
+      e.stopPropagation();
       setIsOpen(!isOpen);
     }
   };
@@ -74,12 +84,21 @@ function Insurance() {
     );
   };
 
+  const Input = (props: InputProps) => {
+    const { children } = props;
+
+    return (
+      <components.Input autoFocus={isOpen} {...props}>
+        {children}
+      </components.Input>
+    );
+  };
+
   return (
     <>
       <Select
         options={options}
-        components={{ Control, DropdownIndicator }}
-        defaultValue={insurance}
+        components={{ Control, DropdownIndicator, Input }}
         isClearable={true}
         isSearchable={true}
         menuIsOpen={isOpen}
@@ -100,11 +119,12 @@ function Insurance() {
 
   function handleInputFocus() {
     setIsOpen(true);
+    inputRef.current?.focus();
   }
 
   function handleInputBlur(e: FocusEvent<HTMLInputElement>) {
     setIsOpen(false);
-    setInsurance(e.target.value);
+    updateValue(e.target.value);
   }
 }
 

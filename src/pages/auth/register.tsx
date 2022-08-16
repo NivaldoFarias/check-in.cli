@@ -1,46 +1,18 @@
+import { useContext, useEffect, useState } from 'react';
 import { validate } from 'gerador-validador-cpf';
-import { useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 
 import backgroundImage from '../../../public/background-alt.svg';
+
+import DataContext from '../../contexts/DataContext';
 import CommonData from '../../components/CommonData';
-import LoadingDots from '../../components/loading';
-import { useEffect } from 'react';
+import LoadingDots from '../../components/Loading';
 
 function Register() {
-  const [commonData, setCommonData] = useState({
-    cpf: '',
-    full_name: '',
-    social_name: '',
-    insurance: '',
-    birthdate: '',
-  });
-  /* const [registryData, setRegistryData] = useState({
-    gender: '',
-    assigned_at_birth: '',
-    rg: '',
-    personal_number: '',
-    household_number: '',
-  });
-  const [addressData, setAddressData] = useState({
-    street: '',
-    number: '',
-    complement: '',
-    neighborhood: '',
-    city: '',
-    state: '',
-    country: '',
-    postal_code: '',
-  });
-  const [formData, setFormData] = useState({
-    common: commonData,
-    registry: registryData,
-    address: addressData,
-  }); */
-
-  const [hasSubmitted, setHasSubmitted] = useState<boolean>(false);
   const [validCpf, setValidCpf] = useState<boolean>(true);
+
+  const { commonData, hasSubmitted } = useContext(DataContext);
 
   const RegisterPage = buildRegisterPage();
 
@@ -68,12 +40,7 @@ function Register() {
     return (
       <main className='auth-page__container'>
         <h1 className='title-card'>Cadastro</h1>
-        <CommonData
-          formData={commonData}
-          setFormData={setCommonData}
-          setHasSubmitted={setHasSubmitted}
-          validCpf={validCpf}
-        />
+        <CommonData validCpf={validCpf} />
         <div className='footer-section'>
           <button className={validateForm()} type='submit'>
             {hasSubmitted ? <LoadingDots /> : 'Cadastrar'}

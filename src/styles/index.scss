@@ -14,6 +14,8 @@ body {
 .form-group {
   @include flex(column, center, center, 45px);
   position: relative;
+
+  padding-top: 30px;
   height: fit-content;
   width: 100%;
 
@@ -246,6 +248,12 @@ body {
       }
     }
   }
+  .section-container {
+    @include flex(column, center, center, initial);
+
+    height: 100%;
+    width: 100%;
+  }
   .background-image {
     pointer-events: none;
     position: fixed !important;
@@ -331,7 +339,7 @@ body {
     }
   }
   .register-data-section {
-    @include flex(column, center, center, 30px);
+    @include flex(column, initial, center, 30px);
     height: 0;
     width: 100%;
     overflow: hidden;
@@ -384,23 +392,30 @@ body {
     }
   }
   .select-insurance {
+    position: relative;
     width: 300px;
 
     > span {
       cursor: pointer;
     }
     &__control {
+      position: relative;
       outline: none;
       border: none;
       border-radius: 0px;
-      border-bottom: 1px solid $secondary;
+      border-bottom: 2px solid $tertiary;
 
       box-shadow: none;
       background-color: transparent;
     }
     &__menu {
+      position: relative;
+      height: min-content;
+      width: 100%;
+
       color: $alt-primary;
       text-shadow: $font-shadow;
+
       border: 1px solid $alert;
       background-color: $secondary;
     }

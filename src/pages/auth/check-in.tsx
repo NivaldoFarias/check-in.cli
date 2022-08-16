@@ -8,7 +8,7 @@ import { validate } from 'gerador-validador-cpf';
 
 import backgroundImage from '../../../public/background-alt.svg';
 import { getRandomInt } from '../../utils/functions.util';
-import LoadingDots from '../../components/loading';
+import LoadingDots from '../../components/Loading';
 
 function CheckIn() {
   const [formData, setFormData] = useState({

@@ -88,6 +88,7 @@ model Address {
 }
 
 enum enum_insurances {
+  PRIVATE                @map("private")
   ALLIANZ_SAUDE          @map("allianz_saude")
   AMEPLAN_SAUDE          @map("ameplan_saude")
   AMIL_FACIL             @map("amil_facil")

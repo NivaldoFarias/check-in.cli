@@ -1,10 +1,18 @@
-import { ChangeEvent, FocusEvent, FormEvent, useEffect, useRef } from 'react';
+import {
+  ChangeEvent,
+  FocusEvent,
+  FormEvent,
+  useContext,
+  useEffect,
+  useRef,
+} from 'react';
 import { useState } from 'react';
 
 import { HiOutlineViewList } from 'react-icons/hi';
 import { MdCalendarViewDay } from 'react-icons/md';
 
 import { getRandomInt } from '../utils/functions.util';
+import DataContext from '../contexts/DataContext';
 import Insurance from '../components/Insurances';
 import { time } from '../utils/constants.util';
 
@@ -13,10 +21,17 @@ type InputRef = {
 };
 
 function CommonData(props: any) {
-  const { formData, setFormData, setHasSubmitted, validCpf } = props;
+  const { validCpf } = props;
   const [countDateInputs, setCountDateInputs] = useState<number>(0);
   const [expandSection, setSectionState] = useState<boolean>(false);
-  const [height, setHeight] = useState<number>(0);
+  const [height, setHeight] = useState<number | string>(0);
+
+  const {
+    commonData: formData,
+    setCommonData: setFormData,
+    modalIsOpen,
+    setHasSubmitted,
+  } = useContext(DataContext);
 
   const inputRef = useRef<InputRef>({
     cpf: null,
@@ -33,7 +48,7 @@ function CommonData(props: any) {
         setHeight(sectionRef.current.getBoundingClientRect().height);
       } else setHeight(0);
     }
-  }, [expandSection]);
+  }, [expandSection, modalIsOpen]);
 
   function buildCommonDataComponent() {
     const alertCpf =
@@ -78,23 +93,6 @@ function CommonData(props: any) {
         </section>
         <section className='input-section'>
           <input
-            ref={(element) => (inputRef.current['insurance'] = element)}
-            type='text'
-            value={formData?.insurance}
-            name='insurance'
-            maxLength={30}
-            onChange={handleInputChange}
-            onFocus={handleInputFocus}
-            onBlur={handleInputBlur}
-            className='input-field'
-            required
-          />
-          <span className='highlight'></span>
-          <span className='bar'></span>
-          <label className='label-text'>Convênio</label>
-        </section>
-        <section className='input-section'>
-          <input
             type='text'
             name='cpf'
             maxLength={14}
@@ -132,7 +130,7 @@ function CommonData(props: any) {
         </section>
         <section className='input-section'>
           <p className='input-section__label'>Convênio</p>
-          <Insurance />
+          <Insurance updateValue={updateValue} />
         </section>
       </form>
     );
@@ -238,12 +236,16 @@ function CommonData(props: any) {
 
       return `alert-text birthday-alert ${transparent}`;
     }
+
+    function updateValue(value: string) {
+      setFormData({ ...formData, insurance: value });
+    }
   }
 
   const commonDataComponent = buildCommonDataComponent();
 
   return (
-    <>
+    <section className='section-container'>
       <div className='section-header'>
         <h2 className='section-header__subtitle' onClick={toggleSection}>
           Dados Básicos
@@ -263,7 +265,7 @@ function CommonData(props: any) {
       <div className='register-data-section' style={{ height }}>
         {commonDataComponent}
       </div>
-    </>
+    </section>
   );
 
   function toggleSection() {
