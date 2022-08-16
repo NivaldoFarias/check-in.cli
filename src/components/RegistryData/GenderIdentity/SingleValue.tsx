@@ -8,8 +8,8 @@ function SingleValue(props: any) {
   const { registryData, setRegistryData } = useContext(DataContext);
 
   useEffect(() => {
-    if (data && data.label !== registryData.assignedAtBirth) {
-      setRegistryData({ ...registryData, assignedAtBirth: data.label });
+    if (data && data.value !== registryData.gender) {
+      setRegistryData({ ...registryData, gender: data.value });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data]);

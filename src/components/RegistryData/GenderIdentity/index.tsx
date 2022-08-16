@@ -1,5 +1,5 @@
 import { useContext } from 'react';
-import Select, { InputActionMeta } from 'react-select';
+import Select, { ActionMeta, InputActionMeta } from 'react-select';
 
 import DataContext from '../../../contexts/DataContext';
 
@@ -18,7 +18,8 @@ function GenderIdentity() {
     { value: 'NO_INFO', label: 'Prefiro não informar' },
   ];
 
-  const { selectGender, setSelectGender } = useContext(DataContext);
+  const { selectGender, setSelectGender, setHasGenderCleared } =
+    useContext(DataContext);
 
   return (
     <>
@@ -27,6 +28,7 @@ function GenderIdentity() {
         components={{ Control, DropdownIndicator, Input, SingleValue }}
         isClearable={true}
         isSearchable={true}
+        onChange={handleInputChange}
         menuIsOpen={selectGender}
         openMenuOnFocus={true}
         openMenuOnClick={true}
@@ -43,9 +45,16 @@ function GenderIdentity() {
     </>
   );
 
-  function handleInputChange(_newValue: string, actionMeta: InputActionMeta) {
+  function handleInputChange(
+    _newValue: string,
+    actionMeta: InputActionMeta | ActionMeta<any>,
+  ) {
     if (!selectGender && actionMeta.action === 'input-change')
       setSelectGender(true);
+    else if (actionMeta.action === 'clear') {
+      setSelectGender(false);
+      setHasGenderCleared(true);
+    }
   }
 
   function handleInputBlur() {

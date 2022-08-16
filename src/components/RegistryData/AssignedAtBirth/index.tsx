@@ -1,5 +1,5 @@
 import { useContext } from 'react';
-import Select, { InputActionMeta } from 'react-select';
+import Select, { ActionMeta, InputActionMeta } from 'react-select';
 
 import DataContext from '../../../contexts/DataContext';
 
@@ -16,7 +16,8 @@ function AssignedAtBirth() {
     { value: 'OTHER', label: 'Outro' },
   ];
 
-  const { selectAssigned, setSelectAssigned } = useContext(DataContext);
+  const { selectAssigned, setSelectAssigned, setHasAssignedCleared } =
+    useContext(DataContext);
 
   return (
     <>
@@ -26,6 +27,7 @@ function AssignedAtBirth() {
         isClearable={true}
         isSearchable={true}
         menuIsOpen={selectAssigned}
+        onChange={handleInputChange}
         openMenuOnFocus={true}
         openMenuOnClick={true}
         tabSelectsValue={true}
@@ -41,9 +43,16 @@ function AssignedAtBirth() {
     </>
   );
 
-  function handleInputChange(_newValue: string, actionMeta: InputActionMeta) {
+  function handleInputChange(
+    _newValue: string,
+    actionMeta: InputActionMeta | ActionMeta<any>,
+  ) {
     if (!selectAssigned && actionMeta.action === 'input-change')
       setSelectAssigned(true);
+    else if (actionMeta.action === 'clear') {
+      setSelectAssigned(false);
+      setHasAssignedCleared(true);
+    }
   }
 
   function handleInputBlur() {

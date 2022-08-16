@@ -1,4 +1,5 @@
 import { useState, createContext } from 'react';
+import { Addresses, Commons, Forms, Registries } from '../types';
 
 const DataContext = createContext<{ [x: string]: any }>({});
 
@@ -9,22 +10,26 @@ function DataProvider(props: any) {
   const [selectAssigned, setSelectAssigned] = useState<boolean>(false);
   const [hasSubmitted, setHasSubmitted] = useState<boolean>(false);
 
-  const [commonData, setCommonData] = useState({
+  const [hasGenderCleared, setHasGenderCleared] = useState<boolean>(false);
+  const [hasAssignedCleared, setHasAssignedCleared] = useState<boolean>(false);
+
+  const [commonData, setCommonData] = useState<Commons>({
     cpf: '',
     full_name: '',
     social_name: '',
     insurance: '',
     birthdate: '',
   });
-  const [registryData, setRegistryData] = useState({
+  const [registryData, setRegistryData] = useState<Registries>({
     gender: '',
     described_idendity: '',
     assigned_at_birth: '',
+    described_assigned: '',
     rg: '',
     personal_number: '',
     household_number: '',
   });
-  const [addressData, setAddressData] = useState({
+  const [addressData, setAddressData] = useState<Addresses>({
     street: '',
     number: '',
     complement: '',
@@ -34,7 +39,7 @@ function DataProvider(props: any) {
     country: '',
     postal_code: '',
   });
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<Forms>({
     common: commonData,
     registry: registryData,
     address: addressData,
@@ -45,10 +50,14 @@ function DataProvider(props: any) {
       value={{
         selectInsurance,
         setSelectInsurance,
+        hasGenderCleared,
+        setHasGenderCleared,
         selectGender,
         setSelectGender,
         selectAssigned,
         setSelectAssigned,
+        hasAssignedCleared,
+        setHasAssignedCleared,
         commonData,
         setCommonData,
         registryData,
