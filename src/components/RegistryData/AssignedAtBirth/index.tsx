@@ -1,5 +1,5 @@
 import { useContext } from 'react';
-import Select from 'react-select';
+import Select, { InputActionMeta } from 'react-select';
 
 import DataContext from '../../../contexts/DataContext';
 
@@ -28,21 +28,22 @@ function AssignedAtBirth() {
         menuIsOpen={selectAssigned}
         openMenuOnFocus={true}
         openMenuOnClick={true}
-        blurInputOnSelect={true}
         tabSelectsValue={true}
+        blurInputOnSelect={true}
         backspaceRemovesValue={true}
         menuShouldScrollIntoView={false}
         className='select-wrapper'
         classNamePrefix='select-wrapper'
         placeholder='Selecionar'
-        onFocus={handleInputFocus}
+        onInputChange={handleInputChange}
         onBlur={handleInputBlur}
       />
     </>
   );
 
-  function handleInputFocus() {
-    setSelectAssigned(true);
+  function handleInputChange(_newValue: string, actionMeta: InputActionMeta) {
+    if (!selectAssigned && actionMeta.action === 'input-change')
+      setSelectAssigned(true);
   }
 
   function handleInputBlur() {

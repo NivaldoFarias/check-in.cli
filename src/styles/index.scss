@@ -289,6 +289,12 @@ body {
     border-bottom: 1px solid $secondary;
   }
 }
+.input-section.gender-identity,
+.input-section.assigned-at-birth {
+  .select-wrapper__single-value {
+    letter-spacing: 1px !important;
+  }
+}
 #check-in-page {
   height: 100vh;
 }
@@ -476,12 +482,7 @@ body {
     }
   }
 }
-.input-section.gender-identity,
-.input-section.assigned-at-birth {
-  .select-wrapper__single-value {
-    letter-spacing: 1px !important;
-  }
-}
+
 #loading-dots {
   /* sourced from https://primarypen.io/nzbin/pen/GGrXbp?editors=1100 (modified) */
   position: relative;

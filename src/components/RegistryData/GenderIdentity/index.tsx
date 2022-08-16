@@ -1,5 +1,5 @@
 import { useContext } from 'react';
-import Select from 'react-select';
+import Select, { InputActionMeta } from 'react-select';
 
 import DataContext from '../../../contexts/DataContext';
 
@@ -37,15 +37,15 @@ function GenderIdentity() {
         className='select-wrapper'
         classNamePrefix='select-wrapper'
         placeholder='Selecionar'
-        onInputChange={(newValue: string) => console.log(newValue)}
-        onFocus={handleInputFocus}
+        onInputChange={handleInputChange}
         onBlur={handleInputBlur}
       />
     </>
   );
 
-  function handleInputFocus() {
-    setSelectGender(true);
+  function handleInputChange(_newValue: string, actionMeta: InputActionMeta) {
+    if (!selectGender && actionMeta.action === 'input-change')
+      setSelectGender(true);
   }
 
   function handleInputBlur() {
