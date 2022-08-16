@@ -8,7 +8,7 @@ import backgroundImage from '../../../public/background-alt.svg';
 import DataContext from '../../contexts/DataContext';
 import CommonData from '../../components/CommonData';
 import LoadingDots from '../../components/Loading';
-import RegistryData from '../../components/registryData';
+import RegistryData from '../../components/RegistryData';
 
 function Register() {
   const [validCpf, setValidCpf] = useState<boolean>(true);

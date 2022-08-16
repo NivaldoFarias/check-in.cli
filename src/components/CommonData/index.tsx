@@ -11,10 +11,10 @@ import {
 import { HiOutlineViewList } from 'react-icons/hi';
 import { MdCalendarViewDay } from 'react-icons/md';
 
-import { getRandomInt } from '../utils/functions.util';
-import DataContext from '../contexts/DataContext';
-import Insurance from '../components/Insurances';
-import { time } from '../utils/constants.util';
+import { getRandomInt } from '../../utils/functions.util';
+import DataContext from '../../contexts/DataContext';
+import { time } from '../../utils/constants.util';
+import Insurance from './Insurances';
 
 type InputRef = {
   [x: string]: HTMLInputElement | null;
@@ -29,7 +29,7 @@ function CommonData(props: any) {
   const {
     commonData: formData,
     setCommonData: setFormData,
-    modalIsOpen,
+    selectInsurance,
     setHasSubmitted,
   } = useContext(DataContext);
 
@@ -48,7 +48,7 @@ function CommonData(props: any) {
         setHeight(sectionRef.current.getBoundingClientRect().height);
       } else setHeight(0);
     }
-  }, [expandSection, modalIsOpen]);
+  }, [expandSection, selectInsurance]);
 
   const commonDataComponent = buildCommonDataComponent();
 

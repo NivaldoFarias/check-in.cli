@@ -391,7 +391,7 @@ body {
       }
     }
   }
-  .select-insurance {
+  .select-wrapper {
     position: relative;
     width: 300px;
 
@@ -474,6 +474,12 @@ body {
       font-weight: 400;
       letter-spacing: 2px;
     }
+  }
+}
+.input-section.gender-identity,
+.input-section.assigned-at-birth {
+  .select-wrapper__single-value {
+    letter-spacing: 1px !important;
   }
 }
 #loading-dots {

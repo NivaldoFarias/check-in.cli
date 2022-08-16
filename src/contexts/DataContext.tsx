@@ -4,7 +4,9 @@ const DataContext = createContext<{ [x: string]: any }>({});
 
 function DataProvider(props: any) {
   const { children } = props;
-  const [modalIsOpen, setModalIsOpen] = useState<boolean>(false);
+  const [selectInsurance, setSelectInsurance] = useState<boolean>(false);
+  const [selectGender, setSelectGender] = useState<boolean>(false);
+  const [selectAssigned, setSelectAssigned] = useState<boolean>(false);
   const [hasSubmitted, setHasSubmitted] = useState<boolean>(false);
 
   const [commonData, setCommonData] = useState({
@@ -16,6 +18,7 @@ function DataProvider(props: any) {
   });
   const [registryData, setRegistryData] = useState({
     gender: '',
+    described_idendity: '',
     assigned_at_birth: '',
     rg: '',
     personal_number: '',
@@ -40,13 +43,17 @@ function DataProvider(props: any) {
   return (
     <DataContext.Provider
       value={{
-        modalIsOpen,
-        setModalIsOpen,
+        selectInsurance,
+        setSelectInsurance,
+        selectGender,
+        setSelectGender,
+        selectAssigned,
+        setSelectAssigned,
         commonData,
         setCommonData,
-        formData,
         registryData,
         setRegistryData,
+        formData,
         addressData,
         setAddressData,
         setFormData,

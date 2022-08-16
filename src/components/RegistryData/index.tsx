@@ -11,9 +11,10 @@ import {
 import { HiOutlineViewList } from 'react-icons/hi';
 import { MdCalendarViewDay } from 'react-icons/md';
 
-import { getRandomInt } from '../utils/functions.util';
-import DataContext from '../contexts/DataContext';
-import { time } from '../utils/constants.util';
+import { getRandomInt } from '../../utils/functions.util';
+import DataContext from '../../contexts/DataContext';
+import GenderIdentity from './GenderIdentity';
+import AssignedAtBirth from './AssignedAtBirth';
 
 type InputRef = {
   [x: string]: HTMLInputElement | null;
@@ -26,6 +27,8 @@ function RegistryData() {
   const {
     registryData: formData,
     setRegistryData: setFormData,
+    selectGender,
+    selectAssigned,
     setHasSubmitted,
   } = useContext(DataContext);
 
@@ -44,7 +47,7 @@ function RegistryData() {
         setHeight(sectionRef.current.getBoundingClientRect().height);
       } else setHeight(0);
     }
-  }, [expandSection]);
+  }, [expandSection, selectGender, selectAssigned]);
 
   const registryDataComponent = buildRegistryDataComponent();
 
@@ -82,42 +85,8 @@ function RegistryData() {
         <section className='input-section'>
           <input
             type='text'
-            maxLength={20}
-            name='gender'
-            className='input-field'
-            value={formData?.gender}
-            ref={(element) => (inputRef.current['gender'] = element)}
-            onChange={handleInputChange}
-            onFocus={handleInputFocus}
-            onBlur={handleInputBlur}
-            required
-          />
-          <span className='highlight'></span>
-          <span className='bar'></span>
-          <label className='label-text'>Identidade de gênero</label>
-        </section>
-        <section className='input-section'>
-          <input
-            ref={(element) => (inputRef.current['assigned_at_birth'] = element)}
-            type='text'
-            value={formData?.assigned_at_birth}
-            name='assigned_at_birth'
-            maxLength={25}
-            onChange={handleInputChange}
-            onFocus={handleInputFocus}
-            onBlur={handleInputBlur}
-            className='input-field'
-            required
-          />
-          <span className='highlight'></span>
-          <span className='bar'></span>
-          <label className='label-text'>Sexo biológico</label>
-        </section>
-        <section className='input-section'>
-          <input
-            type='text'
             name='rg'
-            maxLength={14}
+            maxLength={25}
             value={formData?.rg}
             className='input-field input-spacedout-field'
             ref={(element) => (inputRef.current['rg'] = element)}
@@ -134,8 +103,7 @@ function RegistryData() {
           <input
             type='text'
             name='personal_number'
-            min={time.MIN_DATE}
-            max={time.CURRRENT_DATE}
+            maxLength={25}
             value={formData?.personal_number}
             ref={(element) => (inputRef.current['personal_number'] = element)}
             className='input-field input-spacedout-field'
@@ -146,7 +114,55 @@ function RegistryData() {
           />
           <span className='highlight'></span>
           <span className='bar'></span>
-          <label className='label-text'>Data de nascimento</label>
+          <label className='label-text'>Telefone pessoal</label>
+        </section>
+        <section className='input-section'>
+          <input
+            type='text'
+            name='household_number'
+            maxLength={25}
+            value={formData?.household_number}
+            ref={(element) => (inputRef.current['household_number'] = element)}
+            className='input-field input-spacedout-field'
+            onChange={handleInputChange}
+            onFocus={handleInputFocus}
+            onBlur={handleInputBlur}
+            required
+          />
+          <span className='highlight'></span>
+          <span className='bar'></span>
+          <label className='label-text'>Telefone residencial</label>
+        </section>
+        <section className='input-section assigned-at-birth'>
+          <p className='input-section__label'>Sexo biológico</p>
+          <AssignedAtBirth />
+        </section>
+        <section className='input-section gender-identity'>
+          <p className='input-section__label'>Identidade de gênero</p>
+          <GenderIdentity />
+        </section>
+        <section
+          className={`input-section ${
+            formData.gender === 'Prefiro descrever' ? '' : 'hidden'
+          }`}
+        >
+          <input
+            type='text'
+            name='described_identity'
+            maxLength={30}
+            value={formData?.described_identity}
+            ref={(element) =>
+              (inputRef.current['described_identity'] = element)
+            }
+            className='input-field input-spacedout-field'
+            onChange={handleInputChange}
+            onFocus={handleInputFocus}
+            onBlur={handleInputBlur}
+            required
+          />
+          <span className='highlight'></span>
+          <span className='bar'></span>
+          <label className='label-text'>Telefone residencial</label>
         </section>
       </form>
     );

@@ -1,13 +1,17 @@
-import { FocusEvent, MouseEvent, useContext, useRef } from 'react';
+import { FocusEvent, MouseEvent, useContext } from 'react';
 import Select, {
   components,
   DropdownIndicatorProps,
   InputProps,
 } from 'react-select';
 import type { ControlProps } from 'react-select';
-import DataContext from '../contexts/DataContext';
+import DataContext from '../../contexts/DataContext';
 
-function Insurance({ updateValue }: { updateValue: (value: string) => void }) {
+type UpdateValue = {
+  updateValue: (value: string) => void;
+};
+
+function Insurance({ updateValue }: UpdateValue) {
   const options = [
     { value: 'PRIVATE', label: 'Particular (sem convênio)' },
     { value: 'ALLIANZ_SAUDE', label: 'Allianz Saúde' },
@@ -48,10 +52,7 @@ function Insurance({ updateValue }: { updateValue: (value: string) => void }) {
     { value: 'UNIMED_NACIONAL', label: 'Unimed Nacional' },
   ];
 
-  const { modalIsOpen: isOpen, setModalIsOpen: setIsOpen } =
-    useContext(DataContext);
-
-  const inputRef = useRef<any>(null);
+  const { selectInsurance, setSelectInsurance } = useContext(DataContext);
 
   const Control = (props: ControlProps) => {
     const { children } = props;
@@ -65,14 +66,14 @@ function Insurance({ updateValue }: { updateValue: (value: string) => void }) {
     function handleClick(e: MouseEvent<HTMLElement>) {
       e.preventDefault();
       e.stopPropagation();
-      setIsOpen(!isOpen);
+      setSelectInsurance(!selectInsurance);
     }
   };
 
   const DropdownIndicator = (props: DropdownIndicatorProps) => {
     const { children } = props;
     const dropdownStyles = {
-      transform: isOpen ? 'rotate(180deg)' : 'rotate(0deg)',
+      transform: selectInsurance ? 'rotate(180deg)' : 'rotate(0deg)',
     };
 
     return (
@@ -88,7 +89,7 @@ function Insurance({ updateValue }: { updateValue: (value: string) => void }) {
     const { children } = props;
 
     return (
-      <components.Input autoFocus={isOpen} {...props}>
+      <components.Input autoFocus={selectInsurance} {...props}>
         {children}
       </components.Input>
     );
@@ -101,15 +102,15 @@ function Insurance({ updateValue }: { updateValue: (value: string) => void }) {
         components={{ Control, DropdownIndicator, Input }}
         isClearable={true}
         isSearchable={true}
-        menuIsOpen={isOpen}
+        menuIsOpen={selectInsurance}
         openMenuOnFocus={true}
         openMenuOnClick={true}
         blurInputOnSelect={true}
         tabSelectsValue={true}
         backspaceRemovesValue={true}
         menuShouldScrollIntoView={false}
-        className='select-insurance'
-        classNamePrefix='select-insurance'
+        className='select-wrapper'
+        classNamePrefix='select-wrapper'
         placeholder='Selecione o convênio'
         onFocus={handleInputFocus}
         onBlur={handleInputBlur}
@@ -118,12 +119,11 @@ function Insurance({ updateValue }: { updateValue: (value: string) => void }) {
   );
 
   function handleInputFocus() {
-    setIsOpen(true);
-    inputRef.current?.focus();
+    setSelectInsurance(true);
   }
 
   function handleInputBlur(e: FocusEvent<HTMLInputElement>) {
-    setIsOpen(false);
+    setSelectInsurance(false);
     updateValue(e.target.value);
   }
 }
