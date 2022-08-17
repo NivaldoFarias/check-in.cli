@@ -7,11 +7,12 @@ import {
   useState,
   useRef,
   KeyboardEvent,
+  MouseEvent,
 } from 'react';
 
 import { HiOutlineViewList } from 'react-icons/hi';
 import { MdCalendarViewDay } from 'react-icons/md';
-import { RiSendPlaneFill } from 'react-icons/ri';
+import { FaMapMarkerAlt } from 'react-icons/fa';
 
 import { getRandomInt } from '../../utils/functions.util';
 import DataContext from '../../contexts/DataContext';
@@ -25,6 +26,7 @@ function AddressData() {
   const [expandSection, setSectionState] = useState<boolean>(false);
   const [height, setHeight] = useState<number | string>(0);
   const [hasFired, setHasFired] = useState<boolean>(false);
+  const [forceAlert, setForceAlert] = useState<boolean>(false);
 
   const inputRef = useRef<InputRef>({
     street: null,
@@ -53,13 +55,18 @@ function AddressData() {
     }
   }, [expandSection, updateHeight]);
 
+  const [alertCEPText, setAlertCEPText] = useState<string>(
+    formData?.postal_code.length === 9
+      ? `CEP inválido`
+      : `Insira apenas números`,
+  );
   const addressDataComponent = buildAddressDataComponent();
 
   return (
     <section className='section-container'>
       <div className='section-header'>
         <h2 className='section-header__subtitle' onClick={toggleSection}>
-          Dados Gerais
+          Dados Locais
         </h2>
         {expandSection ? (
           <MdCalendarViewDay
@@ -104,20 +111,15 @@ function AddressData() {
 
   function buildAddressDataComponent() {
     const onlyNumbersRegex = /^[\d\-\s]*$/;
-
-    const alertCEPText =
-      formData?.postal_code.length === 9
-        ? `CEP inválido`
-        : `Insira apenas números`;
     const regexCEP = /^\d{5}-\d{3}$/;
     const validCEP = regexCEP.test(formData.postal_code);
 
     return (
       <form ref={sectionRef} className='form-group' onSubmit={handleSubmit}>
         <section className='input-section postal-code-input'>
-          <RiSendPlaneFill
+          <FaMapMarkerAlt
             className='postal-code-input__submit-icon'
-            onClick={() => getAddressData()}
+            onClick={handleClick}
           />
           <input
             type='text'
@@ -135,7 +137,7 @@ function AddressData() {
           <span className='highlight'></span>
           <span className='bar'></span>
           <label className='label-text'>Insira seu CEP</label>
-          <p className={showAlertCEP()}>{alertCEPText}</p>
+          <p className={alertCEPTextClassName()}>{alertCEPText}</p>
         </section>
         <section className='input-section'>
           <input
@@ -225,8 +227,21 @@ function AddressData() {
       </form>
     );
 
+    function handleClick(_e: MouseEvent<HTMLOrSVGElement>) {
+      if (formData.postal_code.length !== 9) {
+        console.log(alertCEPText);
+        setAlertCEPText('Campo obrigatório');
+        setForceAlert(true);
+      } else getAddressData();
+    }
+
     function handleCEPInput(e: ChangeEvent<HTMLInputElement>) {
       const { value } = e.target;
+
+      if (forceAlert && alertCEPText === 'Campo obrigatório') {
+        setAlertCEPText('Insira um CEP válido');
+        if (onlyNumbersRegex.test(formData.postal_code)) setForceAlert(false);
+      }
 
       if (value.length === 6) {
         setFormData({
@@ -276,13 +291,15 @@ function AddressData() {
       );
     }
 
-    function showAlertCEP() {
+    function alertCEPTextClassName() {
       const containsOnlyNumbers = onlyNumbersRegex.test(formData?.postal_code);
       const transparent = containsOnlyNumbers
         ? formData?.postal_code.length === 9
           ? validCEP
             ? 'color-transparent'
             : ''
+          : forceAlert
+          ? ''
           : 'color-transparent'
         : '';
 
