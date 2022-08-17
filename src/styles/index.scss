@@ -397,6 +397,11 @@ body {
       font-weight: 400;
       text-shadow: $font-shadow;
     }
+    .label-text > span {
+      font-weight: 400;
+      font-size: 0.85rem;
+      letter-spacing: 3px;
+    }
   }
   .postal-code-input {
     margin-top: 10px;

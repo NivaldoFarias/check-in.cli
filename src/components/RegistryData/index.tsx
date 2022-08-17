@@ -108,7 +108,9 @@ function RegistryData() {
           />
           <span className='highlight'></span>
           <span className='bar'></span>
-          <label className='label-text'>RG</label>
+          <label className='label-text'>
+            Número de Identidade <span>&nbsp;(RG)</span>
+          </label>
         </section>
         <section className='input-section'>
           <input
