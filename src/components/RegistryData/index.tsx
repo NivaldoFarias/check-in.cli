@@ -128,6 +128,16 @@ function RegistryData() {
   }
 
   function buildRegistryDataComponent() {
+    const alertPhonenumber =
+      formData?.personal_number.length === 15
+        ? `Telefone inválido`
+        : `Insira apenas números`;
+
+    const alertHouseholdNumber =
+      formData?.household_number.length === 14
+        ? `Telefone residencial inválido`
+        : `Insira apenas números`;
+
     return (
       <form ref={sectionRef} className='form-group' onSubmit={handleSubmit}>
         <section className='input-section'>
@@ -151,11 +161,11 @@ function RegistryData() {
           <input
             type='text'
             name='personal_number'
-            maxLength={25}
+            maxLength={15}
             value={formData?.personal_number}
             ref={(element) => (inputRef.current['personal_number'] = element)}
             className='input-field input-spacedout-field'
-            onChange={handleInputChange}
+            onChange={handlePhoneInput}
             onFocus={handleInputFocus}
             onBlur={handleInputBlur}
             required
@@ -163,16 +173,17 @@ function RegistryData() {
           <span className='highlight'></span>
           <span className='bar'></span>
           <label className='label-text'>Telefone pessoal</label>
+          <p className={showAlertPhonenumber()}>{alertPhonenumber}</p>
         </section>
         <section className='input-section'>
           <input
             type='text'
             name='household_number'
-            maxLength={25}
+            maxLength={14}
             value={formData?.household_number}
             ref={(element) => (inputRef.current['household_number'] = element)}
             className='input-field input-spacedout-field'
-            onChange={handleInputChange}
+            onChange={handleHousePhoneInput}
             onFocus={handleInputFocus}
             onBlur={handleInputBlur}
             required
@@ -180,6 +191,7 @@ function RegistryData() {
           <span className='highlight'></span>
           <span className='bar'></span>
           <label className='label-text'>Telefone residencial</label>
+          <p className={showAlertHousePhonenumber()}>{alertHouseholdNumber}</p>
         </section>
         <section className='input-section assigned-at-birth'>
           <p className='input-section__label'>Sexo biológico</p>
@@ -258,6 +270,106 @@ function RegistryData() {
       return inputRef.current[e.target.name]?.classList.remove(
         'input-field--focused',
       );
+    }
+
+    function handlePhoneInput(e: ChangeEvent<HTMLInputElement>) {
+      const { value } = e.target;
+
+      if (value.length === 1) {
+        setFormData({
+          ...formData,
+          personal_number: '(' + (value === '(' ? '' : value),
+        });
+      } else if (value.length === 4) {
+        setFormData({
+          ...formData,
+          personal_number:
+            value.slice(0, -1) +
+            ') ' +
+            (value.slice(-1) === ')' ? '' : value.slice(-1)),
+        });
+      } else if (value.length === 11) {
+        setFormData({
+          ...formData,
+          personal_number:
+            value.slice(0, -1) +
+            '-' +
+            (value.slice(-1) === '-' ? '' : value.slice(-1)),
+        });
+      } else
+        setFormData({
+          ...formData,
+          personal_number:
+            value.slice(0, -1) +
+            (value.slice(-1) === ' ' ? '' : value.slice(-1)),
+        });
+    }
+
+    function handleHousePhoneInput(e: ChangeEvent<HTMLInputElement>) {
+      const { value } = e.target;
+
+      if (value.length === 1) {
+        setFormData({
+          ...formData,
+          household_number: '(' + (value === '(' ? '' : value),
+        });
+      } else if (value.length === 4) {
+        setFormData({
+          ...formData,
+          household_number:
+            value.slice(0, -1) +
+            ') ' +
+            (value.slice(-1) === ')' ? '' : value.slice(-1)),
+        });
+      } else if (value.length === 10) {
+        setFormData({
+          ...formData,
+          household_number:
+            value.slice(0, -1) +
+            '-' +
+            (value.slice(-1) === '-' ? '' : value.slice(-1)),
+        });
+      } else
+        setFormData({
+          ...formData,
+          household_number:
+            value.slice(0, -1) +
+            (value.slice(-1) === ' ' ? '' : value.slice(-1)),
+        });
+    }
+
+    function showAlertPhonenumber() {
+      const phoneRegex = /^(\((\d{2})\)\s9)([1-9])(\d{3})-(\d{4})$/;
+      const validPhonenumber = phoneRegex.test(formData?.personal_number);
+
+      const inputRegex = /^[0-9()-\s]*$/;
+      const containsOnlyNumbers = inputRegex.test(formData?.personal_number);
+      const transparent = containsOnlyNumbers
+        ? formData?.personal_number.length === 15
+          ? validPhonenumber
+            ? 'color-transparent'
+            : ''
+          : 'color-transparent'
+        : '';
+
+      return `alert-text phonenumber-alert ${transparent}`;
+    }
+
+    function showAlertHousePhonenumber() {
+      const phoneRegex = /^(\((\d{2})\)\s)(\d{4})-(\d{4})$/;
+      const validPhonenumber = phoneRegex.test(formData?.household_number);
+
+      const inputRegex = /^[0-9()-\s]*$/;
+      const containsOnlyNumbers = inputRegex.test(formData?.household_number);
+      const transparent = containsOnlyNumbers
+        ? formData?.household_number.length === 14
+          ? validPhonenumber
+            ? 'color-transparent'
+            : ''
+          : 'color-transparent'
+        : '';
+
+      return `alert-text housenumber-alert ${transparent}`;
     }
   }
 }
