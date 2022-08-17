@@ -61,7 +61,7 @@ function RegistryData() {
         {expandSection ? (
           <MdCalendarViewDay
             onClick={toggleSection}
-            className='section-header__icon'
+            className={`section-header__icon${expandSection ? '--active' : ''}`}
           />
         ) : (
           <HiOutlineViewList

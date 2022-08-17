@@ -104,7 +104,7 @@ function AddressData() {
         {expandSection ? (
           <MdCalendarViewDay
             onClick={toggleSection}
-            className='section-header__icon'
+            className={`section-header__icon${expandSection ? '--active' : ''}`}
           />
         ) : (
           <HiOutlineViewList
@@ -240,26 +240,12 @@ function AddressData() {
             onChange={handleInputChange}
             onFocus={handleInputFocus}
             onBlur={handleInputBlur}
+            disabled={hasAutoFilled && formData?.number.length > 0}
+            required
           />
           <span className='highlight'></span>
           <span className='bar'></span>
           <label className='label-text'>Número</label>
-        </section>
-        <section className='input-section'>
-          <input
-            type='text'
-            name='complement'
-            maxLength={25}
-            value={formData?.complement}
-            className='input-field input-spacedout-field'
-            ref={(element) => (inputRef.current['complement'] = element)}
-            onChange={handleInputChange}
-            onFocus={handleInputFocus}
-            onBlur={handleInputBlur}
-          />
-          <span className='highlight'></span>
-          <span className='bar'></span>
-          <label className='label-text'>Complemento</label>
         </section>
         <section className='input-section'>
           <input
@@ -273,6 +259,7 @@ function AddressData() {
             onFocus={handleInputFocus}
             onBlur={handleInputBlur}
             disabled={hasAutoFilled && formData?.neighborhood.length > 0}
+            required
           />
           <span className='highlight'></span>
           <span className='bar'></span>
@@ -290,6 +277,7 @@ function AddressData() {
             onFocus={handleInputFocus}
             onBlur={handleInputBlur}
             disabled={hasAutoFilled && formData?.city.length > 0}
+            required
           />
           <span className='highlight'></span>
           <span className='bar'></span>
@@ -307,10 +295,29 @@ function AddressData() {
             onFocus={handleInputFocus}
             onBlur={handleInputBlur}
             disabled={hasAutoFilled && formData?.state.length > 0}
+            required
           />
           <span className='highlight'></span>
           <span className='bar'></span>
           <label className='label-text'>Estado</label>
+        </section>
+        <section className='input-section'>
+          <input
+            type='text'
+            name='complement'
+            maxLength={25}
+            value={formData?.complement}
+            className='input-field input-spacedout-field'
+            ref={(element) => (inputRef.current['complement'] = element)}
+            onChange={handleInputChange}
+            onFocus={handleInputFocus}
+            onBlur={handleInputBlur}
+            disabled={hasAutoFilled && formData?.complement.length > 0}
+            required
+          />
+          <span className='highlight'></span>
+          <span className='bar'></span>
+          <label className='label-text'>Complemento</label>
         </section>
       </form>
     );

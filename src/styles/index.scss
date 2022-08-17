@@ -352,6 +352,23 @@ body {
           pointer-events: none;
         }
       }
+      &--active {
+        position: relative;
+        z-index: 1;
+
+        padding-top: 4px;
+        font-size: 2.5rem;
+        color: $tertiary;
+
+        &:hover {
+          color: $secondary;
+          cursor: pointer;
+
+          * {
+            pointer-events: none;
+          }
+        }
+      }
     }
   }
   .register-data-section {
