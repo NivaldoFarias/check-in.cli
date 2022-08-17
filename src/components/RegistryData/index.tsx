@@ -100,6 +100,7 @@ function RegistryData(props: any) {
   }
 
   function buildRegistryDataComponent() {
+    // TODO fix: fires once and sticks on the last value
     const alertCpf =
       formData?.cpf.length === 14 ? `CPF inválido` : `Insira apenas números`;
     const alertPhonenumber =
@@ -224,13 +225,14 @@ function RegistryData(props: any) {
     }
 
     function showAlertPhonenumber() {
-      const phoneRegex = /^(\((\d{2})\)\s9)([1-9])(\d{3})-(\d{4})$/;
+      const phoneRegex =
+        /^((\((\d{2})\)\s9)([1-9])(\d{3})-(\d{4}))|(\+\d{4}9[1-9]\d*)$/gi;
       const validPhonenumber = phoneRegex.test(formData?.phone_number);
 
-      const inputRegex = /^[0-9()-\s]*$/;
+      const inputRegex = /^[0-9()-\+\s]*$/;
       const containsOnlyNumbers = inputRegex.test(formData?.phone_number);
       const transparent = containsOnlyNumbers
-        ? formData?.phone_number.length === 15
+        ? formData?.phone_number.length >= 14
           ? validPhonenumber
             ? 'color-transparent'
             : ''
