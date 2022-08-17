@@ -86,11 +86,6 @@ function RegistryData() {
         ? `Telefone inválido`
         : `Insira apenas números`;
 
-    const alertHouseholdNumber =
-      formData?.household_number.length === 14
-        ? `Telefone residencial inválido`
-        : `Insira apenas números`;
-
     return (
       <form ref={sectionRef} className='form-group' onSubmit={handleSubmit}>
         <section className='input-section'>
@@ -108,8 +103,8 @@ function RegistryData() {
           />
           <span className='highlight'></span>
           <span className='bar'></span>
-          <label className='label-text'>
-            Número de Identidade <span>&nbsp;(RG)</span>
+          <label className='label-text tidy-field'>
+            Documento de Identidade <span>&nbsp;(RG)</span>
           </label>
         </section>
         <section className='input-section'>
@@ -127,26 +122,8 @@ function RegistryData() {
           />
           <span className='highlight'></span>
           <span className='bar'></span>
-          <label className='label-text'>Telefone pessoal</label>
+          <label className='label-text'>Número de telefone</label>
           <p className={showAlertPhonenumber()}>{alertPhonenumber}</p>
-        </section>
-        <section className='input-section'>
-          <input
-            type='text'
-            name='household_number'
-            maxLength={14}
-            value={formData?.household_number}
-            ref={(element) => (inputRef.current['household_number'] = element)}
-            className='input-field input-spacedout-field'
-            onChange={handleHousePhoneInput}
-            onFocus={handleInputFocus}
-            onBlur={handleInputBlur}
-            required
-          />
-          <span className='highlight'></span>
-          <span className='bar'></span>
-          <label className='label-text'>Telefone residencial</label>
-          <p className={showAlertHousePhonenumber()}>{alertHouseholdNumber}</p>
         </section>
         <SelectAssignedAtBirth />
         <SelectGenderIdentity />
@@ -210,39 +187,6 @@ function RegistryData() {
         });
     }
 
-    function handleHousePhoneInput(e: ChangeEvent<HTMLInputElement>) {
-      const { value } = e.target;
-
-      if (value.length === 1) {
-        setFormData({
-          ...formData,
-          household_number: '(' + (value === '(' ? '' : value),
-        });
-      } else if (value.length === 4) {
-        setFormData({
-          ...formData,
-          household_number:
-            value.slice(0, -1) +
-            ') ' +
-            (value.slice(-1) === ')' ? '' : value.slice(-1)),
-        });
-      } else if (value.length === 10) {
-        setFormData({
-          ...formData,
-          household_number:
-            value.slice(0, -1) +
-            '-' +
-            (value.slice(-1) === '-' ? '' : value.slice(-1)),
-        });
-      } else
-        setFormData({
-          ...formData,
-          household_number:
-            value.slice(0, -1) +
-            (value.slice(-1) === ' ' ? '' : value.slice(-1)),
-        });
-    }
-
     function showAlertPhonenumber() {
       const phoneRegex = /^(\((\d{2})\)\s9)([1-9])(\d{3})-(\d{4})$/;
       const validPhonenumber = phoneRegex.test(formData?.personal_number);
@@ -258,23 +202,6 @@ function RegistryData() {
         : '';
 
       return `alert-text phonenumber-alert ${transparent}`;
-    }
-
-    function showAlertHousePhonenumber() {
-      const phoneRegex = /^(\((\d{2})\)\s)(\d{4})-(\d{4})$/;
-      const validPhonenumber = phoneRegex.test(formData?.household_number);
-
-      const inputRegex = /^[0-9()-\s]*$/;
-      const containsOnlyNumbers = inputRegex.test(formData?.household_number);
-      const transparent = containsOnlyNumbers
-        ? formData?.household_number.length === 14
-          ? validPhonenumber
-            ? 'color-transparent'
-            : ''
-          : 'color-transparent'
-        : '';
-
-      return `alert-text housenumber-alert ${transparent}`;
     }
   }
 }

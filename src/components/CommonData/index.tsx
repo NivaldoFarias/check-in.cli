@@ -89,6 +89,26 @@ function CommonData(props: any) {
       <form ref={sectionRef} className='form-group' onSubmit={handleSubmit}>
         <section className='input-section'>
           <input
+            ref={(element) => (inputRef.current['social_name'] = element)}
+            type='text'
+            value={formData?.social_name}
+            name='social_name'
+            maxLength={25}
+            onChange={handleInputChange}
+            onFocus={handleInputFocus}
+            onBlur={handleInputBlur}
+            className='input-field'
+            required
+          />
+          <span className='highlight'></span>
+          <span className='bar'></span>
+          <label className='label-text'>
+            Primeiro nome{' '}
+            <span className='tidy-field'>&nbsp;(nome próprio)</span>
+          </label>
+        </section>
+        <section className='input-section'>
+          <input
             type='text'
             maxLength={20}
             name='full_name'
@@ -104,23 +124,7 @@ function CommonData(props: any) {
           <span className='bar'></span>
           <label className='label-text'>Nome Completo</label>
         </section>
-        <section className='input-section'>
-          <input
-            ref={(element) => (inputRef.current['social_name'] = element)}
-            type='text'
-            value={formData?.social_name}
-            name='social_name'
-            maxLength={25}
-            onChange={handleInputChange}
-            onFocus={handleInputFocus}
-            onBlur={handleInputBlur}
-            className='input-field'
-            required
-          />
-          <span className='highlight'></span>
-          <span className='bar'></span>
-          <label className='label-text'>Nome Social</label>
-        </section>
+
         <section className='input-section'>
           <input
             type='text'
@@ -136,7 +140,7 @@ function CommonData(props: any) {
           />
           <span className='highlight'></span>
           <span className='bar'></span>
-          <label className='label-text'>CPF</label>
+          <label className='label-text input-spacedout-field'>CPF</label>
           <p className={showAlertCpf()}>{alertCpf}</p>
         </section>
         <section className='input-section'>
