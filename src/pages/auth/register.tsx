@@ -14,15 +14,15 @@ import AddressData from '../../components/AddressData/index';
 function Register() {
   const [validCpf, setValidCpf] = useState<boolean>(true);
 
-  const { commonData, hasSubmitted } = useContext(DataContext);
+  const { registryData, hasSubmitted } = useContext(DataContext);
 
   const RegisterPage = buildRegisterPage();
 
   useEffect(() => {
-    if (commonData?.cpf.length === 14) {
-      setValidCpf(validate(commonData?.cpf));
+    if (registryData?.cpf.length === 14) {
+      setValidCpf(validate(registryData?.cpf));
     }
-  }, [commonData.cpf]);
+  }, [registryData.cpf]);
 
   return (
     <div id='register-page' className='auth-page'>
@@ -42,8 +42,8 @@ function Register() {
     return (
       <main className='auth-page__container'>
         <h1 className='title-card'>Cadastro</h1>
-        <CommonData validCpf={validCpf} />
-        <RegistryData />
+        <CommonData />
+        <RegistryData validCpf={validCpf} />
         <AddressData />
         <div className='footer-section'>
           <button className={validateForm()} type='submit'>
@@ -58,14 +58,8 @@ function Register() {
   }
 
   function validateForm() {
-    return commonData?.full_name.length > 0 &&
-      commonData?.social_name.length > 0 &&
-      commonData?.insurance.length > 0 &&
-      commonData?.birthdate.length > 0 &&
-      validCpf &&
-      !hasSubmitted
-      ? 'submit-btn'
-      : 'submit-btn disabled';
+    return 'submit-btn disabled';
+    // TODO: implement form validation
   }
 }
 

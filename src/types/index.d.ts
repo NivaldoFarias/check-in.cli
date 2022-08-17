@@ -5,16 +5,14 @@ type Commons = {
   social_name: string;
   birthdate: string;
   insurance: string;
-  cpf: string;
 };
 type Registries = {
   gender: string;
+  cpf: string;
   assigned_at_birth: string;
   described_idendity?: string;
   described_assigned?: string;
-  rg: string;
-  personal_number: string;
-  household_number: string;
+  phone_number: string;
 };
 type Addresses = {
   street: string;
@@ -23,7 +21,6 @@ type Addresses = {
   neighborhood: string;
   city: string;
   state: string;
-  country: string;
   postal_code: string;
 };
 type Forms = {

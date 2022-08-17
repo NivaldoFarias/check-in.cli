@@ -16,7 +16,6 @@ function DataProvider(props: any) {
   const [hasAssignedCleared, setHasAssignedCleared] = useState<boolean>(false);
 
   const [commonData, setCommonData] = useState<Commons>({
-    cpf: '',
     full_name: '',
     social_name: '',
     insurance: '',
@@ -27,9 +26,8 @@ function DataProvider(props: any) {
     described_idendity: '',
     assigned_at_birth: '',
     described_assigned: '',
-    rg: '',
-    personal_number: '',
-    household_number: '',
+    cpf: '',
+    phone_number: '',
   });
   const [addressData, setAddressData] = useState<Addresses>({
     street: '',
@@ -38,7 +36,6 @@ function DataProvider(props: any) {
     neighborhood: '',
     city: '',
     state: '',
-    country: '',
     postal_code: '',
   });
   const [formData, setFormData] = useState<Forms>({

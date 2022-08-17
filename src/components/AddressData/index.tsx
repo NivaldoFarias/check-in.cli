@@ -353,7 +353,6 @@ function AddressData() {
 
     function handleClick(_e: MouseEvent<HTMLOrSVGElement>) {
       if (formData.postal_code.length !== 9) {
-        console.log(alertCEPText);
         setAlertCEPText('Campo obrigatório');
         setForceAlert(true);
       } else getAddressData();

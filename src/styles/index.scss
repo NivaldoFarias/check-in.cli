@@ -388,15 +388,7 @@ body {
         color: $tertiary;
       }
     }
-    &__label {
-      margin-bottom: 5px;
-      padding-left: 10px;
 
-      color: $tertiary;
-      font-size: 1.3rem;
-      font-weight: 400;
-      text-shadow: $font-shadow;
-    }
     .label-text {
       > span {
         font-weight: 400;
@@ -406,6 +398,36 @@ body {
     }
     .tidy-field {
       letter-spacing: 0px !important;
+    }
+    &__label {
+      margin-bottom: 5px;
+      padding-left: 10px;
+
+      color: $tertiary;
+      font-size: 1.3rem;
+      font-weight: 400;
+      text-shadow: $font-shadow;
+    }
+    &__cpf-icon,
+    &__phone-icon {
+      position: absolute;
+      top: 7px;
+      right: 5px;
+      z-index: 1;
+      cursor: default;
+      color: $secondary;
+
+      &:hover {
+        * {
+          pointer-events: none;
+        }
+      }
+    }
+    &__cpf-icon {
+      font-size: 1.7rem;
+    }
+    &__phone-icon {
+      font-size: 1.5rem;
     }
   }
   .postal-code-input {

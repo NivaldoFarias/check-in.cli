@@ -20,8 +20,7 @@ type InputRef = {
   [x: string]: HTMLInputElement | null;
 };
 
-function CommonData(props: any) {
-  const { validCpf } = props;
+function CommonData() {
   const [countDateInputs, setCountDateInputs] = useState<number>(0);
   const [expandSection, setSectionState] = useState<boolean>(false);
   const [height, setHeight] = useState<number | string>(0);
@@ -34,7 +33,6 @@ function CommonData(props: any) {
   } = useContext(DataContext);
 
   const inputRef = useRef<InputRef>({
-    cpf: null,
     full_name: null,
     social_name: null,
     insurance: null,
@@ -81,8 +79,6 @@ function CommonData(props: any) {
   }
 
   function buildCommonDataComponent() {
-    const alertCpf =
-      formData?.cpf.length === 14 ? `CPF inválido` : `Insira apenas números`;
     const alertBirthdate = `Insira uma data válida`;
 
     return (
@@ -124,25 +120,6 @@ function CommonData(props: any) {
           <span className='bar'></span>
           <label className='label-text'>Nome Completo</label>
         </section>
-
-        <section className='input-section'>
-          <input
-            type='text'
-            name='cpf'
-            maxLength={14}
-            value={formData?.cpf}
-            className='input-field input-spacedout-field'
-            ref={(element) => (inputRef.current['cpf'] = element)}
-            onChange={handleCPFInput}
-            onFocus={handleInputFocus}
-            onBlur={handleInputBlur}
-            required
-          />
-          <span className='highlight'></span>
-          <span className='bar'></span>
-          <label className='label-text input-spacedout-field'>CPF</label>
-          <p className={showAlertCpf()}>{alertCpf}</p>
-        </section>
         <section className='input-section'>
           <input
             type='date'
@@ -173,30 +150,6 @@ function CommonData(props: any) {
       e.preventDefault();
       setHasSubmitted(true);
       setTimeout(() => null, getRandomInt(750, 2000));
-    }
-
-    function handleCPFInput(e: ChangeEvent<HTMLInputElement>) {
-      const { value } = e.target;
-
-      if (value.length === 4 || value.length === 8) {
-        setFormData({
-          ...formData,
-          cpf:
-            value.slice(0, -1) +
-            '.' +
-            (value.slice(-1) === '.' ? '' : value.slice(-1)),
-        });
-      } else if (value.length === 12) {
-        setFormData({
-          ...formData,
-          cpf:
-            value.slice(0, -1) +
-            '-' +
-            (value.slice(-1) === '-' ? '' : value.slice(-1)),
-        });
-      } else {
-        setFormData({ ...formData, cpf: value });
-      }
     }
 
     function handleBirthdateInput(e: ChangeEvent<HTMLInputElement>) {
@@ -232,18 +185,6 @@ function CommonData(props: any) {
       return inputRef.current[e.target.name]?.classList.remove(
         'input-field--focused',
       );
-    }
-
-    function showAlertCpf() {
-      const cpfRegex = /^[0-9.-\s]*$/;
-      const containsOnlyNumbers = cpfRegex.test(formData?.cpf);
-      const transparent = containsOnlyNumbers
-        ? validCpf
-          ? 'color-transparent'
-          : ''
-        : '';
-
-      return `alert-text cpf-alert ${transparent}`;
     }
 
     function showAlertBirthdate() {
