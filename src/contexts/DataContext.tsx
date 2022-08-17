@@ -1,7 +1,87 @@
 import { useState, createContext } from 'react';
-import { Addresses, Commons, Forms, Registries } from '../types';
+import DataContextGroup, {
+  Addresses,
+  Commons,
+  Forms,
+  Registries,
+} from '../types';
 
-const DataContext = createContext<{ [x: string]: any }>({});
+const initialDataContextValue = {
+  isSectionComplete: {
+    common: false,
+    registry: false,
+    address: false,
+  },
+  setIsSectionComplete: () => {},
+  selectInsurance: false,
+  setSelectInsurance: () => {},
+  hasGenderCleared: false,
+  setHasGenderCleared: () => {},
+  selectGender: false,
+  setSelectGender: () => {},
+  selectAssigned: false,
+  setSelectAssigned: () => {},
+  hasAssignedCleared: false,
+  setHasAssignedCleared: () => {},
+  updateHeight: false,
+  setUpdateHeight: () => {},
+  commonData: {
+    full_name: '',
+    social_name: '',
+    insurance: '',
+    birthdate: '',
+  },
+  setCommonData: () => {},
+  registryData: {
+    gender: '',
+    described_idendity: '',
+    assigned_at_birth: '',
+    described_assigned: '',
+    cpf: '',
+    phone_number: '',
+  },
+  setRegistryData: () => {},
+  addressData: {
+    street: '',
+    number: '',
+    complement: '',
+    neighborhood: '',
+    city: '',
+    state: '',
+    postal_code: '',
+  },
+  setAddressData: () => {},
+  formData: {
+    common: {
+      full_name: '',
+      social_name: '',
+      insurance: '',
+      birthdate: '',
+    },
+    registry: {
+      gender: '',
+      described_idendity: '',
+      assigned_at_birth: '',
+      described_assigned: '',
+      cpf: '',
+      phone_number: '',
+    },
+    address: {
+      street: '',
+      number: '',
+      complement: '',
+      neighborhood: '',
+      city: '',
+      state: '',
+      postal_code: '',
+    },
+  },
+  setFormData: () => {},
+  hasSubmitted: false,
+  setHasSubmitted: () => {},
+};
+
+const DataContext = createContext<DataContextGroup>(initialDataContextValue);
 
 function DataProvider(props: any) {
   const { children } = props;
@@ -14,6 +94,12 @@ function DataProvider(props: any) {
 
   const [hasGenderCleared, setHasGenderCleared] = useState<boolean>(false);
   const [hasAssignedCleared, setHasAssignedCleared] = useState<boolean>(false);
+
+  const [isSectionComplete, setIsSectionComplete] = useState({
+    common: false,
+    registry: false,
+    address: false,
+  });
 
   const [commonData, setCommonData] = useState<Commons>({
     full_name: '',
@@ -47,6 +133,8 @@ function DataProvider(props: any) {
   return (
     <DataContext.Provider
       value={{
+        isSectionComplete,
+        setIsSectionComplete,
         selectInsurance,
         setSelectInsurance,
         hasGenderCleared,

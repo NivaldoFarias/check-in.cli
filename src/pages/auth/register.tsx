@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState } from 'react';
+import { FormEvent, useContext, useEffect, useState } from 'react';
 import { validate } from 'gerador-validador-cpf';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -10,11 +10,13 @@ import CommonData from '../../components/CommonData';
 import LoadingDots from '../../components/Loading';
 import RegistryData from '../../components/RegistryData';
 import AddressData from '../../components/AddressData/index';
+import { getRandomInt } from '../../utils/functions.util';
 
 function Register() {
   const [validCpf, setValidCpf] = useState<boolean>(true);
 
-  const { registryData, hasSubmitted } = useContext(DataContext);
+  const { isSectionComplete, registryData, hasSubmitted, setHasSubmitted } =
+    useContext(DataContext);
 
   const RegisterPage = buildRegisterPage();
 
@@ -40,7 +42,7 @@ function Register() {
 
   function buildRegisterPage() {
     return (
-      <main className='auth-page__container'>
+      <form className='auth-page__container' onSubmit={handleSubmit}>
         <h1 className='title-card'>Cadastro</h1>
         <CommonData />
         <RegistryData validCpf={validCpf} />
@@ -53,13 +55,22 @@ function Register() {
             Já possuo cadastro
           </Link>
         </div>
-      </main>
+      </form>
     );
   }
 
   function validateForm() {
-    return 'submit-btn disabled';
-    // TODO: implement form validation
+    return isSectionComplete.address &&
+      isSectionComplete.common &&
+      isSectionComplete.registry
+      ? 'submit-btn'
+      : 'submit-btn disabled';
+  }
+
+  function handleSubmit(e: FormEvent) {
+    e.preventDefault();
+    setHasSubmitted(true);
+    setTimeout(() => null, getRandomInt(750, 2000));
   }
 }
 

@@ -1,7 +1,6 @@
 import {
   ChangeEvent,
   FocusEvent,
-  FormEvent,
   useContext,
   useState,
   useEffect,
@@ -11,7 +10,6 @@ import {
 import { HiOutlineViewList } from 'react-icons/hi';
 import { MdCalendarViewDay } from 'react-icons/md';
 
-import { getRandomInt } from '../../utils/functions.util';
 import DataContext from '../../contexts/DataContext';
 import { time } from '../../utils/constants.util';
 import Insurance from './Insurances';
@@ -26,10 +24,11 @@ function CommonData() {
   const [height, setHeight] = useState<number | string>(0);
 
   const {
+    isSectionComplete,
+    setIsSectionComplete,
     commonData: formData,
     setCommonData: setFormData,
     selectInsurance,
-    setHasSubmitted,
   } = useContext(DataContext);
 
   const inputRef = useRef<InputRef>({
@@ -38,7 +37,7 @@ function CommonData() {
     insurance: null,
     birthdate: null,
   });
-  const sectionRef = useRef<HTMLFormElement>(null);
+  const sectionRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (sectionRef.current) {
@@ -47,6 +46,23 @@ function CommonData() {
       } else setHeight(0);
     }
   }, [expandSection, selectInsurance]);
+
+  useEffect(() => {
+    const birthdateIsSet = countDateInputs >= 4;
+    const socialNameIsSet = formData?.social_name?.length > 0;
+    const fullNameIsSet = formData?.full_name?.length > 3;
+    const insuranceIsSet = formData?.insurance?.length > 0;
+    const isComplete =
+      birthdateIsSet && socialNameIsSet && fullNameIsSet && insuranceIsSet;
+
+    if (isComplete) {
+      setIsSectionComplete({
+        ...isSectionComplete,
+        common: true,
+      });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [formData]);
 
   const commonDataComponent = buildCommonDataComponent();
 
@@ -82,7 +98,7 @@ function CommonData() {
     const alertBirthdate = `Insira uma data válida`;
 
     return (
-      <form ref={sectionRef} className='form-group' onSubmit={handleSubmit}>
+      <div ref={sectionRef} className='form-group'>
         <section className='input-section'>
           <input
             ref={(element) => (inputRef.current['social_name'] = element)}
@@ -143,14 +159,8 @@ function CommonData() {
           <p className='input-section__label'>Convênio</p>
           <Insurance updateValue={updateValue} />
         </section>
-      </form>
+      </div>
     );
-
-    function handleSubmit(e: FormEvent) {
-      e.preventDefault();
-      setHasSubmitted(true);
-      setTimeout(() => null, getRandomInt(750, 2000));
-    }
 
     function handleBirthdateInput(e: ChangeEvent<HTMLInputElement>) {
       setCountDateInputs(countDateInputs + 1);

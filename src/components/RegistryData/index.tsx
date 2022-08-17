@@ -1,12 +1,10 @@
 import {
   ChangeEvent,
   FocusEvent,
-  FormEvent,
   useContext,
   useEffect,
   useState,
   useRef,
-  MouseEvent,
 } from 'react';
 
 import { HiOutlineViewList } from 'react-icons/hi';
@@ -14,7 +12,6 @@ import { MdCalendarViewDay } from 'react-icons/md';
 import { AiFillIdcard } from 'react-icons/ai';
 import { FaMobile } from 'react-icons/fa';
 
-import { getRandomInt } from '../../utils/functions.util';
 import DataContext from '../../contexts/DataContext';
 import SelectAssignedAtBirth from './SelectAssignedAtBirth';
 import SelectGenderIdentity from './SelectGenderIdentity';
@@ -29,12 +26,13 @@ function RegistryData(props: any) {
   const [height, setHeight] = useState<number | string>(0);
 
   const {
+    isSectionComplete,
+    setIsSectionComplete,
     registryData: formData,
     setRegistryData: setFormData,
     selectGender,
     updateHeight,
     selectAssigned,
-    setHasSubmitted,
   } = useContext(DataContext);
 
   const inputRef = useRef<InputRef>({
@@ -43,7 +41,25 @@ function RegistryData(props: any) {
     cpf: null,
     phone_number: null,
   });
-  const sectionRef = useRef<HTMLFormElement>(null);
+  const sectionRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const cpfIsSet = validCpf;
+    const phoneNumberIsSet = formData?.phone_number?.length > 6;
+    const assignedIsSet = formData?.assigned_at_birth?.length > 0;
+    const genderIsSet = formData?.gender.length > 0;
+    const isComplete =
+      cpfIsSet && phoneNumberIsSet && assignedIsSet && genderIsSet;
+
+    if (isComplete) {
+      setIsSectionComplete({
+        ...isSectionComplete,
+        registry: true,
+      });
+    }
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [formData]);
 
   useEffect(() => {
     if (sectionRef.current) {
@@ -92,7 +108,7 @@ function RegistryData(props: any) {
         : `Insira apenas números`;
 
     return (
-      <form ref={sectionRef} className='form-group' onSubmit={handleSubmit}>
+      <div ref={sectionRef} className='form-group'>
         <section className='input-section'>
           <AiFillIdcard className='input-section__cpf-icon' />
           <input
@@ -133,14 +149,8 @@ function RegistryData(props: any) {
         </section>
         <SelectAssignedAtBirth />
         <SelectGenderIdentity />
-      </form>
+      </div>
     );
-
-    function handleSubmit(e: FormEvent) {
-      e.preventDefault();
-      setHasSubmitted(true);
-      setTimeout(() => null, getRandomInt(750, 2000));
-    }
 
     function handleCPFInput(e: ChangeEvent<HTMLInputElement>) {
       const { value } = e.target;

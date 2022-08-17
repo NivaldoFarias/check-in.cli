@@ -1,7 +1,6 @@
 import {
   ChangeEvent,
   FocusEvent,
-  FormEvent,
   useContext,
   useEffect,
   useState,
@@ -15,7 +14,6 @@ import { HiOutlineViewList } from 'react-icons/hi';
 import { MdCalendarViewDay, MdFormatClear } from 'react-icons/md';
 import { FaMapMarkerAlt } from 'react-icons/fa';
 
-import { getRandomInt } from '../../utils/functions.util';
 import DataContext from '../../contexts/DataContext';
 import axios from 'axios';
 
@@ -71,14 +69,40 @@ function AddressData() {
     country: null,
     postal_code: null,
   });
-  const sectionRef = useRef<HTMLFormElement>(null);
+  const sectionRef = useRef<HTMLDivElement>(null);
 
   const {
+    isSectionComplete,
+    setIsSectionComplete,
     addressData: formData,
     setAddressData: setFormData,
     updateHeight,
-    setHasSubmitted,
   } = useContext(DataContext);
+
+  useEffect(() => {
+    const cepIsSet = formData?.postal_code?.length > 5;
+    const streetIsSet = formData?.street?.length > 3;
+    const numberIsSet = formData?.number?.length > 0;
+    const neighborhoodIsSet = formData?.neighborhood?.length > 3;
+    const cityIsSet = formData?.city?.length > 3;
+    const stateIsSet = formData?.state?.length > 0;
+    const isComplete =
+      cepIsSet &&
+      streetIsSet &&
+      numberIsSet &&
+      neighborhoodIsSet &&
+      cityIsSet &&
+      stateIsSet;
+
+    if (isComplete) {
+      setIsSectionComplete({
+        ...isSectionComplete,
+        address: true,
+      });
+    }
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [formData]);
 
   useEffect(() => {
     if (sectionRef.current) {
@@ -185,7 +209,7 @@ function AddressData() {
     const validCEP = regexCEP.test(formData.postal_code);
 
     return (
-      <form ref={sectionRef} className='form-group' onSubmit={handleSubmit}>
+      <div ref={sectionRef} className='form-group'>
         <section className='input-section postal-code-input'>
           <FaMapMarkerAlt
             className={`postal-code-input__submit-icon${
@@ -325,7 +349,7 @@ function AddressData() {
           <span className='bar'></span>
           <label className='label-text'>Complemento</label>
         </section>
-      </form>
+      </div>
     );
 
     function handleReset(_e: MouseEvent<HTMLOrSVGElement>) {
@@ -381,12 +405,6 @@ function AddressData() {
         (value.length === 8 && onlyNumbersRegex.test(value))
       )
         getAddressData(value);
-    }
-
-    function handleSubmit(e: FormEvent) {
-      e.preventDefault();
-      setHasSubmitted(true);
-      setTimeout(() => null, getRandomInt(750, 2000));
     }
 
     function handleKeyDown(e: KeyboardEvent<HTMLInputElement>) {
