@@ -2,6 +2,7 @@
 @import './sass/variables';
 @import './sass/mixins';
 
+@import './plugins/ConfirmAlert';
 @import './plugins/DatePicker';
 @import './plugins/Calendar';
 @import './plugins/Dropdown';
@@ -294,6 +295,11 @@ body {
     letter-spacing: 1px !important;
   }
 }
+.react-confirm-alert-body-element #register-page {
+  filter: url(#gaussian-blur);
+  filter: blur(2px);
+  -webkit-filter: blur(2px);
+}
 #check-in-page {
   height: 100vh;
 }
@@ -408,7 +414,13 @@ body {
         }
       }
       &--active {
+        position: absolute;
+        top: 10px;
+        right: 8px;
+
         color: $alert;
+        font-size: 1.2rem;
+        transition: all 100ms ease-in-out 0s;
       }
     }
   }

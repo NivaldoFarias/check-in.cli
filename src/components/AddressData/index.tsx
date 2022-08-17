@@ -9,6 +9,7 @@ import {
   KeyboardEvent,
   MouseEvent,
 } from 'react';
+import { confirmAlert } from 'react-confirm-alert';
 
 import { HiOutlineViewList } from 'react-icons/hi';
 import { MdCalendarViewDay } from 'react-icons/md';
@@ -90,6 +91,20 @@ function AddressData() {
     setSectionState(!expandSection);
   }
 
+  function handleError(error: any) {
+    confirmAlert({
+      message: `${
+        error.response?.data?.message ?? 'Ops! Parece que algo deu errado'
+      }.\n\n Por favor, tente novamente.`,
+      buttons: [
+        {
+          label: 'OK',
+          onClick: () => null,
+        },
+      ],
+    });
+  }
+
   async function getAddressData(value?: string | undefined) {
     if (hasFired) return null;
 
@@ -101,11 +116,10 @@ function AddressData() {
     const API_URL = `https://viacep.com.br/ws/${cep}/json/`;
     try {
       setHasFired(true);
-      const response = await axios.get(API_URL);
-      return console.log(response.data);
+      const { data } = await axios.get(API_URL);
     } catch (error) {
       setHasFired(false);
-      return console.log(error);
+      return handleError(error);
     }
   }
 
@@ -118,7 +132,9 @@ function AddressData() {
       <form ref={sectionRef} className='form-group' onSubmit={handleSubmit}>
         <section className='input-section postal-code-input'>
           <FaMapMarkerAlt
-            className='postal-code-input__submit-icon'
+            className={`postal-code-input__submit-icon${
+              hasFired ? '--active' : ''
+            }`}
             onClick={handleClick}
           />
           <input

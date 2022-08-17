@@ -1,0 +1,181 @@
+body.react-confirm-alert-body-element {
+  overflow: hidden;
+}
+
+.react-confirm-alert-blur {
+  filter: url(#gaussian-blur);
+  filter: blur(2px);
+  -webkit-filter: blur(2px);
+}
+
+.react-confirm-alert-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 2;
+
+  background: rgba(255, 255, 255, 0.12);
+  @include flex(initial, center, center, initial);
+  opacity: 0;
+  -webkit-animation: react-confirm-alert-fadeIn 0.5s 0.2s forwards;
+  -moz-animation: react-confirm-alert-fadeIn 0.5s 0.2s forwards;
+  -o-animation: react-confirm-alert-fadeIn 0.5s 0.2s forwards;
+  animation: react-confirm-alert-fadeIn 0.5s 0.2s forwards;
+}
+
+.react-confirm-alert-body {
+  font-family: Arial, Helvetica, sans-serif;
+  width: 400px;
+  padding: 30px;
+  text-align: left;
+  background: #fff;
+  border-radius: 10px;
+  box-shadow: 0 20px 75px rgba(0, 0, 0, 0.13);
+  color: #666;
+}
+
+.react-confirm-alert-svg {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+.react-confirm-alert-body > h1 {
+  margin-top: 0;
+}
+
+.react-confirm-alert-body > h3 {
+  margin: 0;
+  font-size: 16px;
+}
+
+.react-confirm-alert-button-group {
+  display: -webkit-flex;
+  display: -moz-flex;
+  display: -ms-flex;
+  display: -o-flex;
+  display: flex;
+  justify-content: flex-start;
+  margin-top: 20px;
+}
+
+.react-confirm-alert-button-group > button {
+  outline: none;
+  background: #333;
+  border: none;
+  display: inline-block;
+  padding: 6px 18px;
+  color: #eee;
+  margin-right: 10px;
+  border-radius: 5px;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+@-webkit-keyframes react-confirm-alert-fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@-moz-keyframes react-confirm-alert-fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@-o-keyframes react-confirm-alert-fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes react-confirm-alert-fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+#react-confirm-alert > div > div > div {
+  @include flex(column, center, center, 30px);
+  position: absolute;
+  top: 25%;
+  left: 0;
+  right: 0;
+
+  margin: 0 auto;
+  padding: 30px 20px;
+  max-height: 260px;
+  height: 100%;
+  max-width: 360px;
+  width: 100%;
+
+  color: $alt-primary;
+  text-align: center;
+  font-size: 1.5rem;
+  line-height: 2rem;
+  font-family: $primary-font;
+
+  outline: none;
+  overflow: hidden;
+  border-radius: 5px;
+  border: 1px solid $alert;
+  background-color: $secondary;
+
+  h2 {
+    font-size: 1.5rem;
+  }
+  > div {
+    @include flex(row, center, initial, 28px);
+  }
+  button {
+    padding: 8px 16px;
+
+    font-size: 1.1rem;
+    font-weight: 700;
+    letter-spacing: 2px;
+    border: none;
+    cursor: pointer;
+    color: $alt-primary;
+    background-color: $tertiary;
+    &:hover {
+      filter: brightness(1.1);
+    }
+    &.return-btn {
+      color: $alt-primary;
+      background-color: transparent;
+    }
+    &.delete-btn {
+      min-width: 166.6px;
+      background-color: $alert;
+      color: white;
+    }
+    .close-modal-btn {
+      position: absolute;
+      top: 8px;
+      right: 8px;
+      font-size: 1.6em;
+      cursor: pointer;
+      &:hover {
+        filter: brightness(2);
+      }
+      * {
+        pointer-events: none;
+      }
+    }
+  }
+}
