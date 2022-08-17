@@ -12,7 +12,7 @@ import {
 import { confirmAlert } from 'react-confirm-alert';
 
 import { HiOutlineViewList } from 'react-icons/hi';
-import { MdCalendarViewDay } from 'react-icons/md';
+import { MdCalendarViewDay, MdFormatClear } from 'react-icons/md';
 import { FaMapMarkerAlt } from 'react-icons/fa';
 
 import { getRandomInt } from '../../utils/functions.util';
@@ -193,6 +193,12 @@ function AddressData() {
             }`}
             onClick={handleClick}
           />
+          <MdFormatClear
+            className={`postal-code-input__reset-icon ${
+              hasFired ? '' : 'hidden'
+            }`}
+            onClick={handleReset}
+          />
           <input
             type='text'
             name='postal_code'
@@ -209,7 +215,7 @@ function AddressData() {
           />
           <span className='highlight'></span>
           <span className='bar'></span>
-          <label className='label-text'>Insira seu CEP</label>
+          <label className='label-text input-spacedout-field'>CEP</label>
           <p className={alertCEPTextClassName()}>{alertCEPText}</p>
         </section>
         <section className='input-section'>
@@ -321,6 +327,29 @@ function AddressData() {
         </section>
       </form>
     );
+
+    function handleReset(_e: MouseEvent<HTMLOrSVGElement>) {
+      setFormData({
+        postal_code: '',
+        street: '',
+        number: '',
+        neighborhood: '',
+        city: '',
+        state: '',
+        complement: '',
+      });
+      setHasFired(false);
+      setHasAutoFilled(false);
+      setAlertCEPText('');
+
+      inputRef.current.neighborhood?.classList.remove('input-field--focused');
+      inputRef.current.postal_code?.classList.remove('input-field--focused');
+      inputRef.current.complement?.classList.remove('input-field--focused');
+      inputRef.current.number?.classList.remove('input-field--focused');
+      inputRef.current.street?.classList.remove('input-field--focused');
+      inputRef.current.city?.classList.remove('input-field--focused');
+      inputRef.current.state?.classList.remove('input-field--focused');
+    }
 
     function handleClick(_e: MouseEvent<HTMLOrSVGElement>) {
       if (formData.postal_code.length !== 9) {
