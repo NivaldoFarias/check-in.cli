@@ -23,11 +23,43 @@ type InputRef = {
   [x: string]: HTMLInputElement | null;
 };
 
+const STATES_MAP: { [x: string]: string } = {
+  AC: 'Acre',
+  AL: 'Alagoas',
+  AP: 'Amapá',
+  AM: 'Amazonas',
+  BA: 'Bahia',
+  CE: 'Ceará',
+  DF: 'Distrito Federal',
+  ES: 'Espírito Santo',
+  GO: 'Goías',
+  MA: 'Maranhão',
+  MT: 'Mato Grosso',
+  MS: 'Mato Grosso o Sul',
+  MG: 'Minas Gerais',
+  PA: 'Pará',
+  PB: 'Paraíba',
+  PR: 'Paraná',
+  PE: 'Pernambuco',
+  PI: 'Piauí',
+  RJ: 'Rio de Janeio',
+  RN: 'Rio Grande o Norte',
+  RS: 'Rio Grande o Sul',
+  RO: 'Rondônia',
+  RR: 'Roraíma',
+  SC: 'Santa Catarina',
+  SP: 'São Paulo',
+  SE: 'Sergipe',
+  TO: 'Tocantins',
+};
+
 function AddressData() {
   const [expandSection, setSectionState] = useState<boolean>(false);
   const [height, setHeight] = useState<number | string>(0);
+
   const [hasFired, setHasFired] = useState<boolean>(false);
   const [forceAlert, setForceAlert] = useState<boolean>(false);
+  const [hasAutoFilled, setHasAutoFilled] = useState<boolean>(false);
 
   const inputRef = useRef<InputRef>({
     street: null,
@@ -116,7 +148,31 @@ function AddressData() {
     const API_URL = `https://viacep.com.br/ws/${cep}/json/`;
     try {
       setHasFired(true);
-      const { data } = await axios.get(API_URL);
+      let {
+        data: {
+          logradouro: street,
+          bairro: neighborhood,
+          localidade: city,
+          uf: state,
+        },
+      } = await axios.get(API_URL);
+
+      if (street.includes('Avenida')) street = street.replace('Avenida', 'Av.');
+      state = STATES_MAP[state] ?? state;
+
+      setHasAutoFilled(true);
+      setFormData({
+        ...formData,
+        postal_code: cep,
+        street,
+        neighborhood,
+        city,
+        state,
+      });
+      inputRef.current.street?.classList.add('input-field--focused');
+      inputRef.current.neighborhood?.classList.add('input-field--focused');
+      inputRef.current.city?.classList.add('input-field--focused');
+      inputRef.current.state?.classList.add('input-field--focused');
     } catch (error) {
       setHasFired(false);
       return handleError(error);
@@ -149,6 +205,7 @@ function AddressData() {
             onKeyDown={handleKeyDown}
             onBlur={handleInputBlur}
             required
+            disabled={hasAutoFilled && formData?.postal_code.length > 0}
           />
           <span className='highlight'></span>
           <span className='bar'></span>
@@ -162,11 +219,11 @@ function AddressData() {
             maxLength={40}
             value={formData?.street}
             ref={(element) => (inputRef.current['street'] = element)}
-            className='input-field input-spacedout-field'
+            className='input-field'
             onChange={handleInputChange}
             onFocus={handleInputFocus}
             onBlur={handleInputBlur}
-            disabled
+            disabled={hasAutoFilled && formData?.street.length > 0}
           />
           <span className='highlight'></span>
           <span className='bar'></span>
@@ -183,7 +240,6 @@ function AddressData() {
             onChange={handleInputChange}
             onFocus={handleInputFocus}
             onBlur={handleInputBlur}
-            disabled
           />
           <span className='highlight'></span>
           <span className='bar'></span>
@@ -200,7 +256,6 @@ function AddressData() {
             onChange={handleInputChange}
             onFocus={handleInputFocus}
             onBlur={handleInputBlur}
-            disabled
           />
           <span className='highlight'></span>
           <span className='bar'></span>
@@ -217,7 +272,7 @@ function AddressData() {
             onChange={handleInputChange}
             onFocus={handleInputFocus}
             onBlur={handleInputBlur}
-            disabled
+            disabled={hasAutoFilled && formData?.neighborhood.length > 0}
           />
           <span className='highlight'></span>
           <span className='bar'></span>
@@ -234,11 +289,28 @@ function AddressData() {
             onChange={handleInputChange}
             onFocus={handleInputFocus}
             onBlur={handleInputBlur}
-            disabled
+            disabled={hasAutoFilled && formData?.city.length > 0}
           />
           <span className='highlight'></span>
           <span className='bar'></span>
-          <label className='label-text'>Número</label>
+          <label className='label-text'>Cidade</label>
+        </section>
+        <section className='input-section'>
+          <input
+            type='text'
+            name='state'
+            maxLength={10}
+            value={formData?.state}
+            ref={(element) => (inputRef.current['state'] = element)}
+            className='input-field input-spacedout-field'
+            onChange={handleInputChange}
+            onFocus={handleInputFocus}
+            onBlur={handleInputBlur}
+            disabled={hasAutoFilled && formData?.state.length > 0}
+          />
+          <span className='highlight'></span>
+          <span className='bar'></span>
+          <label className='label-text'>Estado</label>
         </section>
       </form>
     );

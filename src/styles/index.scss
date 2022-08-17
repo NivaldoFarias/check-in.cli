@@ -38,6 +38,9 @@ body {
       background-color: transparent;
       border-bottom: 1px solid $secondary;
 
+      &:disabled {
+        border-left: 2px solid $alert;
+      }
       &:hover {
         cursor: text;
       }
@@ -55,7 +58,9 @@ body {
       }
       /* active state */
       &--focused ~ .label-text,
-      &:valid ~ .label-text {
+      &:valid ~ .label-text,
+      &:autofill ~ .label-text,
+      &:-webkit-autofill ~ .label-text {
         top: -18px;
         color: $tertiary;
       }
@@ -358,13 +363,13 @@ body {
   .input-section {
     font-size: 1.2rem;
 
-    .label-text {
-      top: 14px;
-    }
-    .input-field:focus ~ .label-text,
-    .input-field:valid ~ .label-text {
-      top: -13px;
-      color: $tertiary;
+    .input-field--focused {
+      padding-left: 7px;
+
+      ~ .label-text {
+        top: -18px;
+        color: $tertiary;
+      }
     }
     &__label {
       margin-bottom: 5px;
@@ -385,7 +390,8 @@ body {
       letter-spacing: 5px !important;
 
       &:focus ~ .label-text,
-      &:valid ~ .label-text {
+      &:autofill ~ .label-text,
+      &:-webkit-autofill ~ .label-text {
         top: -16px;
         color: $tertiary;
       }
