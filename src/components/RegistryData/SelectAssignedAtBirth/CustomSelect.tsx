@@ -1,5 +1,5 @@
-import { useContext } from 'react';
 import Select, { ActionMeta, InputActionMeta } from 'react-select';
+import { useContext } from 'react';
 
 import DataContext from '../../../contexts/DataContext';
 
@@ -8,18 +8,21 @@ import SingleValue from './SingleValue';
 import Control from './Control';
 import Input from './Input';
 
-function GenderIdentity() {
+function CustomSelect() {
   const options = [
-    { value: 'WOMAN', label: 'Mulher' },
-    { value: 'MAN', label: 'Homem' },
-    { value: 'NON_BINARY', label: 'Não-binário' },
-    { value: 'GENDER_FLUID', label: 'Gênero-fluido' },
-    { value: 'SELF_DESCRIBED', label: 'Prefiro descrever' },
-    { value: 'NO_INFO', label: 'Prefiro não informar' },
+    { value: 'FEMALE', label: 'Feminino' },
+    { value: 'MALE', label: 'Masculino' },
+    { value: 'INTERSEXO', label: 'Intersexo' },
+    { value: 'OTHER', label: 'Outro' },
   ];
 
-  const { selectGender, setSelectGender, setHasGenderCleared } =
-    useContext(DataContext);
+  const {
+    selectAssigned,
+    updateHeight,
+    setUpdateHeight,
+    setSelectAssigned,
+    setHasAssignedCleared: setHasCleared,
+  } = useContext(DataContext);
 
   return (
     <>
@@ -28,12 +31,12 @@ function GenderIdentity() {
         components={{ Control, DropdownIndicator, Input, SingleValue }}
         isClearable={true}
         isSearchable={true}
+        menuIsOpen={selectAssigned}
         onChange={handleInputChange}
-        menuIsOpen={selectGender}
         openMenuOnFocus={true}
         openMenuOnClick={true}
-        blurInputOnSelect={true}
         tabSelectsValue={true}
+        blurInputOnSelect={true}
         backspaceRemovesValue={true}
         menuShouldScrollIntoView={false}
         className='select-wrapper'
@@ -49,17 +52,19 @@ function GenderIdentity() {
     _newValue: string,
     actionMeta: InputActionMeta | ActionMeta<any>,
   ) {
-    if (!selectGender && actionMeta.action === 'input-change')
-      setSelectGender(true);
+    if (!selectAssigned && actionMeta.action === 'input-change')
+      setSelectAssigned(true);
     else if (actionMeta.action === 'clear') {
-      setSelectGender(false);
-      setHasGenderCleared(true);
+      setSelectAssigned(false);
+      setHasCleared(true);
+      setUpdateHeight(!updateHeight);
     }
   }
 
   function handleInputBlur() {
-    setSelectGender(false);
+    setSelectAssigned(false);
+    setUpdateHeight(!updateHeight);
   }
 }
 
-export default GenderIdentity;
+export default CustomSelect;

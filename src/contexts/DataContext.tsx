@@ -10,6 +10,8 @@ function DataProvider(props: any) {
   const [selectAssigned, setSelectAssigned] = useState<boolean>(false);
   const [hasSubmitted, setHasSubmitted] = useState<boolean>(false);
 
+  const [updateHeight, setUpdateHeight] = useState<boolean>(false);
+
   const [hasGenderCleared, setHasGenderCleared] = useState<boolean>(false);
   const [hasAssignedCleared, setHasAssignedCleared] = useState<boolean>(false);
 
@@ -58,6 +60,8 @@ function DataProvider(props: any) {
         setSelectAssigned,
         hasAssignedCleared,
         setHasAssignedCleared,
+        updateHeight,
+        setUpdateHeight,
         commonData,
         setCommonData,
         registryData,
