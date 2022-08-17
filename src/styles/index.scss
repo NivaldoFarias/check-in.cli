@@ -31,7 +31,6 @@ body {
 
       color: $secondary;
       font-size: 1.2rem;
-      letter-spacing: 1px;
       text-shadow: $font-shadow;
 
       border: none;
@@ -54,8 +53,8 @@ body {
         }
       }
       /* active state */
-      &--focused ~ label,
-      &:valid ~ label {
+      &--focused ~ .label-text,
+      &:valid ~ .label-text {
         top: -18px;
         color: $tertiary;
       }
@@ -353,11 +352,11 @@ body {
   .input-section {
     font-size: 1.2rem;
 
-    label {
+    .label-text {
       top: 14px;
     }
-    .input-field:focus ~ label,
-    .input-field:valid ~ label {
+    .input-field:focus ~ .label-text,
+    .input-field:valid ~ .label-text {
       top: -13px;
       color: $tertiary;
     }
@@ -369,6 +368,45 @@ body {
       font-size: 1.3rem;
       font-weight: 400;
       text-shadow: $font-shadow;
+    }
+  }
+  .postal-code-input {
+    margin-top: 10px;
+    font-size: 1.3rem;
+
+    .input-field {
+      padding-bottom: 7px;
+      letter-spacing: 5px !important;
+
+      &:focus ~ .label-text,
+      &:valid ~ .label-text {
+        top: -16px;
+        color: $tertiary;
+      }
+    }
+    .label-text {
+      top: 11px;
+    }
+    .alert-text {
+      top: 47px;
+    }
+    &__submit-icon {
+      position: absolute;
+      top: 10px;
+      right: 8px;
+
+      color: $secondary;
+      font-size: 1.3rem;
+      transition: all 100ms ease-in-out 0s;
+
+      &:hover {
+        color: $tertiary;
+        cursor: pointer;
+
+        * {
+          pointer-events: none;
+        }
+      }
     }
   }
   .input-date-field {

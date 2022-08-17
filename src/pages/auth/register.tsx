@@ -9,6 +9,7 @@ import DataContext from '../../contexts/DataContext';
 import CommonData from '../../components/CommonData';
 import LoadingDots from '../../components/Loading';
 import RegistryData from '../../components/RegistryData';
+import AddressData from '../../components/AddressData/index';
 
 function Register() {
   const [validCpf, setValidCpf] = useState<boolean>(true);
@@ -43,6 +44,7 @@ function Register() {
         <h1 className='title-card'>Cadastro</h1>
         <CommonData validCpf={validCpf} />
         <RegistryData />
+        <AddressData />
         <div className='footer-section'>
           <button className={validateForm()} type='submit'>
             {hasSubmitted ? <LoadingDots /> : 'Cadastrar'}
