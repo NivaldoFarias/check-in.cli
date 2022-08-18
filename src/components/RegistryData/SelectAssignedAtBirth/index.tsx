@@ -37,7 +37,7 @@ function SelectAssignedAtBirth() {
   });
 
   useEffect(() => {
-    if (formData.assigned_at_birth === 'OTHER') {
+    if (formData.assigned_at_birth === 'SELF_DESCRIBED') {
       setShowOptionalInput(true);
     } else setShowOptionalInput(false);
     setUpdateHeight(!updateHeight);

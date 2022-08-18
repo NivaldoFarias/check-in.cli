@@ -13,10 +13,12 @@ function CustomSelect() {
     { value: 'FEMALE', label: 'Feminino' },
     { value: 'MALE', label: 'Masculino' },
     { value: 'INTERSEXO', label: 'Intersexo' },
-    { value: 'OTHER', label: 'Outro' },
+    { value: 'SELF_DESCRIBED', label: 'Prefiro descrever' },
   ];
 
   const {
+    registryData,
+    setRegistryData,
     selectAssigned,
     updateHeight,
     setUpdateHeight,
@@ -55,6 +57,7 @@ function CustomSelect() {
     if (!selectAssigned && actionMeta.action === 'input-change')
       setSelectAssigned(true);
     else if (actionMeta.action === 'clear') {
+      setRegistryData({ ...registryData, assigned_at_birth: '' });
       setSelectAssigned(false);
       setHasCleared(true);
       setUpdateHeight(!updateHeight);

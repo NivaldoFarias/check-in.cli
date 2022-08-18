@@ -193,10 +193,10 @@ function AddressData() {
         city,
         state,
       });
-      inputRef.current.street?.classList.add('input-field--focused');
-      inputRef.current.neighborhood?.classList.add('input-field--focused');
-      inputRef.current.city?.classList.add('input-field--focused');
-      inputRef.current.state?.classList.add('input-field--focused');
+      inputRef.current.street?.classList.add('input-field--active');
+      inputRef.current.neighborhood?.classList.add('input-field--active');
+      inputRef.current.city?.classList.add('input-field--active');
+      inputRef.current.state?.classList.add('input-field--active');
     } catch (error) {
       setHasFired(false);
       return handleError(error);
@@ -225,8 +225,10 @@ function AddressData() {
           />
           <input
             type='text'
-            name='postal_code'
+            minLength={5}
             maxLength={9}
+            name='postal_code'
+            pattern='^[\d\-\s]*$'
             value={formData?.postal_code}
             className='input-field input-spacedout-field'
             ref={(element) => (inputRef.current['postal_code'] = element)}
@@ -366,13 +368,13 @@ function AddressData() {
       setHasAutoFilled(false);
       setAlertCEPText('');
 
-      inputRef.current.neighborhood?.classList.remove('input-field--focused');
-      inputRef.current.postal_code?.classList.remove('input-field--focused');
-      inputRef.current.complement?.classList.remove('input-field--focused');
-      inputRef.current.number?.classList.remove('input-field--focused');
-      inputRef.current.street?.classList.remove('input-field--focused');
-      inputRef.current.city?.classList.remove('input-field--focused');
-      inputRef.current.state?.classList.remove('input-field--focused');
+      inputRef.current.neighborhood?.classList.remove('input-field--active');
+      inputRef.current.postal_code?.classList.remove('input-field--active');
+      inputRef.current.complement?.classList.remove('input-field--active');
+      inputRef.current.number?.classList.remove('input-field--active');
+      inputRef.current.street?.classList.remove('input-field--active');
+      inputRef.current.city?.classList.remove('input-field--active');
+      inputRef.current.state?.classList.remove('input-field--active');
     }
 
     function handleClick(_e: MouseEvent<HTMLOrSVGElement>) {
@@ -419,7 +421,7 @@ function AddressData() {
 
     function handleInputFocus(e: FocusEvent<HTMLInputElement>) {
       return inputRef.current[e.target.name]?.classList.add(
-        'input-field--focused',
+        'input-field--active',
       );
     }
 
@@ -427,8 +429,11 @@ function AddressData() {
       if (e.target.name === 'postal_code' && validCEP) {
         getAddressData();
       }
+
+      if (e.target.value.length !== 0) return null;
+
       return inputRef.current[e.target.name]?.classList.remove(
-        'input-field--focused',
+        'input-field--active',
       );
     }
 

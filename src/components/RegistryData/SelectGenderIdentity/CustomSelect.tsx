@@ -18,6 +18,8 @@ function CustomSelect() {
   ];
 
   const {
+    registryData,
+    setRegistryData,
     selectGender,
     updateHeight,
     setUpdateHeight,
@@ -54,6 +56,7 @@ function CustomSelect() {
     if (!selectGender && actionMeta.action === 'input-change')
       setSelectGender(true);
     else if (actionMeta.action === 'clear') {
+      setRegistryData({ ...registryData, gender: '' });
       setSelectGender(false);
       setHasCleared(true);
     }

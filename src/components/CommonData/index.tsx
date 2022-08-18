@@ -33,7 +33,7 @@ function CommonData() {
 
   const inputRef = useRef<InputRef>({
     full_name: null,
-    social_name: null,
+    first_name: null,
     insurance: null,
     birthdate: null,
   });
@@ -49,7 +49,7 @@ function CommonData() {
 
   useEffect(() => {
     const birthdateIsSet = countDateInputs >= 4;
-    const socialNameIsSet = formData?.social_name?.length > 0;
+    const socialNameIsSet = formData?.first_name?.length > 0;
     const fullNameIsSet = formData?.full_name?.length > 3;
     const insuranceIsSet = formData?.insurance?.length > 0;
     const isComplete =
@@ -101,11 +101,13 @@ function CommonData() {
       <div ref={sectionRef} className='form-group'>
         <section className='input-section'>
           <input
-            ref={(element) => (inputRef.current['social_name'] = element)}
+            ref={(element) => (inputRef.current['first_name'] = element)}
             type='text'
-            value={formData?.social_name}
-            name='social_name'
+            value={formData?.first_name}
+            name='first_name'
+            minLength={1}
             maxLength={25}
+            pattern='^(?!-)(?!.*-$)[a-zãẽĩõũáéíóúâêîôûàèìòùäöüẞç]{1,25}$'
             onChange={handleInputChange}
             onFocus={handleInputFocus}
             onBlur={handleInputBlur}
@@ -122,7 +124,8 @@ function CommonData() {
         <section className='input-section'>
           <input
             type='text'
-            maxLength={20}
+            minLength={1}
+            maxLength={35}
             name='full_name'
             className='input-field'
             value={formData?.full_name}
@@ -144,7 +147,7 @@ function CommonData() {
             max={time.CURRRENT_DATE}
             value={formData?.birthdate}
             ref={(element) => (inputRef.current['birthdate'] = element)}
-            className='input-field input-field--focused input-spacedout-field input-date-field'
+            className='input-field input-field--active input-spacedout-field input-date-field'
             onChange={handleBirthdateInput}
             onFocus={handleInputFocus}
             onBlur={handleInputBlur}
@@ -186,15 +189,16 @@ function CommonData() {
     function handleInputFocus(e: FocusEvent<HTMLInputElement>) {
       if (e.target.name === 'birthdate') return null;
       return inputRef.current[e.target.name]?.classList.add(
-        'input-field--focused',
+        'input-field--active',
       );
     }
 
     function handleInputBlur(e: FocusEvent<HTMLInputElement>) {
-      if (e.target.name === 'birthdate') return null;
-      return inputRef.current[e.target.name]?.classList.remove(
-        'input-field--focused',
-      );
+      if (e.target.value.length === 0 && e.target.name !== 'birthdate') {
+        return inputRef.current[e.target.name]?.classList.remove(
+          'input-field--active',
+        );
+      } else return null;
     }
 
     function showAlertBirthdate() {

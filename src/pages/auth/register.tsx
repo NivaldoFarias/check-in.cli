@@ -23,7 +23,7 @@ function Register() {
   useEffect(() => {
     if (registryData?.cpf.length === 14) {
       setValidCpf(validate(registryData?.cpf));
-    }
+    } else setValidCpf(true);
   }, [registryData.cpf]);
 
   return (

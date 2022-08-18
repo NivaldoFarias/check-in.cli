@@ -4,7 +4,7 @@ declare module 'react-mobile-datepicker';
 
 interface Commons {
   full_name: string;
-  social_name: string;
+  first_name: string;
   birthdate: string;
   insurance: string;
 }

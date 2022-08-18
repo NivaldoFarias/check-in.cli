@@ -27,7 +27,7 @@ const initialDataContextValue = {
   setUpdateHeight: () => {},
   commonData: {
     full_name: '',
-    social_name: '',
+    first_name: '',
     insurance: '',
     birthdate: '',
   },
@@ -54,7 +54,7 @@ const initialDataContextValue = {
   formData: {
     common: {
       full_name: '',
-      social_name: '',
+      first_name: '',
       insurance: '',
       birthdate: '',
     },
@@ -103,7 +103,7 @@ function DataProvider(props: any) {
 
   const [commonData, setCommonData] = useState<Commons>({
     full_name: '',
-    social_name: '',
+    first_name: '',
     insurance: '',
     birthdate: '',
   });

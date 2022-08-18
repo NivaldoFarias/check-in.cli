@@ -100,7 +100,6 @@ function RegistryData(props: any) {
   }
 
   function buildRegistryDataComponent() {
-    // TODO fix: fires once and sticks on the last value
     const alertCpf =
       formData?.cpf.length === 14 ? `CPF inválido` : `Insira apenas números`;
     const alertPhonenumber =
@@ -115,7 +114,9 @@ function RegistryData(props: any) {
           <input
             type='text'
             name='cpf'
+            minLength={14}
             maxLength={14}
+            pattern='^[\d\.\-\s]*$'
             value={formData?.cpf}
             className='input-field input-spacedout-field'
             ref={(element) => (inputRef.current['cpf'] = element)}
@@ -135,6 +136,7 @@ function RegistryData(props: any) {
             type='text'
             name='phone_number'
             maxLength={15}
+            pattern='^[\d()-\+\s]*$'
             value={formData?.phone_number}
             ref={(element) => (inputRef.current['phone_number'] = element)}
             className='input-field input-spacedout-field'
@@ -178,16 +180,16 @@ function RegistryData(props: any) {
     }
 
     function handleInputFocus(e: FocusEvent<HTMLInputElement>) {
-      if (e.target.name === 'birthdate') return null;
       return inputRef.current[e.target.name]?.classList.add(
-        'input-field--focused',
+        'input-field--active',
       );
     }
 
     function handleInputBlur(e: FocusEvent<HTMLInputElement>) {
-      if (e.target.name === 'birthdate') return null;
+      if (e.target.value.length !== 0) return null;
+
       return inputRef.current[e.target.name]?.classList.remove(
-        'input-field--focused',
+        'input-field--active',
       );
     }
 
@@ -229,7 +231,7 @@ function RegistryData(props: any) {
         /^((\((\d{2})\)\s9)([1-9])(\d{3})-(\d{4}))|(\+\d{4}9[1-9]\d*)$/gi;
       const validPhonenumber = phoneRegex.test(formData?.phone_number);
 
-      const inputRegex = /^[0-9()-\+\s]*$/;
+      const inputRegex = /^[\d()-\+\s]*$/;
       const containsOnlyNumbers = inputRegex.test(formData?.phone_number);
       const transparent = containsOnlyNumbers
         ? formData?.phone_number.length >= 14
@@ -243,7 +245,7 @@ function RegistryData(props: any) {
     }
 
     function showAlertCpf() {
-      const cpfRegex = /^[0-9.-\s]*$/;
+      const cpfRegex = /^[\d\.\-\s]*$/;
       const containsOnlyNumbers = cpfRegex.test(formData?.cpf);
       const transparent = containsOnlyNumbers
         ? validCpf
