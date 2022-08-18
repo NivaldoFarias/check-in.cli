@@ -7,8 +7,8 @@ import {
   useRef,
 } from 'react';
 
-import { HiOutlineViewList } from 'react-icons/hi';
-import { MdCalendarViewDay } from 'react-icons/md';
+import { MdViewHeadline, MdCalendarViewDay } from 'react-icons/md';
+import { IoMdCheckmarkCircleOutline } from 'react-icons/io';
 import { AiFillIdcard } from 'react-icons/ai';
 import { FaMobile } from 'react-icons/fa';
 
@@ -83,10 +83,17 @@ function RegistryData(props: any) {
             className={`section-header__icon${expandSection ? '--active' : ''}`}
           />
         ) : (
-          <HiOutlineViewList
-            onClick={toggleSection}
-            className='section-header__icon'
-          />
+          <>
+            <MdViewHeadline
+              onClick={toggleSection}
+              className={`section-header__icon${
+                isSectionComplete.registry ? '--complete' : ''
+              }`}
+            />
+            {isSectionComplete.registry ? (
+              <IoMdCheckmarkCircleOutline className='section-header__complete-checkmark' />
+            ) : null}
+          </>
         )}
       </div>
       <div className='register-data-section' style={{ height }}>

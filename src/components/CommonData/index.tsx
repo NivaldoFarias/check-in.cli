@@ -7,8 +7,8 @@ import {
   useRef,
 } from 'react';
 
-import { HiOutlineViewList } from 'react-icons/hi';
-import { MdCalendarViewDay } from 'react-icons/md';
+import { MdViewHeadline, MdCalendarViewDay } from 'react-icons/md';
+import { IoMdCheckmarkCircleOutline } from 'react-icons/io';
 
 import DataContext from '../../contexts/DataContext';
 import { time } from '../../utils/constants.util';
@@ -22,6 +22,10 @@ function CommonData() {
   const [countDateInputs, setCountDateInputs] = useState<number>(0);
   const [expandSection, setSectionState] = useState<boolean>(false);
   const [height, setHeight] = useState<number | string>(0);
+  const [hasFirstNameAutoFilled, setHasFirstNameAutoFilled] =
+    useState<boolean>(false);
+  const [hasFullNameAutoFilled, setHasFullNameAutoFilled] =
+    useState<boolean>(false);
 
   const {
     isSectionComplete,
@@ -64,6 +68,33 @@ function CommonData() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [formData]);
 
+  useEffect(() => {
+    const interval = setInterval(() => {
+      if (
+        inputRef.current.first_name &&
+        inputRef.current?.first_name?.matches(':-internal-autofill-selected')
+      ) {
+        setHasFirstNameAutoFilled(true);
+      }
+
+      if (
+        inputRef.current.full_name &&
+        inputRef.current?.full_name?.matches(':-internal-autofill-selected')
+      ) {
+        setHasFullNameAutoFilled(true);
+      }
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, 500);
+
+    if (hasFirstNameAutoFilled && hasFullNameAutoFilled) {
+      clearInterval(interval);
+    }
+
+    return () => {
+      clearInterval(interval);
+    };
+  }, [hasFirstNameAutoFilled, hasFullNameAutoFilled]);
+
   const commonDataComponent = buildCommonDataComponent();
 
   return (
@@ -78,10 +109,17 @@ function CommonData() {
             className={`section-header__icon${expandSection ? '--active' : ''}`}
           />
         ) : (
-          <HiOutlineViewList
-            onClick={toggleSection}
-            className='section-header__icon'
-          />
+          <>
+            <MdViewHeadline
+              onClick={toggleSection}
+              className={`section-header__icon${
+                isSectionComplete.common ? '--complete' : ''
+              }`}
+            />
+            {isSectionComplete.common ? (
+              <IoMdCheckmarkCircleOutline className='section-header__complete-checkmark' />
+            ) : null}
+          </>
         )}
       </div>
       <div className='register-data-section' style={{ height }}>
@@ -107,11 +145,16 @@ function CommonData() {
             name='first_name'
             minLength={1}
             maxLength={25}
-            pattern='^(?!-)(?!.*-$)[a-zãẽĩõũáéíóúâêîôûàèìòùäöüẞç]{1,25}$'
+            pattern='^(?!-)(?!.*-$)[a-zA-ZãÃẽẼĩĨõÕũŨáÁéÉíÍóÓúÚâÂêÊîÎôÔûÛàÀèÈìÌòÒùÙäÄöÖüÜẞçÇ]+$'
             onChange={handleInputChange}
             onFocus={handleInputFocus}
             onBlur={handleInputBlur}
-            className='input-field'
+            className={`input-field ${
+              hasFirstNameAutoFilled && formData.first_name.length > 0
+                ? 'input-field--active'
+                : ''
+            }`}
+            disabled={hasFirstNameAutoFilled && formData.first_name.length > 0}
             required
           />
           <span className='highlight'></span>
@@ -127,12 +170,17 @@ function CommonData() {
             minLength={1}
             maxLength={35}
             name='full_name'
-            className='input-field'
+            className={`input-field ${
+              hasFullNameAutoFilled && formData.full_name.length > 0
+                ? 'input-field--active'
+                : ''
+            }`}
             value={formData?.full_name}
             ref={(element) => (inputRef.current['full_name'] = element)}
             onChange={handleInputChange}
             onFocus={handleInputFocus}
             onBlur={handleInputBlur}
+            disabled={hasFullNameAutoFilled && formData.full_name.length > 0}
             required
           />
           <span className='highlight'></span>

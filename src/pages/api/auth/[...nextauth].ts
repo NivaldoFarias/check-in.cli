@@ -3,7 +3,6 @@ import NextAuth, { NextAuthOptions } from 'next-auth';
 import bcrypt from 'bcrypt';
 
 import prisma from '../../../config/database.config';
-import AppError from '../../../config/error.config';
 import { env } from '../../../utils/constants.util';
 import { NextApiRequest, NextApiResponse } from 'next';
 import exceptionHandler from '../../../utils/exception.util';

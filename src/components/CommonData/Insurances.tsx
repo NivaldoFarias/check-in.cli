@@ -6,6 +6,7 @@ import Select, {
 } from 'react-select';
 import type { ControlProps } from 'react-select';
 import DataContext from '../../contexts/DataContext';
+import SingleValue from './SingleValue';
 
 type UpdateValue = {
   updateValue: (value: string) => void;
@@ -99,7 +100,7 @@ function Insurance({ updateValue }: UpdateValue) {
     <>
       <Select
         options={options}
-        components={{ Control, DropdownIndicator, Input }}
+        components={{ Control, DropdownIndicator, Input, SingleValue }}
         isClearable={true}
         isSearchable={true}
         menuIsOpen={selectInsurance}

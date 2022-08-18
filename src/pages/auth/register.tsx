@@ -44,9 +44,11 @@ function Register() {
     return (
       <form className='auth-page__container' onSubmit={handleSubmit}>
         <h1 className='title-card'>Cadastro</h1>
-        <CommonData />
-        <RegistryData validCpf={validCpf} />
-        <AddressData />
+        <div className='form-sections-wrapper'>
+          <CommonData />
+          <RegistryData validCpf={validCpf} />
+          <AddressData />
+        </div>
         <div className='footer-section'>
           <button className={validateForm()} type='submit'>
             {hasSubmitted ? <LoadingDots /> : 'Cadastrar'}

@@ -81,7 +81,6 @@ function SelectAssignedAtBirth() {
             onChange={handleInputChange}
             onFocus={handleInputFocus}
             onBlur={handleInputBlur}
-            required
           />
           <span className='highlight'></span>
           <span className='bar'></span>

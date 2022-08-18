@@ -12,7 +12,7 @@ interface Registries {
   gender: string;
   cpf: string;
   assigned_at_birth: string;
-  described_idendity?: string;
+  described_identity?: string;
   described_assigned?: string;
   phone_number: string;
 }

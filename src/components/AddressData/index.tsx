@@ -10,8 +10,12 @@ import {
 } from 'react';
 import { confirmAlert } from 'react-confirm-alert';
 
-import { HiOutlineViewList } from 'react-icons/hi';
-import { MdCalendarViewDay, MdFormatClear } from 'react-icons/md';
+import {
+  MdCalendarViewDay,
+  MdFormatClear,
+  MdViewHeadline,
+} from 'react-icons/md';
+import { IoMdCheckmarkCircleOutline } from 'react-icons/io';
 import { FaMapMarkerAlt } from 'react-icons/fa';
 
 import DataContext from '../../contexts/DataContext';
@@ -58,6 +62,8 @@ function AddressData() {
   const [hasFired, setHasFired] = useState<boolean>(false);
   const [forceAlert, setForceAlert] = useState<boolean>(false);
   const [hasAutoFilled, setHasAutoFilled] = useState<boolean>(false);
+  const [hasComplementAutofilled, setHasComplementAutofilled] =
+    useState<boolean>(false);
 
   const inputRef = useRef<InputRef>({
     street: null,
@@ -105,6 +111,14 @@ function AddressData() {
   }, [formData]);
 
   useEffect(() => {
+    if (inputRef.current?.complement) {
+      if (inputRef.current?.complement?.matches(':-internal-autofill-selected'))
+        setHasComplementAutofilled(true);
+      else setHasComplementAutofilled(false);
+    }
+  }, [inputRef.current?.complement]);
+
+  useEffect(() => {
     if (sectionRef.current) {
       if (expandSection) {
         setHeight(sectionRef.current.getBoundingClientRect().height);
@@ -131,10 +145,17 @@ function AddressData() {
             className={`section-header__icon${expandSection ? '--active' : ''}`}
           />
         ) : (
-          <HiOutlineViewList
-            onClick={toggleSection}
-            className='section-header__icon'
-          />
+          <>
+            <MdViewHeadline
+              onClick={toggleSection}
+              className={`section-header__icon${
+                isSectionComplete.address ? '--complete' : ''
+              }`}
+            />
+            {isSectionComplete.address ? (
+              <IoMdCheckmarkCircleOutline className='section-header__complete-checkmark' />
+            ) : null}
+          </>
         )}
       </div>
       <div className='register-data-section' style={{ height }}>
@@ -344,8 +365,7 @@ function AddressData() {
             onChange={handleInputChange}
             onFocus={handleInputFocus}
             onBlur={handleInputBlur}
-            disabled={hasAutoFilled && formData?.complement.length > 0}
-            required
+            disabled={hasComplementAutofilled}
           />
           <span className='highlight'></span>
           <span className='bar'></span>
