@@ -1,5 +1,4 @@
 import CredentialsProvider from 'next-auth/providers/credentials';
-import { PrismaAdapter } from '@next-auth/prisma-adapter';
 import NextAuth, { NextAuthOptions } from 'next-auth';
 import bcrypt from 'bcrypt';
 
@@ -12,7 +11,6 @@ import logger from '../../../config/logger.config';
 
 async function auth(req: NextApiRequest, res: NextApiResponse) {
   const options: NextAuthOptions = {
-    adapter: PrismaAdapter(prisma),
     secret: env.NEXTAUTH_SECRET,
     session: {
       strategy: 'jwt',
@@ -20,9 +18,8 @@ async function auth(req: NextApiRequest, res: NextApiResponse) {
     },
     pages: {
       signIn: '/auth/check-in',
-      signOut: '/auth/logout',
+      signOut: '/auth/check-out',
       error: '/auth/check-in',
-      verifyRequest: '/auth/verify-request',
     },
     callbacks: {},
     providers: [
@@ -41,40 +38,20 @@ async function auth(req: NextApiRequest, res: NextApiResponse) {
             placeholder: 'Password',
           },
         },
-        authorize: async (credentials) => {
-          logger.info('credentials');
-          if (req.method !== 'POST') {
-            throw new AppError(
-              405,
-              'Method not allowed',
-              'Endpoint only accepts POST requests',
-            );
-          }
-
+        authorize: async (credentials, _req) => {
           const { cpf, password } = credentials ?? {};
+          logger.info('credentials');
 
           const patient = await prisma.patient.findUnique({
             where: { cpf },
           });
-          if (!patient) {
-            throw new AppError(
-              404,
-              'Patient not found',
-              'Ensure to provide valid credentials',
-            );
-          }
+          if (!patient) return null;
 
           const isValid = bcrypt.compareSync(
             password as string,
             patient.password,
           );
-          if (!isValid) {
-            throw new AppError(
-              401,
-              'Unauthorized',
-              'Ensure to provide valid credentials',
-            );
-          }
+          if (!isValid) return null;
 
           return patient;
         },
