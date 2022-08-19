@@ -23,10 +23,7 @@ function Register() {
       ref={pageRef}
       id='register-page'
       className='auth-page'
-      onLoad={() => {
-        pageRef.current?.classList.add('has-loaded');
-      }}
-      onLoadCapture={() => pageRef.current?.classList.add('has-loaded')}
+      onLoadCapture={handleLoadCapture}
     >
       <Image
         className='background-image'
@@ -40,6 +37,10 @@ function Register() {
       {RegisterPage}
     </div>
   );
+
+  function handleLoadCapture() {
+    return pageRef.current?.classList.add('has-loaded');
+  }
 
   function buildRegisterPage() {
     return (
@@ -60,20 +61,20 @@ function Register() {
         </div>
       </form>
     );
-  }
 
-  function validateForm() {
-    return isSectionComplete.address &&
-      isSectionComplete.common &&
-      isSectionComplete.registry
-      ? 'submit-btn'
-      : 'submit-btn disabled';
-  }
+    function validateForm() {
+      return isSectionComplete.address &&
+        isSectionComplete.common &&
+        isSectionComplete.registry
+        ? 'submit-btn'
+        : 'submit-btn disabled';
+    }
 
-  function handleSubmit(e: FormEvent) {
-    e.preventDefault();
-    setHasSubmitted(true);
-    setTimeout(() => null, getRandomInt(750, 2000));
+    function handleSubmit(e: FormEvent) {
+      e.preventDefault();
+      setHasSubmitted(true);
+      setTimeout(() => null, getRandomInt(750, 2000));
+    }
   }
 }
 

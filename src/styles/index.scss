@@ -176,7 +176,7 @@ body {
   width: 100vw;
   opacity: 0;
   filter: blur(3px);
-  transition: all 500ms ease-in-out 0s;
+  transition: all 400ms ease-in-out 0s;
 
   &.has-loaded {
     opacity: 1;
@@ -286,10 +286,17 @@ body {
     height: min-content;
     width: 100%;
   }
-  .background-image {
-    pointer-events: none;
-    position: fixed !important;
-  }
+}
+.background-image {
+  pointer-events: none;
+  height: auto !important;
+  width: auto !important;
+  min-height: 1080px !important;
+  left: 0 !important;
+  right: 0 !important;
+  margin: 0 auto !important;
+
+  position: fixed !important;
 }
 .nav-icon {
   font-size: 1.5rem;
@@ -440,6 +447,9 @@ body {
       margin-bottom: 15px;
     }
     .input-field {
+      &-password {
+        letter-spacing: 6px !important;
+      }
       &--active {
         padding-left: 7px;
 
@@ -678,6 +688,11 @@ body {
       font-weight: 400;
       letter-spacing: 2px;
     }
+  }
+}
+#check-in-page {
+  .auth-page__container {
+    gap: 30px;
   }
 }
 #loading-dots {

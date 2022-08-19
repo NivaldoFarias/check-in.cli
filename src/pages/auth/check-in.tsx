@@ -159,12 +159,12 @@ function CheckIn() {
               onClick={() => handleReset('password')}
             />
             <input
-              type='text'
+              type='password'
               name='password'
-              maxLength={40}
+              maxLength={22}
               value={formData?.password}
               ref={(element) => (inputRef.current['password'] = element)}
-              className={`input-field ${
+              className={`input-field input-field-password ${
                 hasAutoFilled.password && formData.password.length > 0
                   ? 'input-field--active'
                   : ''
