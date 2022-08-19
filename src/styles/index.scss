@@ -7,6 +7,13 @@
 @import './plugins/Calendar';
 @import './plugins/Dropdown';
 
+*.hidden {
+  display: none;
+}
+*.disabled {
+  opacity: 0.75;
+  pointer-events: none;
+}
 body {
   height: 100vh;
   width: 100vw;

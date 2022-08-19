@@ -195,13 +195,15 @@ function RegistryData() {
         >
           <MdFormatClear
             className={`input-section__reset-icon position-left ${
-              hasCpfAutoFilled ? '' : 'hidden'
+              hasCpfAutoFilled && formData.cpf?.length > 0 ? '' : 'hidden'
             }`}
             onClick={handleResetCpf}
           />
           <AiFillIdcard
             className={`input-section__cpf-icon ${
-              hasCpfAutoFilled ? 'input-section__cpf-icon--active' : ''
+              hasCpfAutoFilled && formData.cpf?.length > 0
+                ? 'input-section__cpf-icon--active'
+                : ''
             } ${validCpf ? '' : 'input-section__cpf-icon--invalid'}`}
           />
           <input
@@ -231,13 +233,15 @@ function RegistryData() {
         <section className='input-section'>
           <MdFormatClear
             className={`input-section__reset-icon position-left ${
-              hasPhoneNumberAutoFilled ? '' : 'hidden'
+              hasPhoneNumberAutoFilled && formData.phone_number?.length > 0
+                ? ''
+                : 'hidden'
             }`}
             onClick={handleResetPhoneNumber}
           />
           <FaMobile
             className={`input-section__phone-icon ${
-              hasPhoneNumberAutoFilled
+              hasPhoneNumberAutoFilled && formData.phone_number?.length > 0
                 ? 'input-section__phone-icon--active'
                 : ''
             }`}

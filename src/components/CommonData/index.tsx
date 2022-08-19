@@ -153,7 +153,9 @@ function CommonData() {
         <section className='input-section'>
           <MdFormatClear
             className={`input-section__reset-icon ${
-              hasFirstNameAutoFilled ? '' : 'hidden'
+              hasFirstNameAutoFilled && formData.first_name?.length > 0
+                ? ''
+                : 'hidden'
             }`}
             onClick={() => handleReset('first_name')}
           />
@@ -185,7 +187,9 @@ function CommonData() {
         <section className='input-section'>
           <MdFormatClear
             className={`input-section__reset-icon ${
-              hasFullNameAutoFilled ? '' : 'hidden'
+              hasFullNameAutoFilled && formData.full_name?.length > 0
+                ? ''
+                : 'hidden'
             }`}
             onClick={() => handleReset('full_name')}
           />

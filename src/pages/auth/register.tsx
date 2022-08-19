@@ -1,6 +1,7 @@
 import { FormEvent, useContext, useRef } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
+import { confirmAlert } from 'react-confirm-alert';
 
 import backgroundImage from '../../../public/background-alt.svg';
 
@@ -12,7 +13,7 @@ import AddressData from '../../components/AddressData/index';
 import { getRandomInt } from '../../utils/functions.util';
 
 function Register() {
-  const { isSectionComplete, hasSubmitted, setHasSubmitted } =
+  const { isSectionComplete, hasSubmitted, setHasSubmitted, commonData } =
     useContext(DataContext);
   const pageRef = useRef<HTMLDivElement>(null);
 
@@ -42,6 +43,18 @@ function Register() {
     return pageRef.current?.classList.add('has-loaded');
   }
 
+  function openModal() {
+    confirmAlert({
+      message: `Quase lá! Agora só precisamos criar uma senha para você`,
+      buttons: [
+        {
+          label: 'Definir senha',
+          onClick: () => null,
+        },
+      ],
+    });
+  }
+
   function buildRegisterPage() {
     return (
       <form className='auth-page__container' onSubmit={handleSubmit}>
@@ -52,8 +65,8 @@ function Register() {
           <AddressData />
         </div>
         <div className='footer-section'>
-          <button className={validateForm()} type='submit'>
-            {hasSubmitted ? <LoadingDots /> : 'Cadastrar'}
+          <button className={validateForm()} onClick={openModal}>
+            Cadastrar
           </button>
           <Link className='navigate-link' href='/auth/check-in'>
             Já possuo cadastro

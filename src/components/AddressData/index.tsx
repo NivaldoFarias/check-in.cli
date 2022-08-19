@@ -365,13 +365,17 @@ function AddressData() {
         <section className='input-section postal-code-input'>
           <FaMapMarkerAlt
             className={`postal-code-input__submit-icon ${
-              hasFired ? 'postal-code-input__submit-icon--active' : ''
+              hasFired && formData.postal_code?.length > 0
+                ? 'postal-code-input__submit-icon--active'
+                : ''
             }`}
             onClick={handleClick}
           />
           <MdLayersClear
             className={`input-section__reset-icon position-left ${
-              hasAutoFilled.postal_code ? '' : 'hidden'
+              hasAutoFilled.postal_code && formData.postal_code?.length > 0
+                ? ''
+                : 'hidden'
             }`}
             onClick={handleHardReset}
           />
@@ -405,7 +409,9 @@ function AddressData() {
         <section className='input-section'>
           <MdFormatClear
             className={`input-section__reset-icon ${
-              hasAutoFilled.street ? '' : 'hidden'
+              hasAutoFilled.street && formData.street?.length > 0
+                ? ''
+                : 'hidden'
             }`}
             onClick={() => handleReset('street')}
           />
@@ -432,7 +438,9 @@ function AddressData() {
         <section className='input-section'>
           <MdFormatClear
             className={`input-section__reset-icon ${
-              hasAutoFilled.number ? '' : 'hidden'
+              hasAutoFilled.number && formData.number?.length > 0
+                ? ''
+                : 'hidden'
             }`}
             onClick={() => handleReset('number')}
           />
@@ -460,7 +468,9 @@ function AddressData() {
         <section className='input-section'>
           <MdFormatClear
             className={`input-section__reset-icon ${
-              hasAutoFilled.neighborhood ? '' : 'hidden'
+              hasAutoFilled.neighborhood && formData.neighborhood?.length > 0
+                ? ''
+                : 'hidden'
             }`}
             onClick={() => handleReset('neighborhood')}
           />
@@ -490,7 +500,7 @@ function AddressData() {
         <section className='input-section'>
           <MdFormatClear
             className={`input-section__reset-icon ${
-              hasAutoFilled.city ? '' : 'hidden'
+              hasAutoFilled.city && formData.city?.length > 0 ? '' : 'hidden'
             }`}
             onClick={() => handleReset('city')}
           />
@@ -518,7 +528,7 @@ function AddressData() {
         <section className='input-section'>
           <MdFormatClear
             className={`input-section__reset-icon ${
-              hasAutoFilled.state ? '' : 'hidden'
+              hasAutoFilled.state && formData.state?.length > 0 ? '' : 'hidden'
             }`}
             onClick={() => handleReset('state')}
           />
@@ -546,7 +556,9 @@ function AddressData() {
         <section className='input-section'>
           <MdFormatClear
             className={`input-section__reset-icon ${
-              hasAutoFilled.complement ? '' : 'hidden'
+              hasAutoFilled.complement && formData.complement?.length > 0
+                ? ''
+                : 'hidden'
             }`}
             onClick={() => handleReset('complement')}
           />
