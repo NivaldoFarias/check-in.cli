@@ -7,10 +7,15 @@ import {
   useRef,
 } from 'react';
 
-import { MdViewHeadline, MdCalendarViewDay } from 'react-icons/md';
+import {
+  MdViewHeadline,
+  MdCalendarViewDay,
+  MdFormatClear,
+} from 'react-icons/md';
 import { IoMdCheckmarkCircleOutline } from 'react-icons/io';
 import { AiFillIdcard } from 'react-icons/ai';
 import { FaMobile } from 'react-icons/fa';
+import { validate } from 'gerador-validador-cpf';
 
 import DataContext from '../../contexts/DataContext';
 import SelectAssignedAtBirth from './SelectAssignedAtBirth';
@@ -20,10 +25,15 @@ type InputRef = {
   [x: string]: HTMLInputElement | null;
 };
 
-function RegistryData(props: any) {
-  const { validCpf } = props;
+// TODO refactor: component has too many responsibilities
+
+function RegistryData() {
+  const [validCpf, setValidCpf] = useState<boolean>(true);
   const [expandSection, setSectionState] = useState<boolean>(false);
   const [height, setHeight] = useState<number | string>(0);
+  const [hasCpfAutoFilled, setHasCpfAutoFilled] = useState<boolean>(false);
+  const [hasPhoneNumberAutoFilled, setHasPhoneNumberAutoFilled] =
+    useState<boolean>(false);
 
   const {
     isSectionComplete,
@@ -44,22 +54,42 @@ function RegistryData(props: any) {
   const sectionRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
+    if (formData?.cpf.length === 14) {
+      setValidCpf(validate(formData?.cpf));
+    } else setValidCpf(true);
+  }, [formData.cpf]);
+
+  useEffect(() => {
     const cpfIsSet = validCpf;
     const phoneNumberIsSet = formData?.phone_number?.length > 6;
-    const assignedIsSet = formData?.assigned_at_birth?.length > 0;
-    const genderIsSet = formData?.gender.length > 0;
+    const assignedIsSet =
+      (formData?.assigned_at_birth.length > 0 &&
+        formData?.assigned_at_birth !== 'SELF_DESCRIBED') ||
+      (formData?.assigned_at_birth === 'SELF_DESCRIBED' &&
+        formData?.described_assigned &&
+        formData?.described_assigned.length > 0);
+    const genderIsSet =
+      (formData?.gender.length > 0 && formData?.gender !== 'SELF_DESCRIBED') ||
+      (formData?.gender === 'SELF_DESCRIBED' &&
+        formData?.described_identity &&
+        formData?.described_identity.length > 0);
+
     const isComplete =
       cpfIsSet && phoneNumberIsSet && assignedIsSet && genderIsSet;
 
-    if (isComplete) {
+    if (isComplete && !isSectionComplete.registry) {
       setIsSectionComplete({
         ...isSectionComplete,
         registry: true,
       });
-    }
+    } else if (!isComplete && isSectionComplete.registry)
+      setIsSectionComplete({
+        ...isSectionComplete,
+        registry: false,
+      });
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [formData]);
+  }, [formData, hasCpfAutoFilled, hasPhoneNumberAutoFilled]);
 
   useEffect(() => {
     if (sectionRef.current) {
@@ -68,6 +98,39 @@ function RegistryData(props: any) {
       } else setHeight(0);
     }
   }, [expandSection, selectGender, selectAssigned, updateHeight]);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      if (
+        inputRef.current.cpf &&
+        inputRef.current?.cpf?.matches(':-internal-autofill-selected') &&
+        !hasCpfAutoFilled
+      ) {
+        setSectionState(true);
+        setHasCpfAutoFilled(true);
+      }
+
+      if (
+        inputRef.current.phone_number &&
+        inputRef.current?.phone_number?.matches(
+          ':-internal-autofill-selected',
+        ) &&
+        !hasPhoneNumberAutoFilled
+      ) {
+        setSectionState(true);
+        setHasPhoneNumberAutoFilled(true);
+      }
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, 500);
+
+    if (hasCpfAutoFilled && hasPhoneNumberAutoFilled) {
+      clearInterval(interval);
+    }
+
+    return () => {
+      clearInterval(interval);
+    };
+  }, [hasCpfAutoFilled, hasPhoneNumberAutoFilled]);
 
   const registryDataComponent = buildRegistryDataComponent();
 
@@ -107,17 +170,40 @@ function RegistryData(props: any) {
   }
 
   function buildRegistryDataComponent() {
+    const cpfRegex = /^[\d\.\-\s]*$/;
+    const inputRegex = /^[\d()-\+\s]*$/;
+    const phoneRegex =
+      /^((\((\d{2})\)\s9)([1-9])(\d{3})-(\d{4}))|(\+?\d{4}9[1-9]\d*)$/gi;
+
     const alertCpf =
       formData?.cpf.length === 14 ? `CPF inválido` : `Insira apenas números`;
     const alertPhonenumber =
-      formData?.phone_number.length === 15
+      formData?.phone_number.length >= 13
         ? `Telefone inválido`
         : `Insira apenas números`;
 
     return (
       <div ref={sectionRef} className='form-group'>
-        <section className='input-section'>
-          <AiFillIdcard className='input-section__cpf-icon' />
+        <section
+          className={`input-section  ${
+            cpfRegex.test(formData?.cpf)
+              ? validCpf
+                ? ''
+                : 'push-bottom'
+              : 'push-bottom'
+          }`}
+        >
+          <MdFormatClear
+            className={`input-section__reset-icon position-left ${
+              hasCpfAutoFilled ? '' : 'hidden'
+            }`}
+            onClick={handleResetCpf}
+          />
+          <AiFillIdcard
+            className={`input-section__cpf-icon ${
+              hasCpfAutoFilled ? 'input-section__cpf-icon--active' : ''
+            } ${validCpf ? '' : 'input-section__cpf-icon--invalid'}`}
+          />
           <input
             type='text'
             name='cpf'
@@ -125,11 +211,16 @@ function RegistryData(props: any) {
             maxLength={14}
             pattern='^[\d\.\-\s]*$'
             value={formData?.cpf}
-            className='input-field input-spacedout-field'
+            className={`input-field input-spacedout-field ${
+              hasCpfAutoFilled && formData.cpf.length > 0
+                ? 'input-field--active'
+                : ''
+            }`}
             ref={(element) => (inputRef.current['cpf'] = element)}
             onChange={handleCPFInput}
             onFocus={handleInputFocus}
             onBlur={handleInputBlur}
+            disabled={hasCpfAutoFilled && formData.cpf.length > 0}
             required
           />
           <span className='highlight'></span>
@@ -138,7 +229,19 @@ function RegistryData(props: any) {
           <p className={showAlertCpf()}>{alertCpf}</p>
         </section>
         <section className='input-section'>
-          <FaMobile className='input-section__phone-icon' />
+          <MdFormatClear
+            className={`input-section__reset-icon position-left ${
+              hasPhoneNumberAutoFilled ? '' : 'hidden'
+            }`}
+            onClick={handleResetPhoneNumber}
+          />
+          <FaMobile
+            className={`input-section__phone-icon ${
+              hasPhoneNumberAutoFilled
+                ? 'input-section__phone-icon--active'
+                : ''
+            }`}
+          />
           <input
             type='text'
             name='phone_number'
@@ -146,10 +249,17 @@ function RegistryData(props: any) {
             pattern='^[\d()-\+\s]*$'
             value={formData?.phone_number}
             ref={(element) => (inputRef.current['phone_number'] = element)}
-            className='input-field input-spacedout-field'
+            className={`input-field input-spacedout-field ${
+              hasPhoneNumberAutoFilled && formData.phone_number.length > 0
+                ? 'input-field--active'
+                : ''
+            }`}
             onChange={handlePhoneInput}
             onFocus={handleInputFocus}
             onBlur={handleInputBlur}
+            disabled={
+              hasPhoneNumberAutoFilled && formData.phone_number.length > 0
+            }
             required
           />
           <span className='highlight'></span>
@@ -161,6 +271,22 @@ function RegistryData(props: any) {
         <SelectGenderIdentity />
       </div>
     );
+
+    function handleResetCpf() {
+      setFormData({
+        ...formData,
+        cpf: '',
+      });
+      setHasCpfAutoFilled(false);
+    }
+
+    function handleResetPhoneNumber() {
+      setFormData({
+        ...formData,
+        phone_number: '',
+      });
+      setHasPhoneNumberAutoFilled(false);
+    }
 
     function handleCPFInput(e: ChangeEvent<HTMLInputElement>) {
       const { value } = e.target;
@@ -234,11 +360,7 @@ function RegistryData(props: any) {
     }
 
     function showAlertPhonenumber() {
-      const phoneRegex =
-        /^((\((\d{2})\)\s9)([1-9])(\d{3})-(\d{4}))|(\+\d{4}9[1-9]\d*)$/gi;
       const validPhonenumber = phoneRegex.test(formData?.phone_number);
-
-      const inputRegex = /^[\d()-\+\s]*$/;
       const containsOnlyNumbers = inputRegex.test(formData?.phone_number);
       const transparent = containsOnlyNumbers
         ? formData?.phone_number.length >= 14
@@ -252,7 +374,6 @@ function RegistryData(props: any) {
     }
 
     function showAlertCpf() {
-      const cpfRegex = /^[\d\.\-\s]*$/;
       const containsOnlyNumbers = cpfRegex.test(formData?.cpf);
       const transparent = containsOnlyNumbers
         ? validCpf

@@ -12,8 +12,9 @@ import { confirmAlert } from 'react-confirm-alert';
 
 import {
   MdCalendarViewDay,
-  MdFormatClear,
   MdViewHeadline,
+  MdFormatClear,
+  MdLayersClear,
 } from 'react-icons/md';
 import { IoMdCheckmarkCircleOutline } from 'react-icons/io';
 import { FaMapMarkerAlt } from 'react-icons/fa';
@@ -23,6 +24,23 @@ import axios from 'axios';
 
 type InputRef = {
   [x: string]: HTMLInputElement | null;
+};
+type AddressStrings =
+  | 'street'
+  | 'number'
+  | 'complement'
+  | 'neighborhood'
+  | 'city'
+  | 'state'
+  | 'postal_code';
+type AddressBooleanStates = {
+  postal_code: boolean;
+  street: boolean;
+  number: boolean;
+  complement: boolean;
+  neighborhood: boolean;
+  city: boolean;
+  state: boolean;
 };
 
 const STATES_MAP: { [x: string]: string } = {
@@ -55,15 +73,24 @@ const STATES_MAP: { [x: string]: string } = {
   TO: 'Tocantins',
 };
 
+// TODO refactor: component has too many responsibilities
+
 function AddressData() {
+  const [validCEP, setValidCEP] = useState<boolean>(false);
   const [expandSection, setSectionState] = useState<boolean>(false);
   const [height, setHeight] = useState<number | string>(0);
 
   const [hasFired, setHasFired] = useState<boolean>(false);
   const [forceAlert, setForceAlert] = useState<boolean>(false);
-  const [hasAutoFilled, setHasAutoFilled] = useState<boolean>(false);
-  const [hasComplementAutofilled, setHasComplementAutofilled] =
-    useState<boolean>(false);
+  const [hasAutoFilled, setHasAutoFilled] = useState<AddressBooleanStates>({
+    postal_code: false,
+    street: false,
+    number: false,
+    complement: false,
+    neighborhood: false,
+    city: false,
+    state: false,
+  });
 
   const inputRef = useRef<InputRef>({
     street: null,
@@ -100,23 +127,109 @@ function AddressData() {
       cityIsSet &&
       stateIsSet;
 
-    if (isComplete) {
+    if (isComplete && !isSectionComplete.address) {
       setIsSectionComplete({
         ...isSectionComplete,
         address: true,
       });
-    }
+    } else if (!isComplete && isSectionComplete.address)
+      setIsSectionComplete({
+        ...isSectionComplete,
+        address: false,
+      });
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [formData]);
+  }, [formData, hasAutoFilled]);
 
   useEffect(() => {
-    if (inputRef.current?.complement) {
-      if (inputRef.current?.complement?.matches(':-internal-autofill-selected'))
-        setHasComplementAutofilled(true);
-      else setHasComplementAutofilled(false);
+    const interval = setInterval(() => {
+      if (
+        inputRef.current?.postal_code &&
+        inputRef.current?.postal_code?.matches(
+          ':-internal-autofill-selected',
+        ) &&
+        !hasAutoFilled.postal_code
+      ) {
+        setSectionState(true);
+        setHasAutoFilled({ ...hasAutoFilled, postal_code: true });
+      }
+
+      if (
+        inputRef.current?.street &&
+        inputRef.current?.street?.matches(':-internal-autofill-selected') &&
+        !hasAutoFilled.street
+      ) {
+        setSectionState(true);
+        setHasAutoFilled({ ...hasAutoFilled, street: true });
+      }
+
+      if (
+        inputRef.current?.number &&
+        inputRef.current?.number?.matches(':-internal-autofill-selected') &&
+        !hasAutoFilled.number
+      ) {
+        setSectionState(true);
+        setHasAutoFilled({ ...hasAutoFilled, number: true });
+      }
+
+      if (
+        inputRef.current?.complement &&
+        inputRef.current?.complement?.matches(':-internal-autofill-selected') &&
+        !hasAutoFilled.complement
+      ) {
+        setSectionState(true);
+        setHasAutoFilled({ ...hasAutoFilled, complement: true });
+      }
+
+      if (
+        inputRef.current?.neighborhood &&
+        inputRef.current?.neighborhood?.matches(
+          ':-internal-autofill-selected',
+        ) &&
+        !hasAutoFilled.neighborhood
+      ) {
+        setSectionState(true);
+        setHasAutoFilled({ ...hasAutoFilled, neighborhood: true });
+      }
+
+      if (
+        inputRef.current?.city &&
+        inputRef.current?.city?.matches(':-internal-autofill-selected') &&
+        !hasAutoFilled.city
+      ) {
+        setSectionState(true);
+        setHasAutoFilled({ ...hasAutoFilled, city: true });
+      }
+
+      if (
+        inputRef.current?.state &&
+        inputRef.current?.state?.matches(':-internal-autofill-selected') &&
+        !hasAutoFilled.state
+      ) {
+        setSectionState(true);
+        setHasAutoFilled({ ...hasAutoFilled, state: true });
+      }
+
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, 500);
+
+    if (
+      hasAutoFilled.city &&
+      hasAutoFilled.state &&
+      hasAutoFilled.postal_code &&
+      hasAutoFilled.street &&
+      hasAutoFilled.number &&
+      hasAutoFilled.complement &&
+      hasAutoFilled.neighborhood
+    ) {
+      clearInterval(interval);
     }
-  }, [inputRef.current?.complement]);
+
+    return () => {
+      clearInterval(interval);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [hasAutoFilled]);
 
   useEffect(() => {
     if (sectionRef.current) {
@@ -126,10 +239,23 @@ function AddressData() {
     }
   }, [expandSection, updateHeight]);
 
+  useEffect(() => {
+    const onlyNumbersRegex = /^[\d\-\s]*$/;
+    const regexCEP = /^\d{5}-\d{3}$/;
+
+    if (formData?.postal_code.length === 9) {
+      setAlertCEPText('CEP inválido');
+      setValidCEP(regexCEP.test(formData?.postal_code));
+    } else {
+      if (alertCEPText !== 'Insira apenas números')
+        setAlertCEPText('Insira apenas números');
+      setValidCEP(onlyNumbersRegex.test(formData?.postal_code));
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [formData.postal_code]);
+
   const [alertCEPText, setAlertCEPText] = useState<string>(
-    formData?.postal_code.length === 9
-      ? `CEP inválido`
-      : `Insira apenas números`,
+    'Insira apenas números',
   );
   const addressDataComponent = buildAddressDataComponent();
 
@@ -183,13 +309,15 @@ function AddressData() {
   }
 
   async function getAddressData(value?: string | undefined) {
-    if (hasFired) return null;
+    if (hasFired || !validCEP) return null;
 
     const replaceRegex = /(\-|\s)/gi;
     const input = formData?.postal_code.replaceAll(replaceRegex, '');
     const optInput = value?.replaceAll(replaceRegex, '');
 
-    const cep = optInput ?? input;
+    if (input.length !== 8 && optInput?.length !== 8) return null;
+
+    const cep = optInput?.length === 8 ? optInput : input;
     const API_URL = `https://viacep.com.br/ws/${cep}/json/`;
     try {
       setHasFired(true);
@@ -204,45 +332,48 @@ function AddressData() {
 
       if (street.includes('Avenida')) street = street.replace('Avenida', 'Av.');
       state = STATES_MAP[state] ?? state;
+      const postal_code = `${cep.substring(0, 5)}-${cep.substring(5)}`;
 
-      setHasAutoFilled(true);
       setFormData({
         ...formData,
-        postal_code: cep,
+        postal_code,
         street,
         neighborhood,
         city,
         state,
       });
-      inputRef.current.street?.classList.add('input-field--active');
-      inputRef.current.neighborhood?.classList.add('input-field--active');
-      inputRef.current.city?.classList.add('input-field--active');
-      inputRef.current.state?.classList.add('input-field--active');
+      setHasAutoFilled({
+        ...hasAutoFilled,
+        neighborhood: true,
+        postal_code: true,
+        street: true,
+        city: true,
+        state: true,
+      });
     } catch (error) {
       setHasFired(false);
+      setValidCEP(false);
       return handleError(error);
     }
   }
 
   function buildAddressDataComponent() {
     const onlyNumbersRegex = /^[\d\-\s]*$/;
-    const regexCEP = /^\d{5}-\d{3}$/;
-    const validCEP = regexCEP.test(formData.postal_code);
 
     return (
       <div ref={sectionRef} className='form-group'>
         <section className='input-section postal-code-input'>
           <FaMapMarkerAlt
-            className={`postal-code-input__submit-icon${
-              hasFired ? '--active' : ''
+            className={`postal-code-input__submit-icon ${
+              hasFired ? 'postal-code-input__submit-icon--active' : ''
             }`}
             onClick={handleClick}
           />
-          <MdFormatClear
-            className={`postal-code-input__reset-icon ${
-              hasFired ? '' : 'hidden'
+          <MdLayersClear
+            className={`input-section__reset-icon position-left ${
+              hasAutoFilled.postal_code ? '' : 'hidden'
             }`}
-            onClick={handleReset}
+            onClick={handleHardReset}
           />
           <input
             type='text'
@@ -251,14 +382,20 @@ function AddressData() {
             name='postal_code'
             pattern='^[\d\-\s]*$'
             value={formData?.postal_code}
-            className='input-field input-spacedout-field'
+            className={`input-field input-spacedout-field ${
+              hasAutoFilled.postal_code && formData.postal_code.length > 0
+                ? 'input-field--active'
+                : ''
+            }`}
             ref={(element) => (inputRef.current['postal_code'] = element)}
             onChange={handleCEPInput}
             onFocus={handleInputFocus}
             onKeyDown={handleKeyDown}
             onBlur={handleInputBlur}
             required
-            disabled={hasAutoFilled && formData?.postal_code.length > 0}
+            disabled={
+              hasAutoFilled.postal_code && formData?.postal_code.length > 0
+            }
           />
           <span className='highlight'></span>
           <span className='bar'></span>
@@ -266,34 +403,54 @@ function AddressData() {
           <p className={alertCEPTextClassName()}>{alertCEPText}</p>
         </section>
         <section className='input-section'>
+          <MdFormatClear
+            className={`input-section__reset-icon ${
+              hasAutoFilled.street ? '' : 'hidden'
+            }`}
+            onClick={() => handleReset('street')}
+          />
           <input
             type='text'
             name='street'
             maxLength={40}
             value={formData?.street}
             ref={(element) => (inputRef.current['street'] = element)}
-            className='input-field'
+            className={`input-field ${
+              hasAutoFilled.street && formData.street.length > 0
+                ? 'input-field--active'
+                : ''
+            }`}
             onChange={handleInputChange}
             onFocus={handleInputFocus}
             onBlur={handleInputBlur}
-            disabled={hasAutoFilled && formData?.street.length > 0}
+            disabled={hasAutoFilled.street && formData?.street.length > 0}
           />
           <span className='highlight'></span>
           <span className='bar'></span>
           <label className='label-text'>Logradouro</label>
         </section>
         <section className='input-section'>
+          <MdFormatClear
+            className={`input-section__reset-icon ${
+              hasAutoFilled.number ? '' : 'hidden'
+            }`}
+            onClick={() => handleReset('number')}
+          />
           <input
             type='text'
             name='number'
             maxLength={10}
             value={formData?.number}
             ref={(element) => (inputRef.current['number'] = element)}
-            className='input-field input-spacedout-field'
+            className={`input-field input-spacedout-field ${
+              hasAutoFilled.number && formData.number.length > 0
+                ? 'input-field--active'
+                : ''
+            }`}
             onChange={handleInputChange}
             onFocus={handleInputFocus}
             onBlur={handleInputBlur}
-            disabled={hasAutoFilled && formData?.number.length > 0}
+            disabled={hasAutoFilled.number && formData?.number.length > 0}
             required
           />
           <span className='highlight'></span>
@@ -301,17 +458,29 @@ function AddressData() {
           <label className='label-text'>Número</label>
         </section>
         <section className='input-section'>
+          <MdFormatClear
+            className={`input-section__reset-icon ${
+              hasAutoFilled.neighborhood ? '' : 'hidden'
+            }`}
+            onClick={() => handleReset('neighborhood')}
+          />
           <input
             type='text'
             name='neighborhood'
             maxLength={40}
             value={formData?.neighborhood}
             ref={(element) => (inputRef.current['neighborhood'] = element)}
-            className='input-field input-spacedout-field'
+            className={`input-field input-spacedout-field ${
+              hasAutoFilled.neighborhood && formData.neighborhood.length > 0
+                ? 'input-field--active'
+                : ''
+            }`}
             onChange={handleInputChange}
             onFocus={handleInputFocus}
             onBlur={handleInputBlur}
-            disabled={hasAutoFilled && formData?.neighborhood.length > 0}
+            disabled={
+              hasAutoFilled.neighborhood && formData?.neighborhood.length > 0
+            }
             required
           />
           <span className='highlight'></span>
@@ -319,17 +488,27 @@ function AddressData() {
           <label className='label-text'>Bairro</label>
         </section>
         <section className='input-section'>
+          <MdFormatClear
+            className={`input-section__reset-icon ${
+              hasAutoFilled.city ? '' : 'hidden'
+            }`}
+            onClick={() => handleReset('city')}
+          />
           <input
             type='text'
             name='city'
             maxLength={10}
             value={formData?.city}
             ref={(element) => (inputRef.current['city'] = element)}
-            className='input-field input-spacedout-field'
+            className={`input-field input-spacedout-field ${
+              hasAutoFilled.city && formData.city.length > 0
+                ? 'input-field--active'
+                : ''
+            }`}
             onChange={handleInputChange}
             onFocus={handleInputFocus}
             onBlur={handleInputBlur}
-            disabled={hasAutoFilled && formData?.city.length > 0}
+            disabled={hasAutoFilled.city && formData?.city.length > 0}
             required
           />
           <span className='highlight'></span>
@@ -337,17 +516,27 @@ function AddressData() {
           <label className='label-text'>Cidade</label>
         </section>
         <section className='input-section'>
+          <MdFormatClear
+            className={`input-section__reset-icon ${
+              hasAutoFilled.state ? '' : 'hidden'
+            }`}
+            onClick={() => handleReset('state')}
+          />
           <input
             type='text'
             name='state'
             maxLength={10}
             value={formData?.state}
             ref={(element) => (inputRef.current['state'] = element)}
-            className='input-field input-spacedout-field'
+            className={`input-field input-spacedout-field ${
+              hasAutoFilled.state && formData.state.length > 0
+                ? 'input-field--active'
+                : ''
+            }`}
             onChange={handleInputChange}
             onFocus={handleInputFocus}
             onBlur={handleInputBlur}
-            disabled={hasAutoFilled && formData?.state.length > 0}
+            disabled={hasAutoFilled.state && formData?.state.length > 0}
             required
           />
           <span className='highlight'></span>
@@ -355,17 +544,29 @@ function AddressData() {
           <label className='label-text'>Estado</label>
         </section>
         <section className='input-section'>
+          <MdFormatClear
+            className={`input-section__reset-icon ${
+              hasAutoFilled.complement ? '' : 'hidden'
+            }`}
+            onClick={() => handleReset('complement')}
+          />
           <input
             type='text'
             name='complement'
             maxLength={25}
             value={formData?.complement}
-            className='input-field input-spacedout-field'
+            className={`input-field input-spacedout-field ${
+              hasAutoFilled.complement && formData.complement.length > 0
+                ? 'input-field--active'
+                : ''
+            }`}
             ref={(element) => (inputRef.current['complement'] = element)}
             onChange={handleInputChange}
             onFocus={handleInputFocus}
             onBlur={handleInputBlur}
-            disabled={hasComplementAutofilled}
+            disabled={
+              hasAutoFilled.complement && formData?.complement.length > 0
+            }
           />
           <span className='highlight'></span>
           <span className='bar'></span>
@@ -374,7 +575,15 @@ function AddressData() {
       </div>
     );
 
-    function handleReset(_e: MouseEvent<HTMLOrSVGElement>) {
+    function handleReset(name: AddressStrings) {
+      setFormData({
+        ...formData,
+        [name]: '',
+      });
+      setHasAutoFilled({ ...hasAutoFilled, [name]: false });
+    }
+
+    function handleHardReset() {
       setFormData({
         postal_code: '',
         street: '',
@@ -385,16 +594,15 @@ function AddressData() {
         complement: '',
       });
       setHasFired(false);
-      setHasAutoFilled(false);
-      setAlertCEPText('');
-
-      inputRef.current.neighborhood?.classList.remove('input-field--active');
-      inputRef.current.postal_code?.classList.remove('input-field--active');
-      inputRef.current.complement?.classList.remove('input-field--active');
-      inputRef.current.number?.classList.remove('input-field--active');
-      inputRef.current.street?.classList.remove('input-field--active');
-      inputRef.current.city?.classList.remove('input-field--active');
-      inputRef.current.state?.classList.remove('input-field--active');
+      setHasAutoFilled({
+        postal_code: false,
+        street: false,
+        number: false,
+        complement: false,
+        neighborhood: false,
+        city: false,
+        state: false,
+      });
     }
 
     function handleClick(_e: MouseEvent<HTMLOrSVGElement>) {
@@ -446,7 +654,11 @@ function AddressData() {
     }
 
     function handleInputBlur(e: FocusEvent<HTMLInputElement>) {
-      if (e.target.name === 'postal_code' && validCEP) {
+      if (
+        e.target.name === 'postal_code' &&
+        formData?.postal_code.length === 9 &&
+        validCEP
+      ) {
         getAddressData();
       }
 

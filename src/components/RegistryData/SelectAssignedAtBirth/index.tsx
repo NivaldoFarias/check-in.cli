@@ -7,15 +7,13 @@ import {
   useRef,
 } from 'react';
 
+import { MdFormatClear } from 'react-icons/md';
 import DataContext from '../../../contexts/DataContext';
 import CustomSelect from './CustomSelect';
 
-type InputRef = {
-  [x: string]: HTMLInputElement | null;
-};
-
 function SelectAssignedAtBirth() {
   const [showOptionalInput, setShowOptionalInput] = useState<boolean>(false);
+  const [hasAutoFilled, setHasAutoFilled] = useState<boolean>(false);
 
   const {
     registryData: formData,
@@ -24,17 +22,10 @@ function SelectAssignedAtBirth() {
     setUpdateHeight,
     updateHeight,
     setHasAssignedCleared: setHasCleared,
-    hasAssignedCleared: shasCleared,
+    hasAssignedCleared: hasCleared,
   } = useContext(DataContext);
 
-  const inputRef = useRef<InputRef>({
-    gender: null,
-    assigned_at_birth: null,
-    rg: null,
-    personal_number: null,
-    household_number: null,
-    described_identity: null,
-  });
+  const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     if (formData.assigned_at_birth === 'SELF_DESCRIBED') {
@@ -45,7 +36,7 @@ function SelectAssignedAtBirth() {
   }, [formData.assigned_at_birth, selectAssigned]);
 
   useEffect(() => {
-    if (shasCleared) {
+    if (hasCleared) {
       if (showOptionalInput) {
         setShowOptionalInput(false);
       }
@@ -53,7 +44,30 @@ function SelectAssignedAtBirth() {
       setUpdateHeight(!updateHeight);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [shasCleared]);
+  }, [hasCleared]);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      if (
+        inputRef.current &&
+        inputRef.current?.matches(':-internal-autofill-selected') &&
+        !hasAutoFilled
+      ) {
+        setHasAutoFilled(true);
+      }
+
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, 500);
+
+    if (hasAutoFilled) {
+      clearInterval(interval);
+    }
+
+    return () => {
+      clearInterval(interval);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [hasAutoFilled]);
 
   const selectAssignedAtBirthComponent = buildSelectAssignedAtBirthComponent();
 
@@ -69,18 +83,33 @@ function SelectAssignedAtBirth() {
         <section
           className={`input-section ${showOptionalInput ? '' : 'hidden'}`}
         >
+          <MdFormatClear
+            className={`input-section__reset-icon ${
+              hasAutoFilled ? '' : 'hidden'
+            }`}
+            onClick={handleReset}
+          />
           <input
             type='text'
             name='described_assigned'
-            maxLength={30}
+            maxLength={40}
             value={formData?.described_assigned}
-            ref={(element) =>
-              (inputRef.current['described_assigned'] = element)
-            }
-            className='input-field input-spacedout-field'
+            ref={inputRef}
+            className={`input-field ${
+              hasAutoFilled &&
+              !!formData.described_assigned &&
+              formData.described_assigned.length > 0
+                ? 'input-field--active'
+                : ''
+            }`}
             onChange={handleInputChange}
             onFocus={handleInputFocus}
             onBlur={handleInputBlur}
+            disabled={
+              hasAutoFilled &&
+              !!formData.described_assigned &&
+              formData?.described_assigned.length > 0
+            }
           />
           <span className='highlight'></span>
           <span className='bar'></span>
@@ -89,20 +118,26 @@ function SelectAssignedAtBirth() {
       </>
     );
 
+    function handleReset() {
+      setFormData({
+        ...formData,
+        described_assigned: '',
+      });
+      setHasAutoFilled(false);
+    }
+
     function handleInputChange(e: ChangeEvent<HTMLInputElement>) {
       setFormData({ ...formData, [e.target.name]: e.target.value });
     }
 
-    function handleInputFocus(e: FocusEvent<HTMLInputElement>) {
-      return inputRef.current[e.target.name]?.classList.add(
-        'input-field--focused',
-      );
+    function handleInputFocus(_e: FocusEvent<HTMLInputElement>) {
+      return inputRef.current?.classList.add('input-field--active');
     }
 
     function handleInputBlur(e: FocusEvent<HTMLInputElement>) {
-      return inputRef.current[e.target.name]?.classList.remove(
-        'input-field--focused',
-      );
+      if (e.target.value.length !== 0) return null;
+
+      return inputRef.current?.classList.remove('input-field--active');
     }
   }
 }

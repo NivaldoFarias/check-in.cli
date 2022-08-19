@@ -5,9 +5,14 @@ import {
   useState,
   useEffect,
   useRef,
+  MouseEvent,
 } from 'react';
 
-import { MdViewHeadline, MdCalendarViewDay } from 'react-icons/md';
+import {
+  MdViewHeadline,
+  MdCalendarViewDay,
+  MdFormatClear,
+} from 'react-icons/md';
 import { IoMdCheckmarkCircleOutline } from 'react-icons/io';
 
 import DataContext from '../../contexts/DataContext';
@@ -59,28 +64,36 @@ function CommonData() {
     const isComplete =
       birthdateIsSet && socialNameIsSet && fullNameIsSet && insuranceIsSet;
 
-    if (isComplete) {
+    if (isComplete && !isSectionComplete.common) {
       setIsSectionComplete({
         ...isSectionComplete,
         common: true,
       });
-    }
+    } else if (!isComplete && isSectionComplete.common)
+      setIsSectionComplete({
+        ...isSectionComplete,
+        common: false,
+      });
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [formData]);
+  }, [formData, hasFirstNameAutoFilled, hasFullNameAutoFilled]);
 
   useEffect(() => {
     const interval = setInterval(() => {
       if (
         inputRef.current.first_name &&
-        inputRef.current?.first_name?.matches(':-internal-autofill-selected')
+        inputRef.current?.first_name?.matches(':-internal-autofill-selected') &&
+        !hasFirstNameAutoFilled
       ) {
+        setSectionState(true);
         setHasFirstNameAutoFilled(true);
       }
 
       if (
         inputRef.current.full_name &&
-        inputRef.current?.full_name?.matches(':-internal-autofill-selected')
+        inputRef.current?.full_name?.matches(':-internal-autofill-selected') &&
+        !hasFullNameAutoFilled
       ) {
+        setSectionState(true);
         setHasFullNameAutoFilled(true);
       }
       // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -138,6 +151,12 @@ function CommonData() {
     return (
       <div ref={sectionRef} className='form-group'>
         <section className='input-section'>
+          <MdFormatClear
+            className={`input-section__reset-icon ${
+              hasFirstNameAutoFilled ? '' : 'hidden'
+            }`}
+            onClick={() => handleReset('first_name')}
+          />
           <input
             ref={(element) => (inputRef.current['first_name'] = element)}
             type='text'
@@ -160,17 +179,22 @@ function CommonData() {
           <span className='highlight'></span>
           <span className='bar'></span>
           <label className='label-text'>
-            Primeiro nome{' '}
-            <span className='tidy-field'>&nbsp;(nome próprio)</span>
+            Nome <span className='tidy-field'>&nbsp;(apelido)</span>
           </label>
         </section>
         <section className='input-section'>
+          <MdFormatClear
+            className={`input-section__reset-icon ${
+              hasFullNameAutoFilled ? '' : 'hidden'
+            }`}
+            onClick={() => handleReset('full_name')}
+          />
           <input
             type='text'
             minLength={1}
             maxLength={35}
             name='full_name'
-            className={`input-field ${
+            className={`input-field tidy-field ${
               hasFullNameAutoFilled && formData.full_name.length > 0
                 ? 'input-field--active'
                 : ''
@@ -212,6 +236,15 @@ function CommonData() {
         </section>
       </div>
     );
+
+    function handleReset(name: 'full_name' | 'first_name') {
+      setFormData({
+        ...formData,
+        [name]: '',
+      });
+      if (name === 'full_name') setHasFullNameAutoFilled(false);
+      else if (name === 'first_name') setHasFirstNameAutoFilled(false);
+    }
 
     function handleBirthdateInput(e: ChangeEvent<HTMLInputElement>) {
       setCountDateInputs(countDateInputs + 1);

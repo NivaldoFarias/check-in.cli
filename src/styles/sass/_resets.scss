@@ -9,9 +9,6 @@
 
   box-sizing: border-box;
   transition: all 200ms ease-in-out 0s;
-
-  -ms-overflow-style: none; /* for IE, Edge */
-  scrollbar-width: none; /* for Firefox */
 }
 ::-webkit-scrollbar {
   display: none;

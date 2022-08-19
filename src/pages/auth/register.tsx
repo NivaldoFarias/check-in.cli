@@ -1,5 +1,4 @@
-import { FormEvent, useContext, useEffect, useState } from 'react';
-import { validate } from 'gerador-validador-cpf';
+import { FormEvent, useContext, useRef } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 
@@ -13,21 +12,22 @@ import AddressData from '../../components/AddressData/index';
 import { getRandomInt } from '../../utils/functions.util';
 
 function Register() {
-  const [validCpf, setValidCpf] = useState<boolean>(true);
-
-  const { isSectionComplete, registryData, hasSubmitted, setHasSubmitted } =
+  const { isSectionComplete, hasSubmitted, setHasSubmitted } =
     useContext(DataContext);
+  const pageRef = useRef<HTMLDivElement>(null);
 
   const RegisterPage = buildRegisterPage();
 
-  useEffect(() => {
-    if (registryData?.cpf.length === 14) {
-      setValidCpf(validate(registryData?.cpf));
-    } else setValidCpf(true);
-  }, [registryData.cpf]);
-
   return (
-    <div id='register-page' className='auth-page'>
+    <div
+      ref={pageRef}
+      id='register-page'
+      className='auth-page'
+      onLoad={() => {
+        pageRef.current?.classList.add('has-loaded');
+      }}
+      onLoadCapture={() => pageRef.current?.classList.add('has-loaded')}
+    >
       <Image
         className='background-image'
         objectFit='cover'
@@ -35,6 +35,7 @@ function Register() {
         alt='background image'
         priority={true}
         quality={100}
+        layout='fill'
       />
       {RegisterPage}
     </div>
@@ -46,7 +47,7 @@ function Register() {
         <h1 className='title-card'>Cadastro</h1>
         <div className='form-sections-wrapper'>
           <CommonData />
-          <RegistryData validCpf={validCpf} />
+          <RegistryData />
           <AddressData />
         </div>
         <div className='footer-section'>
@@ -77,3 +78,5 @@ function Register() {
 }
 
 export default Register;
+
+// TODO feat: add smooth transition between pages
