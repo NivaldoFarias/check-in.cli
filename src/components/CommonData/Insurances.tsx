@@ -1,10 +1,10 @@
-import { FocusEvent, MouseEvent, useContext } from 'react';
+import { MouseEvent, useContext } from 'react';
 import Select, {
   components,
   DropdownIndicatorProps,
+  InputActionMeta,
   InputProps,
 } from 'react-select';
-import type { ControlProps } from 'react-select';
 import DataContext from '../../contexts/DataContext';
 import SingleValue from './SingleValue';
 
@@ -55,22 +55,6 @@ function Insurance({ updateValue }: UpdateValue) {
 
   const { selectInsurance, setSelectInsurance } = useContext(DataContext);
 
-  const Control = (props: ControlProps) => {
-    const { children } = props;
-
-    return (
-      <div onClick={handleClick}>
-        <components.Control {...props}>{children}</components.Control>
-      </div>
-    );
-
-    function handleClick(e: MouseEvent<HTMLElement>) {
-      e.preventDefault();
-      e.stopPropagation();
-      setSelectInsurance(!selectInsurance);
-    }
-  };
-
   const DropdownIndicator = (props: DropdownIndicatorProps) => {
     const { children } = props;
     const dropdownStyles = {
@@ -97,15 +81,14 @@ function Insurance({ updateValue }: UpdateValue) {
   };
 
   return (
-    <>
+    <div onClick={handleClick}>
       <Select
         options={options}
-        components={{ Control, DropdownIndicator, Input, SingleValue }}
+        components={{ DropdownIndicator, Input, SingleValue }}
         isClearable={true}
         isSearchable={true}
         menuIsOpen={selectInsurance}
         openMenuOnFocus={true}
-        openMenuOnClick={true}
         blurInputOnSelect={true}
         tabSelectsValue={true}
         backspaceRemovesValue={true}
@@ -113,19 +96,30 @@ function Insurance({ updateValue }: UpdateValue) {
         className='select-wrapper'
         classNamePrefix='select-wrapper'
         placeholder='Selecione o convênio'
+        onInputChange={handleInputChange}
         onFocus={handleInputFocus}
-        onBlur={handleInputBlur}
       />
-    </>
+    </div>
   );
 
-  function handleInputFocus() {
-    setSelectInsurance(true);
+  function handleClick(e: MouseEvent<HTMLElement>) {
+    e.preventDefault();
+    e.stopPropagation();
+    setSelectInsurance(!selectInsurance);
   }
 
-  function handleInputBlur(e: FocusEvent<HTMLInputElement>) {
-    setSelectInsurance(false);
-    updateValue(e.target.value);
+  function handleInputFocus() {
+    if (!selectInsurance) setSelectInsurance(true);
+  }
+
+  function handleInputChange(newValue: string, actionMeta: InputActionMeta) {
+    console.log(newValue, actionMeta);
+    if (actionMeta.action === 'input-blur' || 'input-change') {
+      updateValue(newValue);
+    }
+    if (actionMeta.action === 'menu-close') {
+      setSelectInsurance(false);
+    }
   }
 }
 

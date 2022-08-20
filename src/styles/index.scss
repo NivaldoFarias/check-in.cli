@@ -238,7 +238,8 @@ body {
     .footer-section {
       @include flex(column, center, center, 35px);
     }
-    a, .return-btn {
+    a,
+    .return-btn {
       position: relative;
       z-index: 1;
 
@@ -615,10 +616,9 @@ body {
   .select-wrapper {
     position: relative;
     width: 300px;
+    cursor: pointer;
+    pointer-events: all;
 
-    > span {
-      cursor: pointer;
-    }
     &__control {
       position: relative;
       outline: none;
@@ -627,7 +627,9 @@ body {
       border-bottom: 2px solid $tertiary;
 
       box-shadow: none;
+
       background-color: transparent;
+      pointer-events: none;
     }
     &__menu {
       position: relative;
@@ -641,9 +643,13 @@ body {
       background-color: $secondary;
     }
     &__option {
-      &:hover {
-        cursor: pointer;
+      cursor: pointer;
+      pointer-events: all;
+
+      * {
+        pointer-events: none;
       }
+
       &--is-selected {
         color: initial;
         background-color: $tertiary;
@@ -658,12 +664,7 @@ body {
       }
     }
     &__value-container {
-      cursor: text;
       text-shadow: $font-shadow;
-
-      > * {
-        pointer-events: none;
-      }
     }
     &__input-container,
     &__placeholder,
@@ -675,17 +676,15 @@ body {
     &__indicator,
     &__clear-indicator {
       transition: all 100ms ease-in-out 0s;
+      cursor: pointer;
+      pointer-events: all;
+
+      * {
+        pointer-events: none;
+      }
 
       &:hover {
         color: $alert;
-
-        > svg {
-          pointer-events: all;
-          cursor: pointer;
-        }
-        * {
-          pointer-events: none;
-        }
       }
       &-separator {
         background-color: $alt-secondary;

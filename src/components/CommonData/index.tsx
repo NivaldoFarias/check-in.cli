@@ -54,7 +54,7 @@ function CommonData() {
         setHeight(sectionRef.current.getBoundingClientRect().height);
       } else setHeight(0);
     }
-  }, [expandSection, selectInsurance]);
+  }, [expandSection, selectInsurance, formData.insurance]);
 
   useEffect(() => {
     const birthdateIsSet = countDateInputs >= 4;
