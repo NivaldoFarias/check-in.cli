@@ -1,9 +1,11 @@
 import { MouseEvent, useContext } from 'react';
 import Select, {
   components,
-  DropdownIndicatorProps,
+  ControlProps,
   InputActionMeta,
   InputProps,
+  StylesConfig,
+  ValueContainerProps,
 } from 'react-select';
 import DataContext from '../../contexts/DataContext';
 import SingleValue from './SingleValue';
@@ -14,7 +16,7 @@ type UpdateValue = {
 
 function Insurance({ updateValue }: UpdateValue) {
   const options = [
-    { value: 'PRIVATE', label: 'Particular (sem convênio)' },
+    { value: 'PRIVATE', label: 'Particular (N/A)' },
     { value: 'ALLIANZ_SAUDE', label: 'Allianz Saúde' },
     { value: 'AMEPLAN_SAUDE', label: 'Ameplan Saúde' },
     { value: 'AMIL_FACIL', label: 'Amil Fácil' },
@@ -52,20 +54,22 @@ function Insurance({ updateValue }: UpdateValue) {
     { value: 'UNIHOSP_SAUDE', label: 'UniHosp Saúde' },
     { value: 'UNIMED_NACIONAL', label: 'Unimed Nacional' },
   ];
+  const customStyles: StylesConfig<any> = {
+    dropdownIndicator: (provided, _state) => ({
+      ...provided,
+      transform: selectInsurance ? 'rotate(180deg)' : 'rotate(0deg)',
+    }),
+  };
 
   const { selectInsurance, setSelectInsurance } = useContext(DataContext);
 
-  const DropdownIndicator = (props: DropdownIndicatorProps) => {
+  const ValueContainer = (props: ValueContainerProps) => {
     const { children } = props;
-    const dropdownStyles = {
-      transform: selectInsurance ? 'rotate(180deg)' : 'rotate(0deg)',
-    };
-
     return (
-      <div style={dropdownStyles}>
-        <components.DropdownIndicator {...props}>
+      <div className='value-container-on-click' onClick={handleClick}>
+        <components.ValueContainer {...props}>
           {children}
-        </components.DropdownIndicator>
+        </components.ValueContainer>
       </div>
     );
   };
@@ -81,39 +85,35 @@ function Insurance({ updateValue }: UpdateValue) {
   };
 
   return (
-    <div onClick={handleClick}>
-      <Select
-        options={options}
-        components={{ DropdownIndicator, Input, SingleValue }}
-        isClearable={true}
-        isSearchable={true}
-        menuIsOpen={selectInsurance}
-        openMenuOnFocus={true}
-        blurInputOnSelect={true}
-        tabSelectsValue={true}
-        backspaceRemovesValue={true}
-        menuShouldScrollIntoView={false}
-        className='select-wrapper'
-        classNamePrefix='select-wrapper'
-        placeholder='Selecione o convênio'
-        onInputChange={handleInputChange}
-        onFocus={handleInputFocus}
-      />
-    </div>
+    <Select
+      options={options}
+      styles={customStyles}
+      components={{ ValueContainer, Input, SingleValue }}
+      isClearable={true}
+      isSearchable={true}
+      menuIsOpen={selectInsurance}
+      openMenuOnFocus={true}
+      blurInputOnSelect={true}
+      tabSelectsValue={true}
+      backspaceRemovesValue={true}
+      menuShouldScrollIntoView={false}
+      className='select-wrapper'
+      classNamePrefix='select-wrapper'
+      placeholder='Selecione o convênio'
+      onInputChange={handleInputChange}
+      onFocus={handleInputFocus}
+    />
   );
-
-  function handleClick(e: MouseEvent<HTMLElement>) {
-    e.preventDefault();
-    e.stopPropagation();
-    setSelectInsurance(!selectInsurance);
-  }
 
   function handleInputFocus() {
     if (!selectInsurance) setSelectInsurance(true);
   }
+  function handleClick(_e: MouseEvent) {
+    console.log('click');
+    if (!selectInsurance) setSelectInsurance(true);
+  }
 
   function handleInputChange(newValue: string, actionMeta: InputActionMeta) {
-    console.log(newValue, actionMeta);
     if (actionMeta.action === 'input-blur' || 'input-change') {
       updateValue(newValue);
     }

@@ -616,20 +616,24 @@ body {
   .select-wrapper {
     position: relative;
     width: 300px;
-    cursor: pointer;
-    pointer-events: all;
 
     &__control {
       position: relative;
       outline: none;
       border: none;
       border-radius: 0px;
+      text-overflow: ellipsis;
+      flex-wrap: nowrap;
       border-bottom: 2px solid $tertiary;
 
       box-shadow: none;
+      pointer-events: all;
 
       background-color: transparent;
-      pointer-events: none;
+
+      * {
+        pointer-events: none;
+      }
     }
     &__menu {
       position: relative;
@@ -644,7 +648,7 @@ body {
     }
     &__option {
       cursor: pointer;
-      pointer-events: all;
+      pointer-events: bounding-box;
 
       * {
         pointer-events: none;
@@ -652,7 +656,7 @@ body {
 
       &--is-selected {
         color: initial;
-        background-color: $tertiary;
+        background-color: $tertiary !important;
       }
       &--is-focused {
         color: $alert;
@@ -663,7 +667,11 @@ body {
         background-color: $tertiary;
       }
     }
-    &__value-container {
+    &__value-container,
+    &__value-container--has-value {
+      cursor: pointer;
+      pointer-events: all;
+
       text-shadow: $font-shadow;
     }
     &__input-container,
@@ -676,8 +684,6 @@ body {
     &__indicator,
     &__clear-indicator {
       transition: all 100ms ease-in-out 0s;
-      cursor: pointer;
-      pointer-events: all;
 
       * {
         pointer-events: none;
@@ -690,9 +696,25 @@ body {
         background-color: $alt-secondary;
       }
     }
+    &__placeholder {
+      pointer-events: none;
+    }
+    &__clear-indicator {
+      cursor: pointer;
+      pointer-events: bounding-box;
+    }
+    &__indicator {
+      cursor: pointer;
+      pointer-events: bounding-box;
+    }
     &__single-value {
       font-weight: 400;
       letter-spacing: 2px;
+    }
+    .value-container-on-click {
+      width: fit-content;
+      cursor: pointer;
+      pointer-events: all;
     }
   }
   .create-password-section.form-group {
