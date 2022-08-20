@@ -7,14 +7,16 @@ interface Commons {
   first_name: string;
   birthdate: string;
   insurance: string;
+  password: string;
+  cpf?: string;
 }
 interface Registries {
   gender: string;
-  cpf: string;
   assigned_at_birth: string;
   described_identity?: string;
   described_assigned?: string;
   phone_number: string;
+  cpf?: string;
 }
 interface Addresses {
   street: string;

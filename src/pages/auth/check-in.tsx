@@ -69,7 +69,18 @@ function CheckIn() {
     };
   }, [hasAutoFilled]);
 
-  const checkInPage = buildCheckInPage();
+  useEffect(() => {
+    setTimeout(() => {
+      if (
+        pageRef.current &&
+        !pageRef.current.classList.contains('has-loaded')
+      ) {
+        pageRef.current.classList.add('has-loaded');
+      }
+    }, 100);
+  }, []);
+
+  const checkInForms = buildCheckInForms();
 
   return (
     <div
@@ -89,11 +100,11 @@ function CheckIn() {
         priority={true}
         quality={100}
       />
-      {checkInPage}
+      {checkInForms}
     </div>
   );
 
-  function buildCheckInPage() {
+  function buildCheckInForms() {
     const cpfRegex = /^[\d\.\-\s]*$/;
     const validateForm =
       validCpf && formData.password?.length > 6 && !hasSubmitted

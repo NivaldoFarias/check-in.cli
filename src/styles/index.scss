@@ -238,7 +238,7 @@ body {
     .footer-section {
       @include flex(column, center, center, 35px);
     }
-    a {
+    a, .return-btn {
       position: relative;
       z-index: 1;
 
@@ -695,6 +695,9 @@ body {
       font-weight: 400;
       letter-spacing: 2px;
     }
+  }
+  .create-password-section.form-group {
+    padding-top: 0px !important;
   }
 }
 #check-in-page {

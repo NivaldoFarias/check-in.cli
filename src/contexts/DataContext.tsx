@@ -30,6 +30,7 @@ const initialDataContextValue = {
     first_name: '',
     insurance: '',
     birthdate: '',
+    password: '',
   },
   setCommonData: () => {},
   registryData: {
@@ -57,6 +58,7 @@ const initialDataContextValue = {
       first_name: '',
       insurance: '',
       birthdate: '',
+      password: '',
     },
     registry: {
       gender: '',
@@ -106,6 +108,7 @@ function DataProvider(props: any) {
     first_name: '',
     insurance: '',
     birthdate: '',
+    password: '',
   });
   const [registryData, setRegistryData] = useState<Registries>({
     gender: '',
