@@ -8,7 +8,7 @@ interface Commons {
   birthdate: string;
   insurance: string;
   password: string;
-  cpf?: string;
+  cpf: string;
 }
 interface Registries {
   gender: string;
@@ -16,7 +16,6 @@ interface Registries {
   described_identity?: string;
   described_assigned?: string;
   phone_number: string;
-  cpf?: string;
 }
 interface Addresses {
   street: string;
@@ -26,11 +25,6 @@ interface Addresses {
   city: string;
   state: string;
   postal_code: string;
-}
-interface Forms {
-  common: Commons;
-  registry: Registries;
-  address: Addresses;
 }
 
 interface IsSectionCompleteState {
@@ -64,8 +58,6 @@ type DataContextGroup = {
   setRegistryData: Dispatch<SetStateAction<Registries>>;
   addressData: Addresses;
   setAddressData: Dispatch<SetStateAction<Addresses>>;
-  formData: Forms;
-  setFormData: Dispatch<SetStateAction<Forms>>;
 };
 
 export { Commons, Registries, Addresses, Forms };

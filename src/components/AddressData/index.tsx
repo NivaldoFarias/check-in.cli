@@ -298,7 +298,7 @@ function AddressData() {
     confirmAlert({
       message: `${
         error.response?.data?.message ?? 'Ops! Parece que algo deu errado'
-      }.\n\n Por favor, tente novamente.`,
+      }. Por favor, tente novamente.`,
       buttons: [
         {
           label: 'OK',
@@ -448,6 +448,7 @@ function AddressData() {
             type='text'
             name='number'
             maxLength={10}
+            inputMode='numeric'
             value={formData?.number}
             ref={(element) => (inputRef.current['number'] = element)}
             className={`input-field input-spacedout-field ${

@@ -1,11 +1,15 @@
-import Select, { ActionMeta, InputActionMeta } from 'react-select';
-import { useContext } from 'react';
+import Select, {
+  components,
+  ActionMeta,
+  InputActionMeta,
+  StylesConfig,
+  ValueContainerProps,
+} from 'react-select';
+import { MouseEvent, TouchEvent, useContext } from 'react';
 
 import DataContext from '../../../contexts/DataContext';
 
-import DropdownIndicator from './DropdownIndicator';
 import SingleValue from './SingleValue';
-import Control from './Control';
 import Input from './Input';
 
 function CustomSelect() {
@@ -15,6 +19,17 @@ function CustomSelect() {
     { value: 'INTERSEXO', label: 'Intersexo' },
     { value: 'SELF_DESCRIBED', label: 'Prefiro descrever' },
   ];
+  const customStyles: StylesConfig<any> = {
+    dropdownIndicator: (provided, _state) => ({
+      ...provided,
+      transform: selectAssigned ? 'rotate(180deg)' : 'rotate(0deg)',
+    }),
+    noOptionsMessage: (provided, _state) => ({
+      ...provided,
+      letterSpacing: '0px',
+      textShadow: 'none',
+    }),
+  };
 
   const {
     registryData,
@@ -23,50 +38,90 @@ function CustomSelect() {
     updateHeight,
     setUpdateHeight,
     setSelectAssigned,
+    hasAssignedCleared: hasCleared,
     setHasAssignedCleared: setHasCleared,
   } = useContext(DataContext);
+
+  const ValueContainer = (props: ValueContainerProps) => {
+    const { children } = props;
+    return (
+      <div
+        className='value-container-on-click'
+        onClick={handleClick}
+        onTouchEnd={handleTouchEnd}
+        onTouchStart={handleTouchStart}
+      >
+        <components.ValueContainer {...props}>
+          {children}
+        </components.ValueContainer>
+      </div>
+    );
+  };
 
   return (
     <>
       <Select
         options={options}
-        components={{ Control, DropdownIndicator, Input, SingleValue }}
-        isClearable={true}
-        isSearchable={true}
+        styles={customStyles}
         menuIsOpen={selectAssigned}
-        onChange={handleInputChange}
+        components={{ ValueContainer, Input, SingleValue }}
+        isClearable={true}
+        isSearchable={false}
         openMenuOnFocus={true}
         openMenuOnClick={true}
         tabSelectsValue={true}
         blurInputOnSelect={true}
         backspaceRemovesValue={true}
         menuShouldScrollIntoView={false}
+        placeholder='Selecionar'
         className='select-wrapper'
         classNamePrefix='select-wrapper'
-        placeholder='Selecionar'
+        onFocus={handleInputFocus}
+        onChange={handleSelectChange}
         onInputChange={handleInputChange}
-        onBlur={handleInputBlur}
       />
     </>
   );
 
-  function handleInputChange(
-    _newValue: string,
-    actionMeta: InputActionMeta | ActionMeta<any>,
-  ) {
-    if (!selectAssigned && actionMeta.action === 'input-change')
+  function handleInputFocus() {
+    if (!selectAssigned && !hasCleared) {
       setSelectAssigned(true);
-    else if (actionMeta.action === 'clear') {
-      setRegistryData({ ...registryData, assigned_at_birth: '' });
-      setSelectAssigned(false);
-      setHasCleared(true);
-      setUpdateHeight(!updateHeight);
+      setUpdateHeight(true);
     }
   }
 
-  function handleInputBlur() {
-    setSelectAssigned(false);
+  function handleClick(_e: MouseEvent) {
+    if (!selectAssigned) setSelectAssigned(true);
+  }
+
+  function handleTouchStart(e: TouchEvent) {
+    e.stopPropagation();
+  }
+
+  function handleTouchEnd(e: TouchEvent) {
+    e.stopPropagation();
+  }
+
+  function handleInputChange(_newValue: string, actionMeta: InputActionMeta) {
+    if (!selectAssigned && actionMeta.action === 'input-change') {
+      setSelectAssigned(true);
+    } else if (
+      actionMeta.action === 'input-blur' ||
+      actionMeta.action === 'menu-close'
+    ) {
+      setSelectAssigned(false);
+    }
+
     setUpdateHeight(!updateHeight);
+  }
+
+  function handleSelectChange(_newValue: string, actionMeta: ActionMeta<any>) {
+    if (actionMeta.action === 'clear') {
+      setRegistryData({ ...registryData, gender: '' });
+      setHasCleared(true);
+      setSelectAssigned(false);
+      setUpdateHeight(!updateHeight);
+    }
   }
 }
 

@@ -7,19 +7,19 @@
 @import './plugins/Calendar';
 @import './plugins/Dropdown';
 
-*.hidden {
-  display: none;
-}
-*.disabled {
-  opacity: 0.75;
-  pointer-events: none;
-}
 body {
   height: 100vh;
   width: 100vw;
   overflow-x: hidden;
   overflow-y: visible;
   background-color: $primary;
+}
+*.hidden {
+  display: none;
+}
+*.disabled {
+  opacity: 0.75;
+  pointer-events: none;
 }
 .form-group {
   @include flex(column, center, center, 45px);
@@ -478,7 +478,7 @@ body {
       }
     }
     .tidy-field {
-      width: 285px;
+      width: 275px;
       letter-spacing: 0px !important;
     }
     &__reset-icon {
@@ -615,7 +615,8 @@ body {
   }
   .select-wrapper {
     position: relative;
-    width: 300px;
+    min-width: 300px;
+    max-width: 300px;
 
     &__control {
       position: relative;
@@ -627,13 +628,8 @@ body {
       border-bottom: 2px solid $tertiary;
 
       box-shadow: none;
-      pointer-events: all;
 
       background-color: transparent;
-
-      * {
-        pointer-events: none;
-      }
     }
     &__menu {
       position: relative;
@@ -645,6 +641,12 @@ body {
 
       border: 1px solid $alert;
       background-color: $secondary;
+      overflow-y: scroll;
+
+      ::-webkit-scrollbar {
+        display: block !important;
+        appearance: auto !important;
+      }
     }
     &__option {
       cursor: pointer;
@@ -669,9 +671,6 @@ body {
     }
     &__value-container,
     &__value-container--has-value {
-      cursor: pointer;
-      pointer-events: all;
-
       text-shadow: $font-shadow;
     }
     &__input-container,
@@ -712,9 +711,12 @@ body {
       letter-spacing: 2px;
     }
     .value-container-on-click {
-      width: fit-content;
-      cursor: pointer;
+      width: 100%;
+      cursor: text;
       pointer-events: all;
+      * {
+        pointer-events: none;
+      }
     }
   }
   .create-password-section.form-group {

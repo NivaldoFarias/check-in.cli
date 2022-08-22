@@ -20,6 +20,7 @@ import { validate } from 'gerador-validador-cpf';
 import DataContext from '../../contexts/DataContext';
 import SelectAssignedAtBirth from './SelectAssignedAtBirth';
 import SelectGenderIdentity from './SelectGenderIdentity';
+import { regex } from '../../utils/constants.util';
 
 type InputRef = {
   [x: string]: HTMLInputElement | null;
@@ -38,6 +39,8 @@ function RegistryData() {
   const {
     isSectionComplete,
     setIsSectionComplete,
+    commonData,
+    setCommonData,
     registryData: formData,
     setRegistryData: setFormData,
     selectGender,
@@ -54,10 +57,10 @@ function RegistryData() {
   const sectionRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    if (formData?.cpf.length === 14) {
-      setValidCpf(validate(formData?.cpf));
+    if (commonData?.cpf.length === 14) {
+      setValidCpf(validate(commonData?.cpf));
     } else setValidCpf(true);
-  }, [formData.cpf]);
+  }, [commonData.cpf]);
 
   useEffect(() => {
     const cpfIsSet = validCpf;
@@ -170,13 +173,8 @@ function RegistryData() {
   }
 
   function buildRegistryDataComponent() {
-    const cpfRegex = /^[\d\.\-\s]*$/;
-    const inputRegex = /^[\d()-\+\s]*$/;
-    const phoneRegex =
-      /^((\((\d{2})\)\s9)([1-9])(\d{3})-(\d{4}))|(\+?\d{4}9[1-9]\d*)$/gi;
-
     const alertCpf =
-      formData?.cpf.length === 14 ? `CPF inválido` : `Insira apenas números`;
+      commonData?.cpf.length === 14 ? `CPF inválido` : `Insira apenas números`;
     const alertPhonenumber =
       formData?.phone_number.length >= 13
         ? `Telefone inválido`
@@ -186,7 +184,7 @@ function RegistryData() {
       <div ref={sectionRef} className='form-group'>
         <section
           className={`input-section  ${
-            cpfRegex.test(formData?.cpf)
+            regex.CPF.test(commonData?.cpf)
               ? validCpf
                 ? ''
                 : 'push-bottom'
@@ -195,13 +193,13 @@ function RegistryData() {
         >
           <MdFormatClear
             className={`input-section__reset-icon position-left ${
-              hasCpfAutoFilled && formData.cpf?.length > 0 ? '' : 'hidden'
+              hasCpfAutoFilled && commonData?.cpf.length > 0 ? '' : 'hidden'
             }`}
             onClick={handleResetCpf}
           />
           <AiFillIdcard
             className={`input-section__cpf-icon ${
-              hasCpfAutoFilled && formData.cpf?.length > 0
+              hasCpfAutoFilled && commonData?.cpf?.length > 0
                 ? 'input-section__cpf-icon--active'
                 : ''
             } ${validCpf ? '' : 'input-section__cpf-icon--invalid'}`}
@@ -211,10 +209,11 @@ function RegistryData() {
             name='cpf'
             minLength={14}
             maxLength={14}
+            inputMode='numeric'
             pattern='^[\d\.\-\s]*$'
-            value={formData?.cpf}
+            value={commonData?.cpf}
             className={`input-field input-spacedout-field ${
-              hasCpfAutoFilled && formData.cpf.length > 0
+              hasCpfAutoFilled && commonData?.cpf.length > 0
                 ? 'input-field--active'
                 : ''
             }`}
@@ -222,7 +221,7 @@ function RegistryData() {
             onChange={handleCPFInput}
             onFocus={handleInputFocus}
             onBlur={handleInputBlur}
-            disabled={hasCpfAutoFilled && formData.cpf.length > 0}
+            disabled={hasCpfAutoFilled && commonData?.cpf.length > 0}
             required
           />
           <span className='highlight'></span>
@@ -248,9 +247,10 @@ function RegistryData() {
           />
           <input
             type='text'
+            inputMode='tel'
             name='phone_number'
             maxLength={15}
-            pattern='^[\d()-\+\s]*$'
+            pattern='^[\d\(\)\-\+\s]*$'
             value={formData?.phone_number}
             ref={(element) => (inputRef.current['phone_number'] = element)}
             className={`input-field input-spacedout-field ${
@@ -268,7 +268,9 @@ function RegistryData() {
           />
           <span className='highlight'></span>
           <span className='bar'></span>
-          <label className='label-text'>Número de telefone</label>
+          <label className='label-text'>
+            Número de telefone <span className='tidy-field'>(DDD)</span>
+          </label>
           <p className={showAlertPhonenumber()}>{alertPhonenumber}</p>
         </section>
         <SelectAssignedAtBirth />
@@ -277,8 +279,8 @@ function RegistryData() {
     );
 
     function handleResetCpf() {
-      setFormData({
-        ...formData,
+      setCommonData({
+        ...commonData,
         cpf: '',
       });
       setHasCpfAutoFilled(false);
@@ -296,23 +298,23 @@ function RegistryData() {
       const { value } = e.target;
 
       if (value.length === 4 || value.length === 8) {
-        setFormData({
-          ...formData,
+        setCommonData({
+          ...commonData,
           cpf:
             value.slice(0, -1) +
             '.' +
             (value.slice(-1) === '.' ? '' : value.slice(-1)),
         });
       } else if (value.length === 12) {
-        setFormData({
-          ...formData,
+        setCommonData({
+          ...commonData,
           cpf:
             value.slice(0, -1) +
             '-' +
             (value.slice(-1) === '-' ? '' : value.slice(-1)),
         });
       } else {
-        setFormData({ ...formData, cpf: value });
+        setCommonData({ ...commonData, cpf: value });
       }
     }
 
@@ -332,6 +334,28 @@ function RegistryData() {
 
     function handlePhoneInput(e: ChangeEvent<HTMLInputElement>) {
       const { value } = e.target;
+
+      if (value.length === 11 && !value.includes('-')) {
+        return setFormData({
+          ...formData,
+          phone_number: `(${value.slice(0, 2)}) ${value.slice(
+            2,
+            7,
+          )}-${value.slice(7)}`,
+        });
+      } else if (
+        value.length === 14 &&
+        !value.includes('-') &&
+        value.includes('+55')
+      ) {
+        return setFormData({
+          ...formData,
+          phone_number: `(${value.slice(3, 5)}) ${value.slice(
+            5,
+            10,
+          )}-${value.slice(10)}`,
+        });
+      }
 
       if (value.length === 1) {
         setFormData({
@@ -364,21 +388,26 @@ function RegistryData() {
     }
 
     function showAlertPhonenumber() {
-      const validPhonenumber = phoneRegex.test(formData?.phone_number);
-      const containsOnlyNumbers = inputRegex.test(formData?.phone_number);
-      const transparent = containsOnlyNumbers
-        ? formData?.phone_number.length >= 14
+      const validPhonenumber = regex.PHONE_COMPLETE.test(
+        formData?.phone_number,
+      );
+      const containsOnlyNumbers = regex.PHONE_INPUT.test(
+        formData?.phone_number,
+      );
+      const transparent =
+        formData?.phone_number.length >= 13
           ? validPhonenumber
             ? 'color-transparent'
             : ''
-          : 'color-transparent'
-        : '';
+          : containsOnlyNumbers
+          ? 'color-transparent'
+          : '';
 
       return `alert-text phonenumber-alert ${transparent}`;
     }
 
     function showAlertCpf() {
-      const containsOnlyNumbers = cpfRegex.test(formData?.cpf);
+      const containsOnlyNumbers = regex.CPF.test(commonData?.cpf);
       const transparent = containsOnlyNumbers
         ? validCpf
           ? 'color-transparent'

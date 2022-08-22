@@ -1,11 +1,15 @@
-import Select, { ActionMeta, InputActionMeta } from 'react-select';
-import { useContext } from 'react';
+import Select, {
+  ActionMeta,
+  InputActionMeta,
+  StylesConfig,
+  ValueContainerProps,
+} from 'react-select';
+import { MouseEvent, TouchEvent, useContext } from 'react';
 
-import DropdownIndicator from './DropdownIndicator';
-import SingleValue from './SingleValue';
-import Control from './Control';
-import Input from './Input';
 import DataContext from '../../../contexts/DataContext';
+import SingleValue from './SingleValue';
+import Input from './Input';
+import { components } from 'react-select';
 
 function CustomSelect() {
   const options = [
@@ -16,6 +20,17 @@ function CustomSelect() {
     { value: 'SELF_DESCRIBED', label: 'Prefiro descrever' },
     { value: 'NO_INFO', label: 'Prefiro não informar' },
   ];
+  const customStyles: StylesConfig<any> = {
+    dropdownIndicator: (provided, _state) => ({
+      ...provided,
+      transform: selectGender ? 'rotate(180deg)' : 'rotate(0deg)',
+    }),
+    noOptionsMessage: (provided, _state) => ({
+      ...provided,
+      letterSpacing: '0px',
+      textShadow: 'none',
+    }),
+  };
 
   const {
     registryData,
@@ -24,48 +39,88 @@ function CustomSelect() {
     updateHeight,
     setUpdateHeight,
     setSelectGender,
+    hasGenderCleared: hasCleared,
     setHasGenderCleared: setHasCleared,
   } = useContext(DataContext);
+
+  const ValueContainer = (props: ValueContainerProps) => {
+    const { children } = props;
+    return (
+      <div
+        className='value-container-on-click'
+        onClick={handleClick}
+        onTouchEnd={handleTouchEnd}
+        onTouchStart={handleTouchStart}
+      >
+        <components.ValueContainer {...props}>
+          {children}
+        </components.ValueContainer>
+      </div>
+    );
+  };
 
   return (
     <Select
       options={options}
-      components={{ Control, DropdownIndicator, Input, SingleValue }}
-      isClearable={true}
-      isSearchable={true}
-      onChange={handleInputChange}
+      styles={customStyles}
       menuIsOpen={selectGender}
+      components={{ ValueContainer, Input, SingleValue }}
+      noOptionsMessage={() => 'Nenhum termo encontrado'}
+      isClearable={true}
+      isSearchable={false}
       openMenuOnFocus={true}
-      openMenuOnClick={true}
-      blurInputOnSelect={true}
       tabSelectsValue={true}
+      blurInputOnSelect={true}
       backspaceRemovesValue={true}
       menuShouldScrollIntoView={false}
+      placeholder='Selecionar'
       className='select-wrapper'
       classNamePrefix='select-wrapper'
-      placeholder='Selecionar'
+      onFocus={handleInputFocus}
+      onChange={handleSelectChange}
       onInputChange={handleInputChange}
-      onBlur={handleInputBlur}
     />
   );
 
-  function handleInputChange(
-    _newValue: string,
-    actionMeta: InputActionMeta | ActionMeta<any>,
-  ) {
-    if (!selectGender && actionMeta.action === 'input-change')
+  function handleInputFocus() {
+    if (!selectGender && !hasCleared) {
       setSelectGender(true);
-    else if (actionMeta.action === 'clear') {
-      setRegistryData({ ...registryData, gender: '' });
-      setSelectGender(false);
-      setHasCleared(true);
+      setUpdateHeight(true);
     }
+  }
+
+  function handleClick(_e: MouseEvent) {
+    if (!selectGender) setSelectGender(true);
+  }
+
+  function handleTouchStart(e: TouchEvent) {
+    e.stopPropagation();
+  }
+
+  function handleTouchEnd(e: TouchEvent) {
+    e.stopPropagation();
+  }
+
+  function handleInputChange(_newValue: string, actionMeta: InputActionMeta) {
+    if (!selectGender && actionMeta.action === 'input-change') {
+      setSelectGender(true);
+    } else if (
+      actionMeta.action === 'input-blur' ||
+      actionMeta.action === 'menu-close'
+    ) {
+      setSelectGender(false);
+    }
+
     setUpdateHeight(!updateHeight);
   }
 
-  function handleInputBlur() {
-    setSelectGender(false);
-    setUpdateHeight(!updateHeight);
+  function handleSelectChange(_newValue: string, actionMeta: ActionMeta<any>) {
+    if (actionMeta.action === 'clear') {
+      setRegistryData({ ...registryData, gender: '' });
+      setHasCleared(true);
+      setSelectGender(false);
+      setUpdateHeight(!updateHeight);
+    }
   }
 }
 

@@ -9,9 +9,9 @@ datasource db {
 
 model Patient {
   id           BigInt          @id @default(autoincrement())
-  full_name    String
-  first_name   String
-  password     String
+  full_name    String          @db.VarChar(255)
+  first_name   String          @db.VarChar(255)
+  password     String          @db.VarChar(255)
   cpf          String          @unique @db.VarChar(11)
   insurance    enum_insurances
   birthdate    String          @db.VarChar(10)
@@ -26,7 +26,7 @@ model Patient {
 
 model Practitioner {
   id         Int        @id @default(autoincrement())
-  full_name  String
+  full_name  String     @db.VarChar(255)
   created_at DateTime   @default(now())
   Schedule   Schedule[]
 
@@ -35,7 +35,7 @@ model Practitioner {
 
 model Clinic {
   id         BigInt     @id @default(autoincrement())
-  label      String
+  label      String     @db.VarChar(255)
   created_at DateTime   @default(now())
   Schedule   Schedule[]
 
@@ -59,9 +59,9 @@ model Schedule {
 
 model Registry {
   id                BigInt  @id @default(autoincrement())
-  gender            String
-  assigned_at_birth String
-  phone_number      String
+  gender            String  @db.VarChar(255)
+  assigned_at_birth String  @db.VarChar(255)
+  phone_number      String  @db.VarChar(255)
   code              String  @unique @db.VarChar(8)
   patient_id        BigInt
   patient           Patient @relation(fields: [patient_id], references: [id])
@@ -71,13 +71,13 @@ model Registry {
 
 model Address {
   id           BigInt  @id @default(autoincrement())
-  street       String
-  number       String
-  complement   String?
-  neighborhood String
-  city         String
-  state        String
-  postal_code  String
+  street       String  @db.VarChar(255)
+  number       String  @db.VarChar(255)
+  complement   String? @db.VarChar(255)
+  neighborhood String  @db.VarChar(255)
+  city         String  @db.VarChar(255)
+  state        String  @db.VarChar(255)
+  postal_code  String  @db.VarChar(255)
   patient_id   BigInt
   patient      Patient @relation(fields: [patient_id], references: [id])
 

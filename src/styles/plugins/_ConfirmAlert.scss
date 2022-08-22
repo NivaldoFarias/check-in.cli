@@ -26,7 +26,6 @@ body.react-confirm-alert-body-element {
 }
 
 .react-confirm-alert-body {
-  font-family: Arial, Helvetica, sans-serif;
   width: 400px;
   padding: 30px;
   text-align: left;
@@ -126,7 +125,7 @@ body.react-confirm-alert-body-element {
 
   color: $alt-primary;
   text-align: center;
-  font-size: 1.5rem;
+  font-size: 1.3rem;
   line-height: 2rem;
   font-family: $primary-font;
 
@@ -136,9 +135,6 @@ body.react-confirm-alert-body-element {
   border: 1px solid $alert;
   background-color: $secondary;
 
-  h2 {
-    font-size: 1.5rem;
-  }
   > div {
     @include flex(row, center, initial, 28px);
   }

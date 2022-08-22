@@ -5,7 +5,6 @@ import {
   useState,
   useEffect,
   useRef,
-  MouseEvent,
 } from 'react';
 
 import {
@@ -20,7 +19,11 @@ import { time } from '../../utils/constants.util';
 import Insurance from './Insurances';
 
 type InputRef = {
-  [x: string]: HTMLInputElement | null;
+  full_name: HTMLInputElement | null;
+  first_name: HTMLInputElement | null;
+  insurance: HTMLInputElement | null;
+  birthdate: HTMLInputElement | null;
+  fallbackBirthdate: HTMLInputElement | null;
 };
 
 function CommonData() {
@@ -31,6 +34,7 @@ function CommonData() {
     useState<boolean>(false);
   const [hasFullNameAutoFilled, setHasFullNameAutoFilled] =
     useState<boolean>(false);
+  const [updateHeight, setUpdateHeight] = useState<boolean | string>(false);
 
   const {
     isSectionComplete,
@@ -45,6 +49,7 @@ function CommonData() {
     first_name: null,
     insurance: null,
     birthdate: null,
+    fallbackBirthdate: null,
   });
   const sectionRef = useRef<HTMLDivElement>(null);
 
@@ -53,8 +58,15 @@ function CommonData() {
       if (expandSection) {
         setHeight(sectionRef.current.getBoundingClientRect().height);
       } else setHeight(0);
+
+      if (typeof updateHeight === 'string' && updateHeight === 'scroll') {
+        sectionRef.current.scrollIntoView({
+          behavior: 'smooth',
+          block: 'end',
+        });
+      }
     }
-  }, [expandSection, selectInsurance, formData.insurance]);
+  }, [expandSection, selectInsurance, formData.insurance, updateHeight]);
 
   useEffect(() => {
     const birthdateIsSet = countDateInputs >= 4;
@@ -222,6 +234,7 @@ function CommonData() {
             min={time.MIN_DATE}
             max={time.CURRRENT_DATE}
             value={formData?.birthdate}
+            pattern='\d{4}-\d{2}-\d{2}'
             ref={(element) => (inputRef.current['birthdate'] = element)}
             className='input-field input-field--active input-spacedout-field input-date-field'
             onChange={handleBirthdateInput}
@@ -236,7 +249,10 @@ function CommonData() {
         </section>
         <section className='input-section'>
           <p className='input-section__label'>Convênio</p>
-          <Insurance updateValue={updateValue} />
+          <Insurance
+            updateHeight={updateHeight}
+            setUpdateHeight={setUpdateHeight}
+          />
         </section>
       </div>
     );
@@ -273,16 +289,26 @@ function CommonData() {
 
     function handleInputFocus(e: FocusEvent<HTMLInputElement>) {
       if (e.target.name === 'birthdate') return null;
-      return inputRef.current[e.target.name]?.classList.add(
-        'input-field--active',
-      );
+      return inputRef.current[
+        e.target.name as
+          | 'full_name'
+          | 'first_name'
+          | 'birthdate'
+          | 'insurance'
+          | 'fallbackBirthdate'
+      ]?.classList.add('input-field--active');
     }
 
     function handleInputBlur(e: FocusEvent<HTMLInputElement>) {
       if (e.target.value.length === 0 && e.target.name !== 'birthdate') {
-        return inputRef.current[e.target.name]?.classList.remove(
-          'input-field--active',
-        );
+        return inputRef.current[
+          e.target.name as
+            | 'full_name'
+            | 'first_name'
+            | 'birthdate'
+            | 'insurance'
+            | 'fallbackBirthdate'
+        ]?.classList.remove('input-field--active');
       } else return null;
     }
 
@@ -309,10 +335,6 @@ function CommonData() {
       const transparent = validInput ? 'color-transparent' : '';
 
       return `alert-text birthday-alert ${transparent}`;
-    }
-
-    function updateValue(value: string) {
-      setFormData({ ...formData, insurance: value });
     }
   }
 }

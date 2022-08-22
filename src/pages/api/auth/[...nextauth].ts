@@ -37,14 +37,22 @@ async function auth(req: NextApiRequest, res: NextApiResponse) {
             placeholder: 'Password',
           },
         },
-        authorize: async (credentials, _req) => {
+        authorize: async (credentials: any, _req) => {
           const { cpf, password } = credentials ?? {};
-          logger.info('credentials');
+          let patient = null;
 
-          const patient = await prisma.patient.findUnique({
-            where: { cpf },
-          });
-          if (!patient) return null;
+          logger.info('Authorizing credentials');
+
+          try {
+            patient = await prisma.patient.findUnique({
+              where: { cpf },
+            });
+            if (!patient) throw Error('NOT_FOUND');
+          } catch (error: any) {
+            error.stack = 'stack has been hidden';
+            logger.error(error);
+            throw new Error(error.message);
+          }
 
           const isValid = bcrypt.compareSync(
             password as string,

@@ -1,20 +1,19 @@
-import { MouseEvent, useContext } from 'react';
+import { MouseEvent, TouchEvent, useContext, useState, useEffect } from 'react';
 import Select, {
+  ActionMeta,
   components,
-  ControlProps,
   InputActionMeta,
   InputProps,
   StylesConfig,
   ValueContainerProps,
 } from 'react-select';
+
 import DataContext from '../../contexts/DataContext';
 import SingleValue from './SingleValue';
 
-type UpdateValue = {
-  updateValue: (value: string) => void;
-};
+function Insurance({ updateHeight, setUpdateHeight }: any) {
+  const [hasCleared, setHasCleared] = useState<boolean>(false);
 
-function Insurance({ updateValue }: UpdateValue) {
   const options = [
     { value: 'PRIVATE', label: 'Particular (N/A)' },
     { value: 'ALLIANZ_SAUDE', label: 'Allianz Saúde' },
@@ -59,14 +58,25 @@ function Insurance({ updateValue }: UpdateValue) {
       ...provided,
       transform: selectInsurance ? 'rotate(180deg)' : 'rotate(0deg)',
     }),
+    noOptionsMessage: (provided, _state) => ({
+      ...provided,
+      letterSpacing: '0px',
+      textShadow: 'none',
+    }),
   };
 
-  const { selectInsurance, setSelectInsurance } = useContext(DataContext);
+  const { selectInsurance, setSelectInsurance, commonData, setCommonData } =
+    useContext(DataContext);
 
   const ValueContainer = (props: ValueContainerProps) => {
     const { children } = props;
     return (
-      <div className='value-container-on-click' onClick={handleClick}>
+      <div
+        className='value-container-on-click'
+        onClick={handleClick}
+        onTouchStart={handleTouchStart}
+        onTouchEnd={handleTouchEnd}
+      >
         <components.ValueContainer {...props}>
           {children}
         </components.ValueContainer>
@@ -84,43 +94,79 @@ function Insurance({ updateValue }: UpdateValue) {
     );
   };
 
+  useEffect(() => {
+    if (hasCleared) {
+      setTimeout(() => setHasCleared(false), 200);
+    }
+  }, [hasCleared]);
+
   return (
     <Select
       options={options}
       styles={customStyles}
+      menuIsOpen={selectInsurance}
       components={{ ValueContainer, Input, SingleValue }}
+      noOptionsMessage={() => 'Nenhuma opção encontrada'}
       isClearable={true}
       isSearchable={true}
-      menuIsOpen={selectInsurance}
       openMenuOnFocus={true}
-      blurInputOnSelect={true}
       tabSelectsValue={true}
+      blurInputOnSelect={true}
       backspaceRemovesValue={true}
-      menuShouldScrollIntoView={false}
+      menuShouldScrollIntoView={true}
       className='select-wrapper'
       classNamePrefix='select-wrapper'
       placeholder='Selecione o convênio'
-      onInputChange={handleInputChange}
       onFocus={handleInputFocus}
+      onChange={handleSelectChange}
+      onInputChange={handleInputChange}
     />
   );
 
   function handleInputFocus() {
-    if (!selectInsurance) setSelectInsurance(true);
-  }
-  function handleClick(_e: MouseEvent) {
-    console.log('click');
-    if (!selectInsurance) setSelectInsurance(true);
+    if (!selectInsurance && !hasCleared) {
+      setSelectInsurance(true);
+      setUpdateHeight(true);
+    }
   }
 
-  function handleInputChange(newValue: string, actionMeta: InputActionMeta) {
-    if (actionMeta.action === 'input-blur' || 'input-change') {
-      updateValue(newValue);
+  function handleClick(_e: MouseEvent) {
+    if (!selectInsurance) {
+      setSelectInsurance(true);
+      setUpdateHeight('scroll');
     }
-    if (actionMeta.action === 'menu-close') {
+  }
+
+  function handleTouchStart(e: TouchEvent) {
+    e.stopPropagation();
+  }
+
+  function handleTouchEnd(e: TouchEvent) {
+    e.stopPropagation();
+  }
+
+  function handleInputChange(_newValue: string, actionMeta: InputActionMeta) {
+    if (actionMeta.action === 'input-blur') {
+      if (selectInsurance) setSelectInsurance(false);
+      setHasCleared(false);
+    }
+    if (actionMeta.action === 'menu-close' && selectInsurance) {
       setSelectInsurance(false);
+      setHasCleared(false);
+    }
+    setUpdateHeight(!updateHeight);
+  }
+
+  function handleSelectChange(_newValue: string, actionMeta: ActionMeta<any>) {
+    if (actionMeta.action === 'clear') {
+      setCommonData({ ...commonData, insurance: '' });
+      setHasCleared(true);
+      setSelectInsurance(false);
+      setUpdateHeight(!updateHeight);
     }
   }
 }
 
 export default Insurance;
+
+// TODO STYLES: add disabled class after select

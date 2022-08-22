@@ -29,8 +29,6 @@ function Register() {
     commonData,
     registryData,
     addressData,
-    formData,
-    setFormData,
   } = useContext(DataContext);
   const pageRef = useRef<HTMLDivElement>(null);
 
@@ -130,7 +128,6 @@ function Register() {
       const common = {
         ...commonData,
         password: password.password,
-        cpf: registryData.cpf,
       };
       const registry = {
         ...registryData,
@@ -143,7 +140,8 @@ function Register() {
             ? registryData.assigned_at_birth
             : registryData.described_assigned ?? 'Não informado',
       };
-      delete registry.cpf;
+      delete registryData.described_identity;
+      delete registryData.described_assigned;
 
       const address = { ...addressData };
 
@@ -177,7 +175,7 @@ function Register() {
           body: JSON.stringify(data),
         });
         const result = await response.json();
-        setFormData(result.data);
+        console.log(result);
         return handleSucess();
       } catch (error) {
         return handleError(error);

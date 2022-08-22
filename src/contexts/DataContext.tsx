@@ -1,10 +1,5 @@
 import { useState, createContext } from 'react';
-import DataContextGroup, {
-  Addresses,
-  Commons,
-  Forms,
-  Registries,
-} from '../types';
+import DataContextGroup, { Addresses, Commons, Registries } from '../types';
 
 const initialDataContextValue = {
   isSectionComplete: {
@@ -31,6 +26,7 @@ const initialDataContextValue = {
     insurance: '',
     birthdate: '',
     password: '',
+    cpf: '',
   },
   setCommonData: () => {},
   registryData: {
@@ -52,33 +48,6 @@ const initialDataContextValue = {
     postal_code: '',
   },
   setAddressData: () => {},
-  formData: {
-    common: {
-      full_name: '',
-      first_name: '',
-      insurance: '',
-      birthdate: '',
-      password: '',
-    },
-    registry: {
-      gender: '',
-      described_identity: '',
-      assigned_at_birth: '',
-      described_assigned: '',
-      cpf: '',
-      phone_number: '',
-    },
-    address: {
-      street: '',
-      number: '',
-      complement: '',
-      neighborhood: '',
-      city: '',
-      state: '',
-      postal_code: '',
-    },
-  },
-  setFormData: () => {},
   hasSubmitted: false,
   setHasSubmitted: () => {},
 };
@@ -109,6 +78,7 @@ function DataProvider(props: any) {
     insurance: '',
     birthdate: '',
     password: '',
+    cpf: '',
   });
   const [registryData, setRegistryData] = useState<Registries>({
     gender: '',
@@ -126,11 +96,6 @@ function DataProvider(props: any) {
     city: '',
     state: '',
     postal_code: '',
-  });
-  const [formData, setFormData] = useState<Forms>({
-    common: commonData,
-    registry: registryData,
-    address: addressData,
   });
 
   return (
@@ -154,10 +119,8 @@ function DataProvider(props: any) {
         setCommonData,
         registryData,
         setRegistryData,
-        formData,
         addressData,
         setAddressData,
-        setFormData,
         hasSubmitted,
         setHasSubmitted,
       }}

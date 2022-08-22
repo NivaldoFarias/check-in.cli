@@ -1,6 +1,6 @@
 import type { ChangeEvent, FocusEvent, FormEvent } from 'react';
 import { useState, useRef, useEffect } from 'react';
-import { signIn } from 'next-auth/react';
+import { signIn, SignInResponse } from 'next-auth/react';
 import Image from 'next/image';
 import Link from 'next/link';
 
@@ -11,6 +11,7 @@ import { validate } from 'gerador-validador-cpf';
 import backgroundImage from '../../../public/background-alt.svg';
 import { getRandomInt } from '../../utils/functions.util';
 import LoadingDots from '../../components/Loading';
+import { confirmAlert } from 'react-confirm-alert';
 
 type InputRef = {
   [x: string]: HTMLInputElement | null;
@@ -107,7 +108,7 @@ function CheckIn() {
   function buildCheckInForms() {
     const cpfRegex = /^[\d\.\-\s]*$/;
     const validateForm =
-      validCpf && formData.password?.length > 6 && !hasSubmitted
+      validCpf && formData.password?.length >= 6 && !hasSubmitted
         ? 'submit-btn'
         : 'submit-btn disabled';
 
@@ -227,8 +228,42 @@ function CheckIn() {
       );
     }
 
-    function handleSignIn() {
-      signIn('credentials', { redirect: false, password: 'password' });
+    async function handleSignIn() {
+      const { cpf, password } = formData;
+      try {
+        const response: SignInResponse | undefined = await signIn(
+          'credentials',
+          {
+            redirect: false,
+            cpf,
+            password,
+          },
+        );
+        if (response?.error) {
+          setHasSubmitted(false);
+          return handleError(response.error);
+        }
+      } catch (error: any) {
+        setHasSubmitted(false);
+        return handleError(error);
+      }
+    }
+
+    function handleError(error: string) {
+      confirmAlert({
+        message: `Ops! Parece que ${
+          error === 'NOT_FOUND'
+            ? 'as credenciais estão incorretas'
+            : 'algo deu errado'
+        }. Por favor, tente novamente.`,
+        buttons: [
+          {
+            label: 'OK',
+            onClick: () => null,
+          },
+        ],
+      });
+      console.error(error);
     }
 
     function handleCPFInput(e: ChangeEvent<HTMLInputElement>) {
