@@ -1,7 +1,8 @@
-import { useRef, ChangeEvent, FocusEvent } from 'react';
+import { useRef, ChangeEvent, FocusEvent, useState } from 'react';
 
 function CreatePassword(props: any) {
   const { password, setPassword } = props;
+  const [focusedRef, setFocusedRef] = useState<HTMLInputElement | null>(null);
   const passwordRef = useRef<HTMLInputElement>(null);
   const confirmPasswordRef = useRef<HTMLInputElement>(null);
 
@@ -55,6 +56,7 @@ function CreatePassword(props: any) {
           <span className='highlight'></span>
           <span className='bar'></span>
           <label className='label-text'>Confirmar senha</label>
+          <p className={alertClassName()}>Senhas não correspondem</p>
         </div>
       </>
     );
@@ -64,6 +66,7 @@ function CreatePassword(props: any) {
     }
 
     function handleInputFocus(e: FocusEvent<HTMLInputElement>) {
+      setFocusedRef(e.target);
       if (e.target.name === 'password') {
         passwordRef.current?.classList.add('input-field--active');
       }
@@ -83,6 +86,16 @@ function CreatePassword(props: any) {
           'input-field--active',
         );
       }
+    }
+
+    function alertClassName() {
+      return `alert-text ${
+        focusedRef === confirmPasswordRef.current &&
+        password.confirm.length >= 6 &&
+        password.password !== password.confirm
+          ? ''
+          : 'color-transparent'
+      }`;
     }
   }
 }

@@ -7,10 +7,8 @@ import backgroundImage from '../../../public/background-alt.svg';
 
 import DataContext from '../../contexts/DataContext';
 import CommonData from '../../components/CommonData';
-import LoadingDots from '../../components/Loading';
 import RegistryData from '../../components/RegistryData';
 import AddressData from '../../components/AddressData/index';
-import { getRandomInt } from '../../utils/functions.util';
 import CreatePassword from '../../components/CreatePassword';
 import { Forms } from '../../types';
 
@@ -124,32 +122,42 @@ function Register() {
     function handleSubmit(e: FormEvent) {
       e.preventDefault();
       setHasSubmitted(true);
-      console.log(toggleActiveSection);
       const common = {
         ...commonData,
+        cpf: commonData.cpf.replace(/\D/g, ''),
         password: password.password,
       };
       const registry = {
         ...registryData,
+        phone_number: registryData.phone_number.replace(/\D/g, ''),
         gender:
           registryData.gender === 'SELF_DESCRIBED'
-            ? registryData.gender
-            : registryData.described_identity ?? 'Não informado',
+            ? registryData.described_identity ?? 'Não informado'
+            : registryData.gender,
         assigned_at_birth:
           registryData.assigned_at_birth === 'SELF_DESCRIBED'
-            ? registryData.assigned_at_birth
-            : registryData.described_assigned ?? 'Não informado',
+            ? registryData.described_assigned ?? 'Não informado'
+            : registryData.assigned_at_birth,
       };
       delete registryData.described_identity;
       delete registryData.described_assigned;
+      console.log(registryData);
 
-      const address = { ...addressData };
+      const address = {
+        ...addressData,
+        postal_code: addressData.postal_code.replace(/\D/g, ''),
+      };
 
-      return registerPatient({
+      const data: Forms = {
         common,
         registry,
         address,
-      });
+      };
+
+      console.table(common);
+      console.table(registry);
+      console.table(address);
+      return registerPatient(data);
     }
 
     function openModal(e: FormEvent) {
@@ -197,7 +205,7 @@ function Register() {
     }
 
     function handleError(error: any) {
-      console.log(error);
+      console.error(error);
       confirmAlert({
         message: `Ops! Algo deu errado. Por favor, tente novamente.`,
         buttons: [

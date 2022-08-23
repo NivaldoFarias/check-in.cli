@@ -334,8 +334,10 @@ function RegistryData() {
 
     function handlePhoneInput(e: ChangeEvent<HTMLInputElement>) {
       const { value } = e.target;
+      const notFormatted =
+        !value.includes('-') && !value.includes('(') && !value.includes(')');
 
-      if (value.length === 11 && !value.includes('-')) {
+      if (value.length === 11 && notFormatted) {
         return setFormData({
           ...formData,
           phone_number: `(${value.slice(0, 2)}) ${value.slice(
@@ -343,11 +345,7 @@ function RegistryData() {
             7,
           )}-${value.slice(7)}`,
         });
-      } else if (
-        value.length === 14 &&
-        !value.includes('-') &&
-        value.includes('+55')
-      ) {
+      } else if (value.length === 14 && notFormatted) {
         return setFormData({
           ...formData,
           phone_number: `(${value.slice(3, 5)}) ${value.slice(

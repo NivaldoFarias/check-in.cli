@@ -27,6 +27,12 @@ interface Addresses {
   postal_code: string;
 }
 
+type Forms = {
+  common: Commons;
+  registry: Registries;
+  address: Addresses;
+};
+
 interface IsSectionCompleteState {
   common: boolean;
   registry: boolean;

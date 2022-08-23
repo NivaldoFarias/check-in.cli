@@ -31,9 +31,7 @@ const initialDataContextValue = {
   setCommonData: () => {},
   registryData: {
     gender: '',
-    described_identity: '',
     assigned_at_birth: '',
-    described_assigned: '',
     cpf: '',
     phone_number: '',
   },
@@ -82,10 +80,9 @@ function DataProvider(props: any) {
   });
   const [registryData, setRegistryData] = useState<Registries>({
     gender: '',
-    described_identity: '',
+    described_identity: undefined,
     assigned_at_birth: '',
-    described_assigned: '',
-    cpf: '',
+    described_assigned: undefined,
     phone_number: '',
   });
   const [addressData, setAddressData] = useState<Addresses>({

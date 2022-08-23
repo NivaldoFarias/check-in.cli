@@ -1,5 +1,7 @@
 generator client {
-  provider = "prisma-client-js"
+  provider      = "prisma-client-js"
+  engineType    = "binary"
+  binaryTargets = ["native", "debian-openssl-3.0.x"]
 }
 
 datasource db {
@@ -61,7 +63,7 @@ model Registry {
   id                BigInt  @id @default(autoincrement())
   gender            String  @db.VarChar(255)
   assigned_at_birth String  @db.VarChar(255)
-  phone_number      String  @db.VarChar(255)
+  phone_number      String  @db.VarChar(11)
   code              String  @unique @db.VarChar(8)
   patient_id        BigInt
   patient           Patient @relation(fields: [patient_id], references: [id])
