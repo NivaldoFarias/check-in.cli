@@ -10,18 +10,19 @@ datasource db {
 }
 
 model Patient {
-  id           BigInt          @id @default(autoincrement())
-  full_name    String          @db.VarChar(255)
-  first_name   String          @db.VarChar(255)
-  password     String          @db.VarChar(255)
-  cpf          String          @unique @db.VarChar(11)
-  insurance    enum_insurances
-  birthdate    String          @db.VarChar(10)
-  created_at   DateTime        @default(now())
-  last_updated DateTime        @default(now())
-  Address      Address[]
-  Registry     Registry[]
-  Schedule     Schedule[]
+  id             BigInt          @id @default(autoincrement())
+  full_name      String          @db.VarChar(255)
+  first_name     String          @db.VarChar(255)
+  password       String          @db.VarChar(255)
+  cpf            String          @unique @db.VarChar(11)
+  insurance      enum_insurances
+  insurance_code String          @db.VarChar(255)
+  birthdate      String          @db.VarChar(10)
+  created_at     DateTime        @default(now())
+  last_updated   DateTime        @default(now())
+  Address        Address[]
+  Registry       Registry[]
+  Schedule       Schedule[]
 
   @@map("patients")
 }

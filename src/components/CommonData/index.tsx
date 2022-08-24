@@ -247,13 +247,10 @@ function CommonData() {
           <label className='label-text'>Data de nascimento</label>
           <p className={showAlertBirthdate()}>{alertBirthdate}</p>
         </section>
-        <section className='input-section'>
-          <p className='input-section__label'>Convênio</p>
-          <Insurance
-            updateHeight={updateHeight}
-            setUpdateHeight={setUpdateHeight}
-          />
-        </section>
+        <Insurance
+          updateHeight={updateHeight}
+          setUpdateHeight={setUpdateHeight}
+        />
       </div>
     );
 

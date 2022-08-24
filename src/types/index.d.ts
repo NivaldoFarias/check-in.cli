@@ -7,6 +7,7 @@ interface Commons {
   first_name: string;
   birthdate: string;
   insurance: string;
+  insurance_code: string;
   password: string;
   cpf: string;
 }

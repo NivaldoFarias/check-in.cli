@@ -26,6 +26,7 @@ const initialDataContextValue = {
     full_name: '',
     first_name: '',
     insurance: '',
+    insurance_code: '',
     birthdate: '',
     password: '',
     cpf: '',
@@ -67,7 +68,7 @@ function DataProvider(props: any) {
   const [hasAssignedCleared, setHasAssignedCleared] = useState<boolean>(false);
 
   const mockData =
-    process.env.NODE_ENV === 'development'
+    process.env.NODE_ENV === 'test'
       ? {
           common: {
             first_name: 'Nivaldo',
@@ -75,6 +76,7 @@ function DataProvider(props: any) {
             birthdate: '2000-10-08',
             cpf: generate(),
             insurance: 'PRIVATE',
+            insurance_code: '',
             password: '123456',
           },
           registry: {
@@ -104,6 +106,7 @@ function DataProvider(props: any) {
     full_name: '',
     first_name: '',
     insurance: '',
+    insurance_code: '',
     birthdate: '',
     password: '',
     cpf: '',

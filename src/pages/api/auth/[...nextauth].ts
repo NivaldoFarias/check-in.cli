@@ -1,5 +1,5 @@
 import CredentialsProvider from 'next-auth/providers/credentials';
-import NextAuth, { NextAuthOptions, Session, User } from 'next-auth';
+import NextAuth, { NextAuthOptions } from 'next-auth';
 import bcrypt from 'bcrypt';
 
 import prisma from '../../../config/database.config';
@@ -7,7 +7,6 @@ import { env } from '../../../utils/constants.util';
 import { NextApiRequest, NextApiResponse } from 'next';
 import exceptionHandler from '../../../utils/exception.util';
 import logger from '../../../config/logger.config';
-import { JWT } from 'next-auth/jwt';
 
 async function auth(req: NextApiRequest, res: NextApiResponse) {
   const options: NextAuthOptions = {
@@ -23,23 +22,27 @@ async function auth(req: NextApiRequest, res: NextApiResponse) {
     },
     callbacks: {
       // @ts-ignore
-      session: ({
-        session,
-        token,
-        user,
-      }: {
-        session: Session;
-        user: User;
-        token: JWT;
-      }) => {
-        console.table(session);
-        console.table(token);
-        console.table(user);
+      session: async ({ session, token, user }) => {
+        logger.trace(`Session Callback`);
         return {
           session,
           token,
           user,
         };
+      },
+      // @ts-ignore
+      signIn: async ({ user, account, profile, credentials }) => {
+        logger.trace('SignIn Callback');
+        return {
+          user,
+          account,
+          profile,
+          credentials,
+        };
+      },
+      jwt: async ({ token }) => {
+        logger.trace('JWT Callback');
+        return token;
       },
     },
     providers: [
@@ -84,7 +87,7 @@ async function auth(req: NextApiRequest, res: NextApiResponse) {
             throw new Error('INVALID_CREDENTIALS');
           }
 
-          return { test: 'test' };
+          return patient;
         },
       }),
     ],
