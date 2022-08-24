@@ -72,9 +72,13 @@ function CommonData() {
     const birthdateIsSet = countDateInputs >= 4;
     const socialNameIsSet = formData?.first_name?.length > 0;
     const fullNameIsSet = formData?.full_name?.length > 3;
-    const insuranceIsSet = formData?.insurance?.length > 0;
+    const insuranceIsSet =
+      formData?.insurance?.length > 0 &&
+      (formData?.insurance === 'PRIVATE' ||
+        formData?.insurance_code?.length > 4);
     const isComplete =
       birthdateIsSet && socialNameIsSet && fullNameIsSet && insuranceIsSet;
+    console.log(formData?.insurance, formData?.insurance_code);
 
     if (isComplete && !isSectionComplete.common) {
       setIsSectionComplete({
