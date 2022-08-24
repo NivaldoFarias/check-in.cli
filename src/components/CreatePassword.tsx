@@ -1,8 +1,11 @@
 import { useRef, ChangeEvent, FocusEvent, useState } from 'react';
+import { RiEyeCloseLine, RiEyeLine } from 'react-icons/ri';
 
 function CreatePassword(props: any) {
   const { password, setPassword } = props;
   const [focusedRef, setFocusedRef] = useState<HTMLInputElement | null>(null);
+  const [showPassword, setShowPassword] = useState<boolean>(false);
+
   const passwordRef = useRef<HTMLInputElement>(null);
   const confirmPasswordRef = useRef<HTMLInputElement>(null);
 
@@ -18,8 +21,23 @@ function CreatePassword(props: any) {
     return (
       <>
         <div className='input-section'>
+          {showPassword ? (
+            <RiEyeCloseLine
+              className='input-section__eye-icon eyes-closed'
+              onClick={() => {
+                setShowPassword(false);
+              }}
+            />
+          ) : (
+            <RiEyeLine
+              className='input-section__eye-icon eyes-open'
+              onClick={() => {
+                setShowPassword(true);
+              }}
+            />
+          )}
           <input
-            type='password'
+            type={showPassword ? 'text' : 'password'}
             minLength={6}
             maxLength={22}
             name='password'
@@ -91,7 +109,7 @@ function CreatePassword(props: any) {
     function alertClassName() {
       return `alert-text ${
         focusedRef === confirmPasswordRef.current &&
-        password.confirm.length >= 6 &&
+        password.confirm.length >= password.password.length &&
         password.password !== password.confirm
           ? ''
           : 'color-transparent'

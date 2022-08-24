@@ -1,7 +1,9 @@
 import { useState, createContext } from 'react';
 import DataContextGroup, { Addresses, Commons, Registries } from '../types';
+import { generate } from 'gerador-validador-cpf';
 
 const initialDataContextValue = {
+  mockData: undefined,
   isSectionComplete: {
     common: false,
     registry: false,
@@ -64,6 +66,34 @@ function DataProvider(props: any) {
   const [hasGenderCleared, setHasGenderCleared] = useState<boolean>(false);
   const [hasAssignedCleared, setHasAssignedCleared] = useState<boolean>(false);
 
+  const mockData =
+    process.env.NODE_ENV === 'development'
+      ? {
+          common: {
+            first_name: 'Nivaldo',
+            full_name: 'Nivaldo Farias Garcia',
+            birthdate: '2000-10-08',
+            cpf: generate(),
+            insurance: 'PRIVATE',
+            password: '123456',
+          },
+          registry: {
+            phone_number: '83993355144',
+            gender: 'MALE',
+            assigned_at_birth: 'MAN',
+          },
+          address: {
+            postal_code: '58039151',
+            street: 'Av. Infante Dom Henrique',
+            number: '406',
+            neighborhood: 'Tambaú',
+            city: 'João Pessoa',
+            complement: 'Apto 201',
+            state: 'Paraíba',
+          },
+        }
+      : undefined;
+
   const [isSectionComplete, setIsSectionComplete] = useState({
     common: false,
     registry: false,
@@ -98,6 +128,7 @@ function DataProvider(props: any) {
   return (
     <DataContext.Provider
       value={{
+        mockData,
         isSectionComplete,
         setIsSectionComplete,
         selectInsurance,
@@ -129,3 +160,5 @@ function DataProvider(props: any) {
 
 export { DataProvider };
 export default DataContext;
+
+// TODO refactor: split Contexts into cleaner, smaller Contexts

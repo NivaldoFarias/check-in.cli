@@ -229,7 +229,9 @@ function CheckIn() {
     }
 
     async function handleSignIn() {
-      const { cpf, password } = formData;
+      let { cpf, password } = formData;
+      cpf = cpf.replace(/\D/g, '');
+
       try {
         const response: SignInResponse | undefined = await signIn(
           'credentials',
@@ -250,12 +252,20 @@ function CheckIn() {
     }
 
     function handleError(error: string) {
+      let auxMessage = '';
+      switch (error) {
+        case 'NOT_FOUND':
+          auxMessage = 'não encontramos nenhum cadastro com esse CPF';
+          break;
+        case 'INVALID_CREDENTIALS':
+          auxMessage = 'a senha está incorreta';
+          break;
+        default:
+          auxMessage = 'ocorreu um erro ao tentar fazer o check-in';
+      }
+
       confirmAlert({
-        message: `Ops! Parece que ${
-          error === 'NOT_FOUND'
-            ? 'as credenciais estão incorretas'
-            : 'algo deu errado'
-        }. Por favor, tente novamente.`,
+        message: `Ops! Parece que ${auxMessage}. Por favor, tente novamente.`,
         buttons: [
           {
             label: 'OK',

@@ -8,7 +8,14 @@ import { env } from '../../utils/constants.util';
 import AppError from '../../config/error.config';
 import prisma from '../../config/database.config';
 
-async function handler(req: NextApiRequest, res: NextApiResponse) {
+type ResponseData = {
+  message: string;
+};
+
+async function handler(
+  req: NextApiRequest,
+  res: NextApiResponse<ResponseData>,
+) {
   if (req.method !== 'POST') {
     throw new AppError(
       405,
@@ -28,6 +35,8 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
 
   const encrypted = bcrypt.hashSync(common.password, env.BCRYPT_SALT_ROUNDS);
   const code = createCode();
+  common.created_at = new Date();
+  common.last_updated = new Date();
 
   registry.code = code;
   common.password = encrypted;
@@ -39,7 +48,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
     },
   });
 
-  return res.status(201).send('Created');
+  return res.status(201).json({ message: 'Created' });
 }
 
 function createCode() {

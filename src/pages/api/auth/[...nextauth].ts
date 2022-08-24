@@ -1,5 +1,5 @@
 import CredentialsProvider from 'next-auth/providers/credentials';
-import NextAuth, { NextAuthOptions } from 'next-auth';
+import NextAuth, { NextAuthOptions, Session, User } from 'next-auth';
 import bcrypt from 'bcrypt';
 
 import prisma from '../../../config/database.config';
@@ -7,6 +7,7 @@ import { env } from '../../../utils/constants.util';
 import { NextApiRequest, NextApiResponse } from 'next';
 import exceptionHandler from '../../../utils/exception.util';
 import logger from '../../../config/logger.config';
+import { JWT } from 'next-auth/jwt';
 
 async function auth(req: NextApiRequest, res: NextApiResponse) {
   const options: NextAuthOptions = {
@@ -20,7 +21,27 @@ async function auth(req: NextApiRequest, res: NextApiResponse) {
       signOut: '/auth/check-out',
       error: '/auth/check-in',
     },
-    callbacks: {},
+    callbacks: {
+      // @ts-ignore
+      session: ({
+        session,
+        token,
+        user,
+      }: {
+        session: Session;
+        user: User;
+        token: JWT;
+      }) => {
+        console.table(session);
+        console.table(token);
+        console.table(user);
+        return {
+          session,
+          token,
+          user,
+        };
+      },
+    },
     providers: [
       CredentialsProvider({
         id: 'credentials',
@@ -41,7 +62,7 @@ async function auth(req: NextApiRequest, res: NextApiResponse) {
           const { cpf, password } = credentials ?? {};
           let patient = null;
 
-          logger.info('Authorizing credentials');
+          logger.info(`Authorizing patient with CPF ${cpf}`);
 
           try {
             patient = await prisma.patient.findUnique({
@@ -58,9 +79,12 @@ async function auth(req: NextApiRequest, res: NextApiResponse) {
             password as string,
             patient.password,
           );
-          if (!isValid) return null;
+          if (!isValid) {
+            logger.error('Invalid password');
+            throw new Error('INVALID_CREDENTIALS');
+          }
 
-          return patient;
+          return { test: 'test' };
         },
       }),
     ],

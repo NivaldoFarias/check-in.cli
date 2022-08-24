@@ -42,6 +42,7 @@ interface IsSectionCompleteState {
 type DispatchBoolean = Dispatch<SetStateAction<boolean>>;
 
 type DataContextGroup = {
+  mockData: Forms | undefined;
   isSectionComplete: IsSectionCompleteState;
   setIsSectionComplete: Dispatch<SetStateAction<IsSectionCompleteState>>;
   selectInsurance: boolean;

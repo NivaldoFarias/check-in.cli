@@ -11,6 +11,7 @@ import RegistryData from '../../components/RegistryData';
 import AddressData from '../../components/AddressData/index';
 import CreatePassword from '../../components/CreatePassword';
 import { Forms } from '../../types';
+import { useRouter } from 'next/router';
 
 function Register() {
   const [password, setPassword] = useState<{
@@ -20,8 +21,8 @@ function Register() {
     password: '',
     confirm: '',
   });
-  const [toggleActiveSection, setActiveSection] = useState<boolean>(false);
   const {
+    mockData,
     isSectionComplete,
     setHasSubmitted,
     commonData,
@@ -29,6 +30,11 @@ function Register() {
     addressData,
   } = useContext(DataContext);
   const pageRef = useRef<HTMLDivElement>(null);
+  const [toggleActiveSection, setActiveSection] = useState<boolean>(
+    mockData ? true : false,
+  );
+
+  const router = useRouter();
 
   useEffect(() => {
     setTimeout(() => {
@@ -65,6 +71,47 @@ function Register() {
 
   function handleLoadCapture() {
     return pageRef.current?.classList.add('has-loaded');
+  }
+
+  async function registerPatient(data: Forms) {
+    try {
+      const response = await fetch('/api/register', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data),
+      });
+      if (!response.ok) return handleError(response);
+      return handleSucess();
+    } catch (error) {
+      return handleError(error);
+    }
+  }
+
+  function handleSucess() {
+    confirmAlert({
+      message: `Tudo pronto!`,
+      buttons: [
+        {
+          label: 'Fazer check-in',
+          onClick: () => router.push('/check-in'),
+        },
+      ],
+    });
+  }
+
+  function handleError(error: any) {
+    console.error(error);
+    confirmAlert({
+      message: `Ops! Algo deu errado. Por favor, tente novamente.`,
+      buttons: [
+        {
+          label: 'OK',
+          onClick: () => null,
+        },
+      ],
+    });
   }
 
   function buildRegisterPage() {
@@ -122,6 +169,8 @@ function Register() {
     function handleSubmit(e: FormEvent) {
       e.preventDefault();
       setHasSubmitted(true);
+      if (mockData) return registerPatient(mockData);
+
       const common = {
         ...commonData,
         cpf: commonData.cpf.replace(/\D/g, ''),
@@ -141,7 +190,6 @@ function Register() {
       };
       delete registryData.described_identity;
       delete registryData.described_assigned;
-      console.log(registryData);
 
       const address = {
         ...addressData,
@@ -154,9 +202,6 @@ function Register() {
         address,
       };
 
-      console.table(common);
-      console.table(registry);
-      console.table(address);
       return registerPatient(data);
     }
 
@@ -168,50 +213,6 @@ function Register() {
           {
             label: 'Definir senha',
             onClick: () => setActiveSection(true),
-          },
-        ],
-      });
-    }
-
-    async function registerPatient(data: Forms) {
-      try {
-        const response = await fetch('/api/register', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(data),
-        });
-        const result = await response.json();
-        console.log(result);
-        return handleSucess();
-      } catch (error) {
-        return handleError(error);
-      }
-    }
-
-    function handleSucess() {
-      confirmAlert({
-        message: `Tudo pronto!`,
-        buttons: [
-          {
-            label: 'Fazer check-in',
-            onClick: () => {
-              window.location.href = '/auth/check-in';
-            },
-          },
-        ],
-      });
-    }
-
-    function handleError(error: any) {
-      console.error(error);
-      confirmAlert({
-        message: `Ops! Algo deu errado. Por favor, tente novamente.`,
-        buttons: [
-          {
-            label: 'OK',
-            onClick: () => null,
           },
         ],
       });
