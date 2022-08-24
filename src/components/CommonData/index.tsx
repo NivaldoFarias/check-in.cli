@@ -66,7 +66,7 @@ function CommonData() {
         });
       }
     }
-  }, [expandSection, selectInsurance, formData.insurance, updateHeight]);
+  }, [expandSection, selectInsurance, formData?.insurance, updateHeight]);
 
   useEffect(() => {
     const birthdateIsSet = countDateInputs >= 4;

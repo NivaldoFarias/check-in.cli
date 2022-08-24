@@ -1,0 +1,78 @@
+/* sourced from https://primarypen.io/nzbin/pen/GGrXbp?editors=1100 (modified) */
+
+#loading-dots {
+  position: relative;
+  left: 0;
+  right: 0;
+  margin: 0 auto;
+
+  width: 10px;
+  height: 10px;
+  border-radius: 5px;
+  background-color: transparent;
+  color: $alt-tertiary;
+  box-shadow: 12px 0 0 -5px $alt-tertiary;
+  animation: dotPulse 1s infinite linear;
+  animation-delay: 0.17777777s;
+
+  &::before,
+  &::after {
+    content: '';
+    display: inline-block;
+    position: absolute;
+    top: 0;
+    width: 10px;
+    height: 10px;
+    border-radius: 5px;
+    background-color: transparent;
+    color: $alt-tertiary;
+  }
+
+  &::before {
+    box-shadow: -25px 0 0 -5px $tertiary;
+    animation: dotPulseBefore 1s infinite linear;
+    animation-delay: 0s;
+  }
+
+  &::after {
+    box-shadow: 36px 0 0 -5px $alt-tertiary;
+    animation: dotPulseAfter 1s infinite linear;
+    animation-delay: 0.33333s;
+  }
+  @keyframes dotPulseBefore {
+    0% {
+      box-shadow: -25px 0 0 -5px $alt-tertiary;
+    }
+    30% {
+      box-shadow: -25px 0 0 2px $alt-tertiary;
+    }
+    60%,
+    100% {
+      box-shadow: -25px 0 0 -5px $alt-tertiary;
+    }
+  }
+  @keyframes dotPulse {
+    0% {
+      box-shadow: 12px 0 0 -5px $alt-tertiary;
+    }
+    30% {
+      box-shadow: 12px 0 0 2px $alt-tertiary;
+    }
+    60%,
+    100% {
+      box-shadow: 12px 0 0 -5px $alt-tertiary;
+    }
+  }
+  @keyframes dotPulseAfter {
+    0% {
+      box-shadow: 36px 0 0 -5px $alt-tertiary;
+    }
+    30% {
+      box-shadow: 36px 0 0 2px $alt-tertiary;
+    }
+    60%,
+    100% {
+      box-shadow: 36px 0 0 -5px $alt-tertiary;
+    }
+  }
+}

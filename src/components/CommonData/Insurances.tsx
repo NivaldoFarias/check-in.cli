@@ -91,12 +91,12 @@ function Insurance({ updateHeight, setUpdateHeight }: any) {
   }, [hasCleared]);
 
   useEffect(() => {
-    if (commonData.insurance !== 'PRIVATE' && commonData.insurance.length) {
+    if (commonData?.insurance !== 'PRIVATE' && commonData?.insurance.length) {
       setShowInsuranceInput(true);
     } else setShowInsuranceInput(false);
     setUpdateHeight(!updateHeight);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [commonData.insurance, selectInsurance]);
+  }, [commonData?.insurance, selectInsurance]);
 
   const selectInsuranceComponent = buildSelectInsuranceComponent();
 

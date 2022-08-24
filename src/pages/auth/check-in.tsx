@@ -45,6 +45,7 @@ function CheckIn() {
     const interval = setInterval(() => {
       if (
         inputRef.current.cpf &&
+        !!inputRef.current.cpf.value.length &&
         inputRef.current?.cpf?.matches(':-internal-autofill-selected') &&
         !hasAutoFilled.cpf
       ) {
@@ -53,13 +54,14 @@ function CheckIn() {
 
       if (
         inputRef.current.password &&
+        !!inputRef.current.password.value.length &&
         inputRef.current?.password?.matches(':-internal-autofill-selected') &&
         !hasAutoFilled.password
       ) {
         setHasAutoFilled({ ...hasAutoFilled, password: true });
       }
       // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, 500);
+    }, 100);
 
     if (hasAutoFilled.cpf && hasAutoFilled.password) {
       clearInterval(interval);
@@ -211,7 +213,7 @@ function CheckIn() {
     function handleSubmit(e: FormEvent) {
       e.preventDefault();
       setHasSubmitted(true);
-      setTimeout(handleSignIn, getRandomInt(750, 2000));
+      return setTimeout(handleSignIn, getRandomInt(750, 2000));
     }
 
     function handleInputFocus(e: FocusEvent<HTMLInputElement>) {
@@ -241,14 +243,29 @@ function CheckIn() {
             password,
           },
         );
-        if (response?.error) {
-          setHasSubmitted(false);
-          return handleError(response.error);
+        console.log(response);
+
+        if (!response || response.error) {
+          return handleError(response?.error ?? '');
         }
-      } catch (error: any) {
-        setHasSubmitted(false);
-        return handleError(error);
+        return handleSucess(response);
+      } catch (error) {
+        console.error(error);
+        return handleError('');
       }
+    }
+
+    function handleSucess(response: SignInResponse) {
+      console.log(response);
+      confirmAlert({
+        message: `Em breve você será redirecionado para a página inicial!`,
+        buttons: [
+          {
+            label: 'OK',
+            onClick: () => setHasSubmitted(false),
+          },
+        ],
+      });
     }
 
     function handleError(error: string) {
@@ -269,11 +286,10 @@ function CheckIn() {
         buttons: [
           {
             label: 'OK',
-            onClick: () => null,
+            onClick: () => setHasSubmitted(false),
           },
         ],
       });
-      console.error(error);
     }
 
     function handleCPFInput(e: ChangeEvent<HTMLInputElement>) {
@@ -286,6 +302,15 @@ function CheckIn() {
             value.slice(0, -1) +
             '.' +
             (value.slice(-1) === '.' ? '' : value.slice(-1)),
+        });
+      } else if (value.length === 11 && !value.includes('.')) {
+        setHasAutoFilled({ ...hasAutoFilled, cpf: true });
+        setFormData({
+          ...formData,
+          cpf: `${value.slice(0, 3)}.${value.slice(3, 6)}.${value.slice(
+            6,
+            9,
+          )}-${value.slice(9)}`,
         });
       } else if (value.length === 12) {
         setFormData({

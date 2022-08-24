@@ -33,7 +33,7 @@ function SelectAssignedAtBirth() {
     } else setShowOptionalInput(false);
     setUpdateHeight(!updateHeight);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [formData.assigned_at_birth, selectAssigned]);
+  }, [formData?.assigned_at_birth, selectAssigned]);
 
   useEffect(() => {
     if (hasCleared) {

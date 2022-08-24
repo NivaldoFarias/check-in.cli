@@ -2,6 +2,7 @@
 @import './sass/resets';
 @import './sass/mixins';
 
+@import './plugins/LoadingDots';
 @import './plugins/ConfirmAlert';
 @import './plugins/DatePicker';
 @import './plugins/Calendar';
@@ -37,7 +38,7 @@ body {
     .input-field {
       display: block;
       padding: 10px 10px 6px 5px;
-      width: 300px;
+      width: 285px;
 
       color: $secondary;
       font-size: 1.2rem;
@@ -105,7 +106,7 @@ body {
     .bar {
       position: relative;
       display: block;
-      width: 300px;
+      width: 285px;
       border-top: 1px solid $secondary;
 
       &:before,
@@ -193,6 +194,7 @@ body {
     @include flex(column, center, center, 70px);
 
     height: 100%;
+    width: clamp(280px, 100%, 300px);
     font-family: $primary-font;
 
     .title-card {
@@ -205,7 +207,7 @@ body {
       text-shadow: $font-shadow;
 
       white-space: nowrap;
-      font-size: clamp(4.8rem, 5vw, 8rem);
+      font-size: clamp(4rem, 3vw, 8rem);
       font-weight: 300;
     }
     .alert-text {
@@ -332,7 +334,7 @@ body {
   &__divider {
     position: relative;
     display: block;
-    width: 300px;
+    width: 285px;
     border-bottom: 1px solid $secondary;
   }
 }
@@ -364,7 +366,7 @@ body {
       width: max-content;
 
       color: $tertiary;
-      font-size: 2.3rem;
+      font-size: clamp(2rem, 1.5vw, 3rem);
       font-weight: 400;
       text-align: left;
       text-shadow: $font-shadow;
@@ -456,7 +458,7 @@ body {
     }
     .input-field {
       &-password {
-        width: 275px;
+        width: 260px;
         letter-spacing: 6px !important;
       }
       &--active {
@@ -477,9 +479,12 @@ body {
         font-size: 0.85rem;
         letter-spacing: 3px;
       }
+      &.tidy-label {
+        letter-spacing: 0px;
+      }
     }
     .tidy-field {
-      width: 275px;
+      width: 260px;
       letter-spacing: 0px !important;
     }
     &__reset-icon {
@@ -596,9 +601,6 @@ body {
         color: $tertiary;
       }
     }
-    /* .input-section__reset-icon {
-      right: 40px;
-    } */
   }
   .input-date-field {
     padding-bottom: 7px;
@@ -739,82 +741,5 @@ body {
 #check-in-page {
   .auth-page__container {
     gap: 30px;
-  }
-}
-#loading-dots {
-  /* sourced from https://primarypen.io/nzbin/pen/GGrXbp?editors=1100 (modified) */
-  position: relative;
-  left: -15px;
-  right: 0;
-  margin: 0 auto;
-
-  width: 10px;
-  height: 10px;
-  border-radius: 5px;
-  background-color: transparent;
-  color: $alt-tertiary;
-  box-shadow: 12px 0 0 -5px $alt-tertiary;
-  animation: dotPulse 1s infinite linear;
-  animation-delay: 0.17777777s;
-
-  &::before,
-  &::after {
-    content: '';
-    display: inline-block;
-    position: absolute;
-    top: 0;
-    width: 10px;
-    height: 10px;
-    border-radius: 5px;
-    background-color: $alt-tertiary;
-    color: $alt-tertiary;
-  }
-
-  &::before {
-    box-shadow: -25px 0 0 -5px $alt-tertiary;
-    animation: dotPulseBefore 1s infinite linear;
-    animation-delay: 0s;
-  }
-
-  &::after {
-    box-shadow: 36px 0 0 -5px $alt-tertiary;
-    animation: dotPulseAfter 1s infinite linear;
-    animation-delay: 0.33333s;
-  }
-  @keyframes dotPulseBefore {
-    0% {
-      box-shadow: -25px 0 0 -5px $alt-tertiary;
-    }
-    30% {
-      box-shadow: -25px 0 0 2px $alt-tertiary;
-    }
-    60%,
-    100% {
-      box-shadow: -25px 0 0 -5px $alt-tertiary;
-    }
-  }
-  @keyframes dotPulse {
-    0% {
-      box-shadow: 12px 0 0 -5px $alt-tertiary;
-    }
-    30% {
-      box-shadow: 12px 0 0 2px $alt-tertiary;
-    }
-    60%,
-    100% {
-      box-shadow: 12px 0 0 -5px $alt-tertiary;
-    }
-  }
-  @keyframes dotPulseAfter {
-    0% {
-      box-shadow: 36px 0 0 -5px $alt-tertiary;
-    }
-    30% {
-      box-shadow: 36px 0 0 2px $alt-tertiary;
-    }
-    60%,
-    100% {
-      box-shadow: 36px 0 0 -5px $alt-tertiary;
-    }
   }
 }

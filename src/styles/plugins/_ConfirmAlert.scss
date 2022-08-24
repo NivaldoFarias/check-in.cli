@@ -26,7 +26,7 @@ body.react-confirm-alert-body-element {
 }
 
 .react-confirm-alert-body {
-  width: 400px;
+  width: 300px;
   padding: 30px;
   text-align: left;
   background: #fff;
@@ -112,7 +112,7 @@ body.react-confirm-alert-body-element {
 #react-confirm-alert > div > div > div {
   @include flex(column, center, center, 30px);
   position: absolute;
-  top: 25%;
+  top: 40%;
   left: 0;
   right: 0;
 
@@ -120,7 +120,8 @@ body.react-confirm-alert-body-element {
   padding: 30px 20px;
   max-height: 260px;
   height: 100%;
-  max-width: 360px;
+  min-width: 280px;
+  max-width: 290px;
   width: 100%;
 
   color: $alt-primary;

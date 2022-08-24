@@ -60,7 +60,7 @@ function RegistryData() {
     if (commonData?.cpf.length === 14) {
       setValidCpf(validate(commonData?.cpf));
     } else setValidCpf(true);
-  }, [commonData.cpf]);
+  }, [commonData?.cpf]);
 
   useEffect(() => {
     const cpfIsSet = validCpf;
@@ -100,13 +100,14 @@ function RegistryData() {
         setHeight(sectionRef.current.getBoundingClientRect().height);
       } else setHeight(0);
     }
-  }, [expandSection, selectGender, selectAssigned, updateHeight]);
+  }, [expandSection, selectGender, selectAssigned, updateHeight, validCpf]);
 
   useEffect(() => {
     const interval = setInterval(() => {
       if (
         inputRef.current.cpf &&
-        inputRef.current?.cpf?.matches(':-internal-autofill-selected') &&
+        (inputRef.current?.cpf?.matches(':-internal-autofill-selected') ||
+          inputRef.current?.cpf?.matches('clipboard-event--paste')) &&
         !hasCpfAutoFilled
       ) {
         setSectionState(true);
@@ -115,9 +116,12 @@ function RegistryData() {
 
       if (
         inputRef.current.phone_number &&
-        inputRef.current?.phone_number?.matches(
+        (inputRef.current?.phone_number?.matches(
           ':-internal-autofill-selected',
-        ) &&
+        ) ||
+          inputRef.current?.phone_number?.classList.contains(
+            'clipboard-event--paste',
+          )) &&
         !hasPhoneNumberAutoFilled
       ) {
         setSectionState(true);
@@ -268,7 +272,7 @@ function RegistryData() {
           />
           <span className='highlight'></span>
           <span className='bar'></span>
-          <label className='label-text'>
+          <label className='label-text tidy-label'>
             Número de telefone <span className='tidy-field'>(DDD)</span>
           </label>
           <p className={showAlertPhonenumber()}>{alertPhonenumber}</p>
@@ -304,6 +308,15 @@ function RegistryData() {
             value.slice(0, -1) +
             '.' +
             (value.slice(-1) === '.' ? '' : value.slice(-1)),
+        });
+      } else if (value.length === 11 && !value.includes('.')) {
+        setHasCpfAutoFilled(true);
+        setCommonData({
+          ...commonData,
+          cpf: `${value.slice(0, 3)}.${value.slice(3, 6)}.${value.slice(
+            6,
+            9,
+          )}-${value.slice(9)}`,
         });
       } else if (value.length === 12) {
         setCommonData({

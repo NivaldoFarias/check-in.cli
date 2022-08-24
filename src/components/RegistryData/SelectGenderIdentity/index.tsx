@@ -33,7 +33,7 @@ function SelectGenderIdentity() {
     } else setShowOptionalInput(false);
     setUpdateHeight(!updateHeight);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [formData.gender, selectGender]);
+  }, [formData?.gender, selectGender]);
 
   useEffect(() => {
     if (hasCleared) {

@@ -252,7 +252,7 @@ function AddressData() {
       setValidCEP(onlyNumbersRegex.test(formData?.postal_code));
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [formData.postal_code]);
+  }, [formData?.postal_code]);
 
   const [alertCEPText, setAlertCEPText] = useState<string>(
     'Insira apenas números',
@@ -365,7 +365,7 @@ function AddressData() {
         <section className='input-section postal-code-input'>
           <FaMapMarkerAlt
             className={`postal-code-input__submit-icon ${
-              hasFired && formData.postal_code?.length > 0
+              hasFired && formData?.postal_code?.length > 0
                 ? 'postal-code-input__submit-icon--active'
                 : ''
             }`}
@@ -373,7 +373,7 @@ function AddressData() {
           />
           <MdLayersClear
             className={`input-section__reset-icon position-left ${
-              hasAutoFilled.postal_code && formData.postal_code?.length > 0
+              hasAutoFilled.postal_code && formData?.postal_code?.length > 0
                 ? ''
                 : 'hidden'
             }`}
@@ -387,7 +387,7 @@ function AddressData() {
             pattern='^[\d\-\s]*$'
             value={formData?.postal_code}
             className={`input-field input-spacedout-field ${
-              hasAutoFilled.postal_code && formData.postal_code.length > 0
+              hasAutoFilled.postal_code && formData?.postal_code.length > 0
                 ? 'input-field--active'
                 : ''
             }`}
@@ -409,7 +409,7 @@ function AddressData() {
         <section className='input-section'>
           <MdFormatClear
             className={`input-section__reset-icon ${
-              hasAutoFilled.street && formData.street?.length > 0
+              hasAutoFilled.street && formData?.street?.length > 0
                 ? ''
                 : 'hidden'
             }`}
@@ -422,7 +422,7 @@ function AddressData() {
             value={formData?.street}
             ref={(element) => (inputRef.current['street'] = element)}
             className={`input-field ${
-              hasAutoFilled.street && formData.street.length > 0
+              hasAutoFilled.street && formData?.street.length > 0
                 ? 'input-field--active'
                 : ''
             }`}
@@ -438,7 +438,7 @@ function AddressData() {
         <section className='input-section'>
           <MdFormatClear
             className={`input-section__reset-icon ${
-              hasAutoFilled.number && formData.number?.length > 0
+              hasAutoFilled.number && formData?.number?.length > 0
                 ? ''
                 : 'hidden'
             }`}
@@ -452,7 +452,7 @@ function AddressData() {
             value={formData?.number}
             ref={(element) => (inputRef.current['number'] = element)}
             className={`input-field input-spacedout-field ${
-              hasAutoFilled.number && formData.number.length > 0
+              hasAutoFilled.number && formData?.number.length > 0
                 ? 'input-field--active'
                 : ''
             }`}
@@ -469,7 +469,7 @@ function AddressData() {
         <section className='input-section'>
           <MdFormatClear
             className={`input-section__reset-icon ${
-              hasAutoFilled.neighborhood && formData.neighborhood?.length > 0
+              hasAutoFilled.neighborhood && formData?.neighborhood?.length > 0
                 ? ''
                 : 'hidden'
             }`}
@@ -482,7 +482,7 @@ function AddressData() {
             value={formData?.neighborhood}
             ref={(element) => (inputRef.current['neighborhood'] = element)}
             className={`input-field input-spacedout-field ${
-              hasAutoFilled.neighborhood && formData.neighborhood.length > 0
+              hasAutoFilled.neighborhood && formData?.neighborhood.length > 0
                 ? 'input-field--active'
                 : ''
             }`}
@@ -501,7 +501,7 @@ function AddressData() {
         <section className='input-section'>
           <MdFormatClear
             className={`input-section__reset-icon ${
-              hasAutoFilled.city && formData.city?.length > 0 ? '' : 'hidden'
+              hasAutoFilled.city && formData?.city?.length > 0 ? '' : 'hidden'
             }`}
             onClick={() => handleReset('city')}
           />
@@ -512,7 +512,7 @@ function AddressData() {
             value={formData?.city}
             ref={(element) => (inputRef.current['city'] = element)}
             className={`input-field input-spacedout-field ${
-              hasAutoFilled.city && formData.city.length > 0
+              hasAutoFilled.city && formData?.city.length > 0
                 ? 'input-field--active'
                 : ''
             }`}
@@ -529,7 +529,7 @@ function AddressData() {
         <section className='input-section'>
           <MdFormatClear
             className={`input-section__reset-icon ${
-              hasAutoFilled.state && formData.state?.length > 0 ? '' : 'hidden'
+              hasAutoFilled.state && formData?.state?.length > 0 ? '' : 'hidden'
             }`}
             onClick={() => handleReset('state')}
           />
@@ -540,7 +540,7 @@ function AddressData() {
             value={formData?.state}
             ref={(element) => (inputRef.current['state'] = element)}
             className={`input-field input-spacedout-field ${
-              hasAutoFilled.state && formData.state.length > 0
+              hasAutoFilled.state && formData?.state.length > 0
                 ? 'input-field--active'
                 : ''
             }`}
@@ -557,7 +557,7 @@ function AddressData() {
         <section className='input-section'>
           <MdFormatClear
             className={`input-section__reset-icon ${
-              hasAutoFilled.complement && formData.complement?.length > 0
+              hasAutoFilled.complement && formData?.complement?.length > 0
                 ? ''
                 : 'hidden'
             }`}
@@ -569,7 +569,7 @@ function AddressData() {
             maxLength={25}
             value={formData?.complement}
             className={`input-field input-spacedout-field ${
-              hasAutoFilled.complement && formData.complement.length > 0
+              hasAutoFilled.complement && formData?.complement.length > 0
                 ? 'input-field--active'
                 : ''
             }`}
@@ -619,7 +619,7 @@ function AddressData() {
     }
 
     function handleClick(_e: MouseEvent<HTMLOrSVGElement>) {
-      if (formData.postal_code.length !== 9) {
+      if (formData?.postal_code.length !== 9) {
         setAlertCEPText('Campo obrigatório');
         setForceAlert(true);
       } else getAddressData();
@@ -630,7 +630,7 @@ function AddressData() {
 
       if (forceAlert && alertCEPText === 'Campo obrigatório') {
         setAlertCEPText('Insira um CEP válido');
-        if (onlyNumbersRegex.test(formData.postal_code)) setForceAlert(false);
+        if (onlyNumbersRegex.test(formData?.postal_code)) setForceAlert(false);
       }
 
       if (value.length === 6) {

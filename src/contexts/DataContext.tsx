@@ -1,6 +1,7 @@
 import { useState, createContext } from 'react';
-import DataContextGroup, { Addresses, Commons, Registries } from '../types';
+import DataContextGroup from '../types';
 import { generate } from 'gerador-validador-cpf';
+import useLocalStorage from '../hooks/useLocalStorage';
 
 const initialDataContextValue = {
   mockData: undefined,
@@ -102,7 +103,7 @@ function DataProvider(props: any) {
     address: false,
   });
 
-  const [commonData, setCommonData] = useState<Commons>({
+  const [commonData, setCommonData] = useLocalStorage('commonData', {
     full_name: '',
     first_name: '',
     insurance: '',
@@ -111,14 +112,14 @@ function DataProvider(props: any) {
     password: '',
     cpf: '',
   });
-  const [registryData, setRegistryData] = useState<Registries>({
+  const [registryData, setRegistryData] = useLocalStorage('registryData', {
     gender: '',
     described_identity: undefined,
     assigned_at_birth: '',
     described_assigned: undefined,
     phone_number: '',
   });
-  const [addressData, setAddressData] = useState<Addresses>({
+  const [addressData, setAddressData] = useLocalStorage('addressData', {
     street: '',
     number: '',
     complement: '',

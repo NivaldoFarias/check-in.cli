@@ -83,19 +83,20 @@ function Register() {
         body: JSON.stringify(data),
       });
       if (!response.ok) return handleError(response);
-      return handleSucess();
+      return handleSucess(response);
     } catch (error) {
       return handleError(error);
     }
   }
 
-  function handleSucess() {
+  function handleSucess(response: Response) {
+    console.log(response);
     confirmAlert({
       message: `Tudo pronto!`,
       buttons: [
         {
           label: 'Fazer check-in',
-          onClick: () => router.push('/check-in'),
+          onClick: () => router.push('/auth/check-in'),
         },
       ],
     });

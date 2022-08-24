@@ -16,7 +16,7 @@ model Patient {
   password       String          @db.VarChar(255)
   cpf            String          @unique @db.VarChar(11)
   insurance      enum_insurances
-  insurance_code String          @db.VarChar(255)
+  insurance_code String          @default("") @db.VarChar(255)
   birthdate      String          @db.VarChar(10)
   created_at     DateTime        @default(now())
   last_updated   DateTime        @default(now())
