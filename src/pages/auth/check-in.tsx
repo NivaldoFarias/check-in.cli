@@ -1,5 +1,5 @@
 import type { ChangeEvent, FocusEvent, FormEvent } from 'react';
-import { useState, useRef, useEffect } from 'react';
+import { useRef, useEffect } from 'react';
 import { signIn, SignInResponse } from 'next-auth/react';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -13,21 +13,15 @@ import { getRandomInt } from '../../utils/functions.util';
 import LoadingDots from '../../components/Loading';
 import { confirmAlert } from 'react-confirm-alert';
 
+import useCheckInReducer from '../../hooks/useCheckInReducer';
+
 type InputRef = {
   [x: string]: HTMLInputElement | null;
 };
 
 function CheckIn() {
-  const [formData, setFormData] = useState({
-    cpf: '',
-    password: '',
-  });
-  const [validCpf, setValidCpf] = useState<boolean>(true);
-  const [hasSubmitted, setHasSubmitted] = useState<boolean>(false);
-  const [hasAutoFilled, setHasAutoFilled] = useState<{ [x: string]: boolean }>({
-    cpf: false,
-    password: false,
-  });
+  const { state, dispatch } = useCheckInReducer();
+  const { cpf, password, hasSubmitted } = state;
 
   const inputRef = useRef<InputRef>({
     cpf: null,
@@ -36,10 +30,22 @@ function CheckIn() {
   const pageRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    if (formData?.cpf.length === 14) {
-      setValidCpf(validate(formData?.cpf));
-    } else setValidCpf(true);
-  }, [formData.cpf]);
+    if (cpf.value.length === 14) {
+      dispatch({
+        type: 'forms',
+        key: 'cpf',
+        field: 'isValid',
+        payload: validate(cpf.value),
+      });
+    } else
+      dispatch({
+        type: 'forms',
+        key: 'cpf',
+        field: 'isValid',
+        payload: true,
+      });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [cpf.value]);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -47,30 +53,41 @@ function CheckIn() {
         inputRef.current.cpf &&
         !!inputRef.current.cpf.value.length &&
         inputRef.current?.cpf?.matches(':-internal-autofill-selected') &&
-        !hasAutoFilled.cpf
+        !cpf.hasAutoFilled
       ) {
-        setHasAutoFilled({ ...hasAutoFilled, cpf: true });
+        dispatch({
+          type: 'forms',
+          key: 'cpf',
+          field: 'hasAutoFilled',
+          payload: true,
+        });
       }
 
       if (
         inputRef.current.password &&
         !!inputRef.current.password.value.length &&
         inputRef.current?.password?.matches(':-internal-autofill-selected') &&
-        !hasAutoFilled.password
+        !password.hasAutoFilled
       ) {
-        setHasAutoFilled({ ...hasAutoFilled, password: true });
+        dispatch({
+          type: 'forms',
+          key: 'password',
+          field: 'hasAutoFilled',
+          payload: true,
+        });
       }
       // eslint-disable-next-line react-hooks/exhaustive-deps
     }, 100);
 
-    if (hasAutoFilled.cpf && hasAutoFilled.password) {
+    if (cpf.hasAutoFilled && password.hasAutoFilled) {
       clearInterval(interval);
     }
 
     return () => {
       clearInterval(interval);
     };
-  }, [hasAutoFilled]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [cpf.hasAutoFilled, password.hasAutoFilled]);
 
   useEffect(() => {
     setTimeout(() => {
@@ -82,6 +99,17 @@ function CheckIn() {
       }
     }, 100);
   }, []);
+
+  useEffect(() => {
+    if (cpf.isValid && cpf.value.length === 14 && !cpf.hasAutoFilled) {
+      dispatch({
+        type: 'forms',
+        key: 'cpf',
+        field: 'hasAutoFilled',
+        payload: true,
+      });
+    }
+  }, [cpf.isValid]);
 
   const checkInForms = buildCheckInForms();
 
@@ -110,12 +138,15 @@ function CheckIn() {
   function buildCheckInForms() {
     const cpfRegex = /^[\d\.\-\s]*$/;
     const validateForm =
-      validCpf && formData.password?.length >= 6 && !hasSubmitted
+      cpf.isValid &&
+      cpf.value.length === 14 &&
+      password.value.length >= 6 &&
+      !hasSubmitted
         ? 'submit-btn'
         : 'submit-btn disabled';
 
     const alertCpf =
-      formData?.cpf.length === 14 ? `CPF inválido` : `Insira apenas números`;
+      cpf.value.length === 14 ? `CPF inválido` : `Insira apenas números`;
 
     return (
       <main className='auth-page__container'>
@@ -123,8 +154,8 @@ function CheckIn() {
         <form className='form-group' onSubmit={handleSubmit}>
           <section
             className={`input-section  ${
-              cpfRegex.test(formData?.cpf)
-                ? validCpf
+              cpfRegex.test(cpf.value)
+                ? cpf.isValid
                   ? ''
                   : 'push-bottom'
                 : 'push-bottom'
@@ -132,14 +163,14 @@ function CheckIn() {
           >
             <MdFormatClear
               className={`input-section__reset-icon position-left ${
-                hasAutoFilled.cpf ? '' : 'hidden'
+                cpf.hasAutoFilled ? '' : 'hidden'
               }`}
-              onClick={() => handleReset('cpf')}
+              onClick={() => dispatch({ type: 'reset', key: 'cpf' })}
             />
             <AiFillIdcard
               className={`input-section__cpf-icon ${
-                hasAutoFilled.cpf ? 'input-section__cpf-icon--active' : ''
-              } ${validCpf ? '' : 'input-section__cpf-icon--invalid'}`}
+                cpf.hasAutoFilled ? 'input-section__cpf-icon--active' : ''
+              } ${cpf.isValid ? '' : 'input-section__cpf-icon--invalid'}`}
             />
             <input
               type='text'
@@ -147,9 +178,9 @@ function CheckIn() {
               minLength={14}
               maxLength={14}
               pattern='^[\d\.\-\s]*$'
-              value={formData?.cpf}
+              value={cpf.value}
               className={`input-field input-spacedout-field ${
-                hasAutoFilled.cpf && formData.cpf.length > 0
+                cpf.hasAutoFilled && cpf.value.length > 0
                   ? 'input-field--active'
                   : ''
               }`}
@@ -157,7 +188,7 @@ function CheckIn() {
               onChange={handleCPFInput}
               onFocus={handleInputFocus}
               onBlur={handleInputBlur}
-              disabled={hasAutoFilled.cpf && formData.cpf.length > 0}
+              disabled={cpf.hasAutoFilled && cpf.value.length > 0}
               required
             />
             <span className='highlight'></span>
@@ -168,25 +199,25 @@ function CheckIn() {
           <section className='input-section'>
             <MdFormatClear
               className={`input-section__reset-icon ${
-                hasAutoFilled.password ? '' : 'hidden'
+                password.hasAutoFilled ? '' : 'hidden'
               }`}
-              onClick={() => handleReset('password')}
+              onClick={() => dispatch({ type: 'reset', key: 'password' })}
             />
             <input
               type='password'
               name='password'
               maxLength={22}
-              value={formData?.password}
+              value={password.value}
               ref={(element) => (inputRef.current['password'] = element)}
               className={`input-field input-field-password ${
-                hasAutoFilled.password && formData.password.length > 0
+                password.hasAutoFilled && password.value.length > 0
                   ? 'input-field--active'
                   : ''
               }`}
               onChange={handleInputChange}
               onFocus={handleInputFocus}
               onBlur={handleInputBlur}
-              disabled={hasAutoFilled.password && formData?.password.length > 0}
+              disabled={password.hasAutoFilled && password.value.length > 0}
             />
             <span className='highlight'></span>
             <span className='bar'></span>
@@ -202,17 +233,9 @@ function CheckIn() {
       </main>
     );
 
-    function handleReset(name: 'cpf' | 'password') {
-      setFormData({
-        ...formData,
-        [name]: '',
-      });
-      setHasAutoFilled({ ...hasAutoFilled, [name]: false });
-    }
-
     function handleSubmit(e: FormEvent) {
       e.preventDefault();
-      setHasSubmitted(true);
+      dispatch({ type: 'boolean', key: 'hasSubmitted', payload: true });
       return setTimeout(handleSignIn, getRandomInt(750, 2000));
     }
 
@@ -231,16 +254,14 @@ function CheckIn() {
     }
 
     async function handleSignIn() {
-      let { cpf, password } = formData;
-      cpf = cpf.replace(/\D/g, '');
-
       try {
+        const formattedCpf = cpf.value.replace(/\D/g, '');
         const response: SignInResponse | undefined = await signIn(
           'credentials',
           {
             redirect: false,
-            cpf,
-            password,
+            cpf: formattedCpf,
+            password: password.value,
           },
         );
         console.log(response);
@@ -262,7 +283,12 @@ function CheckIn() {
         buttons: [
           {
             label: 'OK',
-            onClick: () => setHasSubmitted(false),
+            onClick: () =>
+              dispatch({
+                type: 'boolean',
+                key: 'hasSubmitted',
+                payload: false,
+              }),
           },
         ],
       });
@@ -286,7 +312,12 @@ function CheckIn() {
         buttons: [
           {
             label: 'OK',
-            onClick: () => setHasSubmitted(false),
+            onClick: () =>
+              dispatch({
+                type: 'boolean',
+                key: 'hasSubmitted',
+                payload: false,
+              }),
           },
         ],
       });
@@ -296,43 +327,65 @@ function CheckIn() {
       const { value } = e.target;
 
       if (value.length === 4 || value.length === 8) {
-        setFormData({
-          ...formData,
-          cpf:
+        dispatch({
+          type: 'forms',
+          key: 'cpf',
+          field: 'value',
+          payload:
             value.slice(0, -1) +
             '.' +
             (value.slice(-1) === '.' ? '' : value.slice(-1)),
         });
       } else if (value.length === 11 && !value.includes('.')) {
-        setHasAutoFilled({ ...hasAutoFilled, cpf: true });
-        setFormData({
-          ...formData,
-          cpf: `${value.slice(0, 3)}.${value.slice(3, 6)}.${value.slice(
+        dispatch({
+          type: 'forms',
+          key: 'cpf',
+          field: 'hasAutoFilled',
+          payload: true,
+        });
+        dispatch({
+          type: 'forms',
+          key: 'cpf',
+          field: 'value',
+          payload: `
+            ${value.slice(0, 3)}.${value.slice(3, 6)}.${value.slice(
             6,
             9,
           )}-${value.slice(9)}`,
         });
       } else if (value.length === 12) {
-        setFormData({
-          ...formData,
-          cpf:
+        dispatch({
+          type: 'forms',
+          key: 'cpf',
+          field: 'value',
+          payload:
             value.slice(0, -1) +
             '-' +
             (value.slice(-1) === '-' ? '' : value.slice(-1)),
         });
       } else {
-        setFormData({ ...formData, cpf: value });
+        dispatch({
+          type: 'forms',
+          key: 'cpf',
+          field: 'value',
+          payload: value,
+        });
       }
     }
 
     function handleInputChange(e: ChangeEvent<HTMLInputElement>) {
-      setFormData({ ...formData, [e.target.name]: e.target.value });
+      dispatch({
+        type: 'forms',
+        key: e.target.name as 'cpf' | 'password',
+        field: 'value',
+        payload: e.target.value,
+      });
     }
 
     function showAlertCpf() {
-      const containsOnlyNumbers = cpfRegex.test(formData?.cpf);
+      const containsOnlyNumbers = cpfRegex.test(cpf.value);
       const transparent = containsOnlyNumbers
-        ? validCpf
+        ? cpf.isValid
           ? 'color-transparent'
           : ''
         : '';
