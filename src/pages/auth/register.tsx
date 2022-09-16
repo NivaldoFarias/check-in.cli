@@ -89,8 +89,7 @@ function Register() {
     }
   }
 
-  function handleSucess(response: Response) {
-    console.log(response);
+  function handleSucess(_response: Response) {
     confirmAlert({
       message: `Tudo pronto!`,
       buttons: [

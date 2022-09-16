@@ -264,7 +264,6 @@ function CheckIn() {
             password: password.value,
           },
         );
-        console.log(response);
 
         if (!response || response.error) {
           return handleError(response?.error ?? '');
@@ -277,7 +276,6 @@ function CheckIn() {
     }
 
     function handleSucess(response: SignInResponse) {
-      console.log(response);
       confirmAlert({
         message: `Em breve você será redirecionado para a página inicial!`,
         buttons: [

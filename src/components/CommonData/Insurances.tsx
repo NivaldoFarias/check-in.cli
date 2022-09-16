@@ -6,6 +6,7 @@ import {
   useEffect,
   ChangeEvent,
   FocusEvent,
+  useMemo,
 } from 'react';
 import Select, {
   ActionMeta,
@@ -23,51 +24,13 @@ import DataContext from '../../contexts/DataContext';
 import SingleValue from './SingleValue';
 import { useRef } from 'react';
 import { regex } from '../../utils/constants.util';
+import options from '../../data/insurances';
 
 function Insurance({ updateHeight, setUpdateHeight }: any) {
   const [showInsuranceInput, setShowInsuranceInput] = useState<boolean>(false);
   const [hasAutoFilled, setHasAutoFilled] = useState<boolean>(false);
   const [hasCleared, setHasCleared] = useState<boolean>(false);
 
-  const options = [
-    { value: 'PRIVATE', label: 'Particular (N/A)' },
-    { value: 'ALLIANZ_SAUDE', label: 'Allianz Saúde' },
-    { value: 'AMEPLAN_SAUDE', label: 'Ameplan Saúde' },
-    { value: 'AMIL_FACIL', label: 'Amil Fácil' },
-    { value: 'AMIL_SAUDE', label: 'Amil Saúde' },
-    { value: 'ATIVIA', label: 'Ativia' },
-    { value: 'BIOSAUDE', label: 'BioSaude' },
-    { value: 'BIOVIDA_SAUDE', label: 'Biovida Saúde' },
-    { value: 'BLUE_MED_SAUDE', label: 'Blue Med Saúde' },
-    { value: 'CLASSES_LABORIOSAS', label: 'Classes Laboriosas' },
-    { value: 'CUIDAR_ME', label: 'cuidar.me' },
-    { value: 'CRUZ_AZUL_SAUDE', label: 'Cruz Azul Saúde' },
-    { value: 'GS_SAUDE', label: 'GS Saúde' },
-    { value: 'GOLDEN_CROSS', label: 'Golden Cross' },
-    { value: 'HAPVIDA', label: 'Hapvida' },
-    { value: 'HEALTH_SANTARIS', label: 'Health Santaris' },
-    { value: 'INTERCLINICAS_SAUDE', label: 'Interclínicas Saúde' },
-    { value: 'KIPP_SAUDE', label: 'Kipp Saúde' },
-    { value: 'MEDICAL_HEALTH', label: 'Medical Health' },
-    { value: 'MEDSENIOR', label: 'MedSênior' },
-    { value: 'MED_TOUR_SAUDE', label: 'Med Tour Saúde' },
-    { value: 'NOTRE_DAME_INTERMEDICA', label: 'NotreDame Intermédica' },
-    { value: 'PLANSAUDE', label: 'PlanSaúde' },
-    { value: 'PLENA_SAUDE', label: 'Plena Saúde' },
-    { value: 'PORTO_SEGURO_SAUDE', label: 'Porto Seguro Saúde' },
-    { value: 'PREVENT_SENIOR', label: 'Prevent Sênior' },
-    { value: 'QSAUDE', label: 'Qsaúde' },
-    { value: 'SANTA_HELENA_SAUDE', label: 'Santa helena Saúde' },
-    { value: 'SAO_CRISTOVAO_SAUDE', label: 'São Cristovão Saúde' },
-    { value: 'SAO_MIGUEL_SAUDE', label: 'São Miguel Saúde' },
-    { value: 'SEGUROS_UNIMED', label: 'Seguros Unimed' },
-    { value: 'SOMPO_SAUDE', label: 'Sompo Saúde' },
-    { value: 'SUL_AMERICA_SAUDE', label: 'SulAmérica Saúde' },
-    { value: 'TOTAL_MEDCARE_SAUDE', label: 'Total MedCare Saúde' },
-    { value: 'TRASMONTANO_SAUDE', label: 'Transmontano Saúde' },
-    { value: 'UNIHOSP_SAUDE', label: 'UniHosp Saúde' },
-    { value: 'UNIMED_NACIONAL', label: 'Unimed Nacional' },
-  ];
   const customStyles: StylesConfig<any> = {
     dropdownIndicator: (provided, _state) => ({
       ...provided,
@@ -84,13 +47,12 @@ function Insurance({ updateHeight, setUpdateHeight }: any) {
   const { selectInsurance, setSelectInsurance, commonData, setCommonData } =
     useContext(DataContext);
 
-  useEffect(() => {
-    if (hasCleared) {
-      setTimeout(() => setHasCleared(false), 200);
-    }
-  }, [hasCleared]);
+  useMemo(
+    () => (hasCleared ? setTimeout(() => setHasCleared(false), 200) : null),
+    [hasCleared],
+  );
 
-  useEffect(() => {
+  useMemo(() => {
     if (commonData?.insurance !== 'PRIVATE' && commonData?.insurance.length) {
       setShowInsuranceInput(true);
     } else setShowInsuranceInput(false);

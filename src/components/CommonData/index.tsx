@@ -3,6 +3,7 @@ import {
   FocusEvent,
   useContext,
   useState,
+  useMemo,
   useEffect,
   useRef,
 } from 'react';
@@ -17,8 +18,9 @@ import { IoMdCheckmarkCircleOutline } from 'react-icons/io';
 import DataContext from '../../contexts/DataContext';
 import { time } from '../../utils/constants.util';
 import Insurance from './Insurances';
+import useAutoFill from '../../hooks/useAutoFill';
 
-type InputRef = {
+export type InputRef = {
   full_name: HTMLInputElement | null;
   first_name: HTMLInputElement | null;
   insurance: HTMLInputElement | null;
@@ -29,7 +31,6 @@ type InputRef = {
 function CommonData() {
   const [countDateInputs, setCountDateInputs] = useState<number>(0);
   const [expandSection, setSectionState] = useState<boolean>(false);
-  const [height, setHeight] = useState<number | string>(0);
   const [hasFirstNameAutoFilled, setHasFirstNameAutoFilled] =
     useState<boolean>(false);
   const [hasFullNameAutoFilled, setHasFullNameAutoFilled] =
@@ -53,22 +54,14 @@ function CommonData() {
   });
   const sectionRef = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
-    if (sectionRef.current) {
-      if (expandSection) {
-        setHeight(sectionRef.current.getBoundingClientRect().height);
-      } else setHeight(0);
-
-      if (typeof updateHeight === 'string' && updateHeight === 'scroll') {
-        sectionRef.current.scrollIntoView({
-          behavior: 'smooth',
-          block: 'end',
-        });
-      }
-    }
+  const height = useMemo(() => {
+    return sectionRef?.current && expandSection
+      ? sectionRef.current.getBoundingClientRect().height
+      : 0;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [expandSection, selectInsurance, formData?.insurance, updateHeight]);
 
-  useEffect(() => {
+  useMemo(() => {
     const birthdateIsSet = countDateInputs >= 4;
     const socialNameIsSet = formData?.first_name?.length > 0;
     const fullNameIsSet = formData?.full_name?.length > 3;
@@ -76,10 +69,9 @@ function CommonData() {
       formData?.insurance?.length > 0 &&
       (formData?.insurance === 'PRIVATE' ||
         formData?.insurance_code?.length > 4);
+
     const isComplete =
       birthdateIsSet && socialNameIsSet && fullNameIsSet && insuranceIsSet;
-    console.log(formData?.insurance, formData?.insurance_code);
-
     if (isComplete && !isSectionComplete.common) {
       setIsSectionComplete({
         ...isSectionComplete,
@@ -91,38 +83,34 @@ function CommonData() {
         common: false,
       });
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [formData, hasFirstNameAutoFilled, hasFullNameAutoFilled]);
+  }, [
+    formData,
+    isSectionComplete?.common,
+    hasFirstNameAutoFilled,
+    hasFullNameAutoFilled,
+  ]);
 
-  useEffect(() => {
-    const interval = setInterval(() => {
-      if (
-        inputRef.current.first_name &&
-        inputRef.current?.first_name?.matches(':-internal-autofill-selected') &&
-        !hasFirstNameAutoFilled
-      ) {
-        setSectionState(true);
-        setHasFirstNameAutoFilled(true);
-      }
-
-      if (
-        inputRef.current.full_name &&
-        inputRef.current?.full_name?.matches(':-internal-autofill-selected') &&
-        !hasFullNameAutoFilled
-      ) {
-        setSectionState(true);
-        setHasFullNameAutoFilled(true);
-      }
-      // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, 500);
-
-    if (hasFirstNameAutoFilled && hasFullNameAutoFilled) {
-      clearInterval(interval);
+  useMemo(() => {
+    if (
+      sectionRef?.current &&
+      typeof updateHeight === 'string' &&
+      updateHeight === 'scroll'
+    ) {
+      sectionRef.current.scrollIntoView({
+        behavior: 'smooth',
+        block: 'end',
+      });
     }
+  }, [sectionRef, updateHeight]);
 
-    return () => {
-      clearInterval(interval);
-    };
-  }, [hasFirstNameAutoFilled, hasFullNameAutoFilled]);
+  useAutoFill({
+    inputRef,
+    hasFirstNameAutoFilled,
+    setSectionState,
+    setHasFirstNameAutoFilled,
+    hasFullNameAutoFilled,
+    setHasFullNameAutoFilled,
+  });
 
   const commonDataComponent = buildCommonDataComponent();
 
