@@ -2,7 +2,7 @@ import { Dispatch, SetStateAction } from 'react';
 
 declare module 'react-mobile-datepicker';
 
-interface Commons {
+export interface Commons {
   full_name: string;
   first_name: string;
   birthdate: string;
@@ -11,14 +11,14 @@ interface Commons {
   password: string;
   cpf: string;
 }
-interface Registries {
+export interface Registries {
   gender: string;
   assigned_at_birth: string;
   described_identity?: string;
   described_assigned?: string;
   phone_number: string;
 }
-interface Addresses {
+export interface Addresses {
   street: string;
   number: string;
   complement: string;
@@ -28,19 +28,19 @@ interface Addresses {
   postal_code: string;
 }
 
-type Forms = {
+export type Forms = {
   common: Commons;
   registry: Registries;
   address: Addresses;
 };
 
-interface IsSectionCompleteState {
+export interface IsSectionCompleteState {
   common: boolean;
   registry: boolean;
   address: boolean;
 }
 
-type DispatchBoolean = Dispatch<SetStateAction<boolean>>;
+export type DispatchBoolean = Dispatch<SetStateAction<boolean>>;
 
 type DataContextGroup = {
   mockData: Forms | undefined;
@@ -68,5 +68,4 @@ type DataContextGroup = {
   setAddressData: Dispatch<SetStateAction<Addresses>>;
 };
 
-export { Commons, Registries, Addresses, Forms };
 export default DataContextGroup;

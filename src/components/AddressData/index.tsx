@@ -2,11 +2,10 @@ import {
   ChangeEvent,
   FocusEvent,
   useContext,
-  useEffect,
   useState,
   useRef,
   KeyboardEvent,
-  MouseEvent,
+  useMemo,
 } from 'react';
 import { confirmAlert } from 'react-confirm-alert';
 
@@ -14,18 +13,14 @@ import {
   MdCalendarViewDay,
   MdViewHeadline,
   MdFormatClear,
-  MdLayersClear,
 } from 'react-icons/md';
 import { IoMdCheckmarkCircleOutline } from 'react-icons/io';
-import { FaMapMarkerAlt } from 'react-icons/fa';
 
 import DataContext from '../../contexts/DataContext';
 import axios from 'axios';
+import PostalCode from './PostalCode';
 
-type InputRef = {
-  [x: string]: HTMLInputElement | null;
-};
-type AddressStrings =
+export type AddressStrings =
   | 'street'
   | 'number'
   | 'complement'
@@ -33,7 +28,10 @@ type AddressStrings =
   | 'city'
   | 'state'
   | 'postal_code';
-type AddressBooleanStates = {
+export type InputRef = {
+  [x in AddressStrings]: HTMLInputElement | null;
+};
+export type AddressBooleanStates = {
   postal_code: boolean;
   street: boolean;
   number: boolean;
@@ -78,10 +76,8 @@ const STATES_MAP: { [x: string]: string } = {
 function AddressData() {
   const [validCEP, setValidCEP] = useState<boolean>(false);
   const [expandSection, setSectionState] = useState<boolean>(false);
-  const [height, setHeight] = useState<number | string>(0);
 
   const [hasFired, setHasFired] = useState<boolean>(false);
-  const [forceAlert, setForceAlert] = useState<boolean>(false);
   const [hasAutoFilled, setHasAutoFilled] = useState<AddressBooleanStates>({
     postal_code: false,
     street: false,
@@ -91,6 +87,9 @@ function AddressData() {
     city: false,
     state: false,
   });
+  const [alertCEPText, setAlertCEPText] = useState<string>(
+    'Insira apenas números',
+  );
 
   const inputRef = useRef<InputRef>({
     street: null,
@@ -99,7 +98,6 @@ function AddressData() {
     neighborhood: null,
     city: null,
     state: null,
-    country: null,
     postal_code: null,
   });
   const sectionRef = useRef<HTMLDivElement>(null);
@@ -112,7 +110,7 @@ function AddressData() {
     updateHeight,
   } = useContext(DataContext);
 
-  useEffect(() => {
+  useMemo(() => {
     const cepIsSet = formData?.postal_code?.length > 5;
     const streetIsSet = formData?.street?.length > 3;
     const numberIsSet = formData?.number?.length > 0;
@@ -141,7 +139,7 @@ function AddressData() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [formData, hasAutoFilled]);
 
-  useEffect(() => {
+  useMemo(() => {
     const interval = setInterval(() => {
       if (
         inputRef.current?.postal_code &&
@@ -231,15 +229,16 @@ function AddressData() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [hasAutoFilled]);
 
-  useEffect(() => {
-    if (sectionRef.current) {
-      if (expandSection) {
-        setHeight(sectionRef.current.getBoundingClientRect().height);
-      } else setHeight(0);
-    }
-  }, [expandSection, updateHeight]);
+  const height = useMemo(
+    () =>
+      sectionRef?.current && expandSection
+        ? sectionRef.current.getBoundingClientRect().height
+        : 0,
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [expandSection, updateHeight],
+  );
 
-  useEffect(() => {
+  useMemo(() => {
     const onlyNumbersRegex = /^[\d\-\s]*$/;
     const regexCEP = /^\d{5}-\d{3}$/;
 
@@ -254,9 +253,6 @@ function AddressData() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [formData?.postal_code]);
 
-  const [alertCEPText, setAlertCEPText] = useState<string>(
-    'Insira apenas números',
-  );
   const addressDataComponent = buildAddressDataComponent();
 
   return (
@@ -358,54 +354,22 @@ function AddressData() {
   }
 
   function buildAddressDataComponent() {
-    const onlyNumbersRegex = /^[\d\-\s]*$/;
-
     return (
       <div ref={sectionRef} className='form-group'>
-        <section className='input-section postal-code-input'>
-          <FaMapMarkerAlt
-            className={`postal-code-input__submit-icon ${
-              hasFired && formData?.postal_code?.length > 0
-                ? 'postal-code-input__submit-icon--active'
-                : ''
-            }`}
-            onClick={handleClick}
-          />
-          <MdLayersClear
-            className={`input-section__reset-icon position-left ${
-              hasAutoFilled.postal_code && formData?.postal_code?.length > 0
-                ? ''
-                : 'hidden'
-            }`}
-            onClick={handleHardReset}
-          />
-          <input
-            type='text'
-            minLength={5}
-            maxLength={9}
-            name='postal_code'
-            pattern='^[\d\-\s]*$'
-            value={formData?.postal_code}
-            className={`input-field input-spacedout-field ${
-              hasAutoFilled.postal_code && formData?.postal_code.length > 0
-                ? 'input-field--active'
-                : ''
-            }`}
-            ref={(element) => (inputRef.current['postal_code'] = element)}
-            onChange={handleCEPInput}
-            onFocus={handleInputFocus}
-            onKeyDown={handleKeyDown}
-            onBlur={handleInputBlur}
-            required
-            disabled={
-              hasAutoFilled.postal_code && formData?.postal_code.length > 0
-            }
-          />
-          <span className='highlight'></span>
-          <span className='bar'></span>
-          <label className='label-text input-spacedout-field'>CEP</label>
-          <p className={alertCEPTextClassName()}>{alertCEPText}</p>
-        </section>
+        <PostalCode
+          hasFired={hasFired}
+          setHasFired={setHasFired}
+          validCEP={validCEP}
+          alertCEPText={alertCEPText}
+          setAlertCEPText={setAlertCEPText}
+          hasAutoFilled={hasAutoFilled}
+          setHasAutoFilled={setHasAutoFilled}
+          inputRef={inputRef}
+          getAddressData={getAddressData}
+          handleInputFocus={handleInputFocus}
+          handleInputBlur={handleInputBlur}
+          handleKeyDown={handleKeyDown}
+        />
         <section className='input-section'>
           <MdFormatClear
             className={`input-section__reset-icon ${
@@ -596,60 +560,6 @@ function AddressData() {
       setHasAutoFilled({ ...hasAutoFilled, [name]: false });
     }
 
-    function handleHardReset() {
-      setFormData({
-        postal_code: '',
-        street: '',
-        number: '',
-        neighborhood: '',
-        city: '',
-        state: '',
-        complement: '',
-      });
-      setHasFired(false);
-      setHasAutoFilled({
-        postal_code: false,
-        street: false,
-        number: false,
-        complement: false,
-        neighborhood: false,
-        city: false,
-        state: false,
-      });
-    }
-
-    function handleClick(_e: MouseEvent<HTMLOrSVGElement>) {
-      if (formData?.postal_code.length !== 9) {
-        setAlertCEPText('Campo obrigatório');
-        setForceAlert(true);
-      } else getAddressData();
-    }
-
-    function handleCEPInput(e: ChangeEvent<HTMLInputElement>) {
-      const { value } = e.target;
-
-      if (forceAlert && alertCEPText === 'Campo obrigatório') {
-        setAlertCEPText('Insira um CEP válido');
-        if (onlyNumbersRegex.test(formData?.postal_code)) setForceAlert(false);
-      }
-
-      if (value.length === 6) {
-        setFormData({
-          ...formData,
-          postal_code:
-            value.slice(0, -1) +
-            '-' +
-            (value.slice(-1) === '-' ? '' : value.slice(-1)),
-        });
-      } else setFormData({ ...formData, postal_code: value });
-
-      if (
-        value.length === 9 ||
-        (value.length === 8 && onlyNumbersRegex.test(value))
-      )
-        getAddressData(value);
-    }
-
     function handleKeyDown(e: KeyboardEvent<HTMLInputElement>) {
       if (e.key === 'Enter') {
         getAddressData();
@@ -657,11 +567,14 @@ function AddressData() {
     }
 
     function handleInputChange(e: ChangeEvent<HTMLInputElement>) {
-      setFormData({ ...formData, [e.target.name]: e.target.value });
+      setFormData({
+        ...formData,
+        [e.target.name as AddressStrings]: e.target.value,
+      });
     }
 
     function handleInputFocus(e: FocusEvent<HTMLInputElement>) {
-      return inputRef.current[e.target.name]?.classList.add(
+      return inputRef.current[e.target.name as AddressStrings]?.classList.add(
         'input-field--active',
       );
     }
@@ -677,24 +590,9 @@ function AddressData() {
 
       if (e.target.value.length !== 0) return null;
 
-      return inputRef.current[e.target.name]?.classList.remove(
-        'input-field--active',
-      );
-    }
-
-    function alertCEPTextClassName() {
-      const containsOnlyNumbers = onlyNumbersRegex.test(formData?.postal_code);
-      const transparent = containsOnlyNumbers
-        ? formData?.postal_code.length === 9
-          ? validCEP
-            ? 'color-transparent'
-            : ''
-          : forceAlert
-          ? ''
-          : 'color-transparent'
-        : '';
-
-      return `alert-text cpf-alert ${transparent}`;
+      return inputRef.current[
+        e.target.name as AddressStrings
+      ]?.classList.remove('input-field--active');
     }
   }
 }

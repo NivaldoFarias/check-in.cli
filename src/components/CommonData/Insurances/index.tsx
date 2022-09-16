@@ -20,11 +20,11 @@ import Select, {
 import { MdFormatClear } from 'react-icons/md';
 import { CgPassword } from 'react-icons/cg';
 
-import DataContext from '../../contexts/DataContext';
-import SingleValue from './SingleValue';
+import DataContext from '../../../contexts/DataContext';
+import SingleValue from '../SingleValue';
 import { useRef } from 'react';
-import { regex } from '../../utils/constants.util';
-import options from '../../data/insurances';
+import { regex } from '../../../utils/constants.util';
+import options from '../../../data/insurances';
 
 function Insurance({ updateHeight, setUpdateHeight }: any) {
   const [showInsuranceInput, setShowInsuranceInput] = useState<boolean>(false);

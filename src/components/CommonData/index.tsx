@@ -4,7 +4,6 @@ import {
   useContext,
   useState,
   useMemo,
-  useEffect,
   useRef,
 } from 'react';
 
