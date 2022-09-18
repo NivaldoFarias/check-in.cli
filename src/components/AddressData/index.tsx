@@ -1,13 +1,4 @@
-import {
-  ChangeEvent,
-  FocusEvent,
-  useContext,
-  useState,
-  useRef,
-  KeyboardEvent,
-  useMemo,
-} from 'react';
-import { confirmAlert } from 'react-confirm-alert';
+import { useContext, useMemo, useEffect } from 'react';
 
 import {
   MdCalendarViewDay,
@@ -17,98 +8,55 @@ import {
 import { IoMdCheckmarkCircleOutline } from 'react-icons/io';
 
 import DataContext from '../../contexts/DataContext';
-import axios from 'axios';
 import PostalCode from './PostalCode';
-
-export type AddressStrings =
-  | 'street'
-  | 'number'
-  | 'complement'
-  | 'neighborhood'
-  | 'city'
-  | 'state'
-  | 'postal_code';
-export type InputRef = {
-  [x in AddressStrings]: HTMLInputElement | null;
-};
-export type AddressBooleanStates = {
-  postal_code: boolean;
-  street: boolean;
-  number: boolean;
-  complement: boolean;
-  neighborhood: boolean;
-  city: boolean;
-  state: boolean;
-};
-
-const STATES_MAP: { [x: string]: string } = {
-  AC: 'Acre',
-  AL: 'Alagoas',
-  AP: 'Amapá',
-  AM: 'Amazonas',
-  BA: 'Bahia',
-  CE: 'Ceará',
-  DF: 'Distrito Federal',
-  ES: 'Espírito Santo',
-  GO: 'Goías',
-  MA: 'Maranhão',
-  MT: 'Mato Grosso',
-  MS: 'Mato Grosso o Sul',
-  MG: 'Minas Gerais',
-  PA: 'Pará',
-  PB: 'Paraíba',
-  PR: 'Paraná',
-  PE: 'Pernambuco',
-  PI: 'Piauí',
-  RJ: 'Rio de Janeio',
-  RN: 'Rio Grande o Norte',
-  RS: 'Rio Grande o Sul',
-  RO: 'Rondônia',
-  RR: 'Roraíma',
-  SC: 'Santa Catarina',
-  SP: 'São Paulo',
-  SE: 'Sergipe',
-  TO: 'Tocantins',
-};
+import AddressContext from '../../contexts/AddressContext';
 
 // TODO refactor: component has too many responsibilities
 
 function AddressData() {
-  const [validCEP, setValidCEP] = useState<boolean>(false);
-  const [expandSection, setSectionState] = useState<boolean>(false);
-
-  const [hasFired, setHasFired] = useState<boolean>(false);
-  const [hasAutoFilled, setHasAutoFilled] = useState<AddressBooleanStates>({
-    postal_code: false,
-    street: false,
-    number: false,
-    complement: false,
-    neighborhood: false,
-    city: false,
-    state: false,
-  });
-  const [alertCEPText, setAlertCEPText] = useState<string>(
-    'Insira apenas números',
-  );
-
-  const inputRef = useRef<InputRef>({
-    street: null,
-    number: null,
-    complement: null,
-    neighborhood: null,
-    city: null,
-    state: null,
-    postal_code: null,
-  });
-  const sectionRef = useRef<HTMLDivElement>(null);
-
   const {
     isSectionComplete,
     setIsSectionComplete,
     addressData: formData,
-    setAddressData: setFormData,
     updateHeight,
   } = useContext(DataContext);
+  const {
+    data: {
+      setValidCEP,
+      expandSection,
+      setSectionState,
+      hasAutoFilled,
+      setHasAutoFilled,
+      alertCEPText,
+      setAlertCEPText,
+    },
+    functions: { toggleSection },
+    handlers: {
+      handleReset,
+      handleInputBlur,
+      handleInputFocus,
+      handleInputChange,
+    },
+    refs: {
+      streetRef,
+      numberRef,
+      complementRef,
+      neighborhoodRef,
+      cityRef,
+      stateRef,
+      postal_codeRef,
+      sectionRef,
+    },
+  } = useContext(AddressContext);
+
+  const height = useMemo(
+    () =>
+      sectionRef?.current && expandSection
+        ? sectionRef.current.getBoundingClientRect().height
+        : 0,
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [expandSection, updateHeight],
+  );
 
   useMemo(() => {
     const cepIsSet = formData?.postal_code?.length > 5;
@@ -139,13 +87,11 @@ function AddressData() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [formData, hasAutoFilled]);
 
-  useMemo(() => {
+  useEffect(() => {
     const interval = setInterval(() => {
       if (
-        inputRef.current?.postal_code &&
-        inputRef.current?.postal_code?.matches(
-          ':-internal-autofill-selected',
-        ) &&
+        postal_codeRef?.current &&
+        postal_codeRef?.current?.matches(':-internal-autofill-selected') &&
         !hasAutoFilled.postal_code
       ) {
         setSectionState(true);
@@ -153,8 +99,8 @@ function AddressData() {
       }
 
       if (
-        inputRef.current?.street &&
-        inputRef.current?.street?.matches(':-internal-autofill-selected') &&
+        streetRef?.current &&
+        streetRef?.current?.matches(':-internal-autofill-selected') &&
         !hasAutoFilled.street
       ) {
         setSectionState(true);
@@ -162,8 +108,8 @@ function AddressData() {
       }
 
       if (
-        inputRef.current?.number &&
-        inputRef.current?.number?.matches(':-internal-autofill-selected') &&
+        numberRef?.current &&
+        numberRef?.current?.matches(':-internal-autofill-selected') &&
         !hasAutoFilled.number
       ) {
         setSectionState(true);
@@ -171,8 +117,8 @@ function AddressData() {
       }
 
       if (
-        inputRef.current?.complement &&
-        inputRef.current?.complement?.matches(':-internal-autofill-selected') &&
+        complementRef?.current &&
+        complementRef?.current?.matches(':-internal-autofill-selected') &&
         !hasAutoFilled.complement
       ) {
         setSectionState(true);
@@ -180,10 +126,8 @@ function AddressData() {
       }
 
       if (
-        inputRef.current?.neighborhood &&
-        inputRef.current?.neighborhood?.matches(
-          ':-internal-autofill-selected',
-        ) &&
+        neighborhoodRef?.current &&
+        neighborhoodRef?.current?.matches(':-internal-autofill-selected') &&
         !hasAutoFilled.neighborhood
       ) {
         setSectionState(true);
@@ -191,8 +135,8 @@ function AddressData() {
       }
 
       if (
-        inputRef.current?.city &&
-        inputRef.current?.city?.matches(':-internal-autofill-selected') &&
+        cityRef?.current &&
+        cityRef?.current?.matches(':-internal-autofill-selected') &&
         !hasAutoFilled.city
       ) {
         setSectionState(true);
@@ -200,8 +144,8 @@ function AddressData() {
       }
 
       if (
-        inputRef.current?.state &&
-        inputRef.current?.state?.matches(':-internal-autofill-selected') &&
+        stateRef?.current &&
+        stateRef?.current?.matches(':-internal-autofill-selected') &&
         !hasAutoFilled.state
       ) {
         setSectionState(true);
@@ -228,15 +172,6 @@ function AddressData() {
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [hasAutoFilled]);
-
-  const height = useMemo(
-    () =>
-      sectionRef?.current && expandSection
-        ? sectionRef.current.getBoundingClientRect().height
-        : 0,
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [expandSection, updateHeight],
-  );
 
   useMemo(() => {
     const onlyNumbersRegex = /^[\d\-\s]*$/;
@@ -286,90 +221,10 @@ function AddressData() {
     </section>
   );
 
-  function toggleSection() {
-    setSectionState(!expandSection);
-  }
-
-  function handleError(error: any) {
-    confirmAlert({
-      message: `${
-        error.response?.data?.message ?? 'Ops! Parece que algo deu errado'
-      }. Por favor, tente novamente.`,
-      buttons: [
-        {
-          label: 'OK',
-          onClick: () => null,
-        },
-      ],
-    });
-  }
-
-  async function getAddressData(value?: string | undefined) {
-    if (hasFired || !validCEP) return null;
-
-    const replaceRegex = /(\-|\s)/gi;
-    const input = formData?.postal_code.replaceAll(replaceRegex, '');
-    const optInput = value?.replaceAll(replaceRegex, '');
-
-    if (input.length !== 8 && optInput?.length !== 8) return null;
-
-    const cep = optInput?.length === 8 ? optInput : input;
-    const API_URL = `https://viacep.com.br/ws/${cep}/json/`;
-    try {
-      setHasFired(true);
-      let {
-        data: {
-          logradouro: street,
-          bairro: neighborhood,
-          localidade: city,
-          uf: state,
-        },
-      } = await axios.get(API_URL);
-
-      if (street.includes('Avenida')) street = street.replace('Avenida', 'Av.');
-      state = STATES_MAP[state] ?? state;
-      const postal_code = `${cep.substring(0, 5)}-${cep.substring(5)}`;
-
-      setFormData({
-        ...formData,
-        postal_code,
-        street,
-        neighborhood,
-        city,
-        state,
-      });
-      setHasAutoFilled({
-        ...hasAutoFilled,
-        neighborhood: true,
-        postal_code: true,
-        street: true,
-        city: true,
-        state: true,
-      });
-    } catch (error) {
-      setHasFired(false);
-      setValidCEP(false);
-      return handleError(error);
-    }
-  }
-
   function buildAddressDataComponent() {
     return (
       <div ref={sectionRef} className='form-group'>
-        <PostalCode
-          hasFired={hasFired}
-          setHasFired={setHasFired}
-          validCEP={validCEP}
-          alertCEPText={alertCEPText}
-          setAlertCEPText={setAlertCEPText}
-          hasAutoFilled={hasAutoFilled}
-          setHasAutoFilled={setHasAutoFilled}
-          inputRef={inputRef}
-          getAddressData={getAddressData}
-          handleInputFocus={handleInputFocus}
-          handleInputBlur={handleInputBlur}
-          handleKeyDown={handleKeyDown}
-        />
+        <PostalCode />
         <section className='input-section'>
           <MdFormatClear
             className={`input-section__reset-icon ${
@@ -384,7 +239,7 @@ function AddressData() {
             name='street'
             maxLength={40}
             value={formData?.street}
-            ref={(element) => (inputRef.current['street'] = element)}
+            ref={streetRef}
             className={`input-field ${
               hasAutoFilled.street && formData?.street.length > 0
                 ? 'input-field--active'
@@ -414,7 +269,7 @@ function AddressData() {
             maxLength={10}
             inputMode='numeric'
             value={formData?.number}
-            ref={(element) => (inputRef.current['number'] = element)}
+            ref={numberRef}
             className={`input-field input-spacedout-field ${
               hasAutoFilled.number && formData?.number.length > 0
                 ? 'input-field--active'
@@ -444,7 +299,7 @@ function AddressData() {
             name='neighborhood'
             maxLength={40}
             value={formData?.neighborhood}
-            ref={(element) => (inputRef.current['neighborhood'] = element)}
+            ref={neighborhoodRef}
             className={`input-field input-spacedout-field ${
               hasAutoFilled.neighborhood && formData?.neighborhood.length > 0
                 ? 'input-field--active'
@@ -474,7 +329,7 @@ function AddressData() {
             name='city'
             maxLength={10}
             value={formData?.city}
-            ref={(element) => (inputRef.current['city'] = element)}
+            ref={cityRef}
             className={`input-field input-spacedout-field ${
               hasAutoFilled.city && formData?.city.length > 0
                 ? 'input-field--active'
@@ -502,7 +357,7 @@ function AddressData() {
             name='state'
             maxLength={10}
             value={formData?.state}
-            ref={(element) => (inputRef.current['state'] = element)}
+            ref={stateRef}
             className={`input-field input-spacedout-field ${
               hasAutoFilled.state && formData?.state.length > 0
                 ? 'input-field--active'
@@ -537,7 +392,7 @@ function AddressData() {
                 ? 'input-field--active'
                 : ''
             }`}
-            ref={(element) => (inputRef.current['complement'] = element)}
+            ref={complementRef}
             onChange={handleInputChange}
             onFocus={handleInputFocus}
             onBlur={handleInputBlur}
@@ -551,49 +406,6 @@ function AddressData() {
         </section>
       </div>
     );
-
-    function handleReset(name: AddressStrings) {
-      setFormData({
-        ...formData,
-        [name]: '',
-      });
-      setHasAutoFilled({ ...hasAutoFilled, [name]: false });
-    }
-
-    function handleKeyDown(e: KeyboardEvent<HTMLInputElement>) {
-      if (e.key === 'Enter') {
-        getAddressData();
-      }
-    }
-
-    function handleInputChange(e: ChangeEvent<HTMLInputElement>) {
-      setFormData({
-        ...formData,
-        [e.target.name as AddressStrings]: e.target.value,
-      });
-    }
-
-    function handleInputFocus(e: FocusEvent<HTMLInputElement>) {
-      return inputRef.current[e.target.name as AddressStrings]?.classList.add(
-        'input-field--active',
-      );
-    }
-
-    function handleInputBlur(e: FocusEvent<HTMLInputElement>) {
-      if (
-        e.target.name === 'postal_code' &&
-        formData?.postal_code.length === 9 &&
-        validCEP
-      ) {
-        getAddressData();
-      }
-
-      if (e.target.value.length !== 0) return null;
-
-      return inputRef.current[
-        e.target.name as AddressStrings
-      ]?.classList.remove('input-field--active');
-    }
   }
 }
 

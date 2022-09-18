@@ -1,55 +1,30 @@
-import {
-  ChangeEvent,
-  Dispatch,
-  FocusEvent,
-  KeyboardEvent,
-  MouseEvent,
-  MutableRefObject,
-  SetStateAction,
-  useContext,
-  useState,
-} from 'react';
+import { ChangeEvent, MouseEvent, useContext, useState } from 'react';
 import { FaMapMarkerAlt } from 'react-icons/fa';
 import { MdLayersClear } from 'react-icons/md';
 
+import AddressContext from '../../contexts/AddressContext';
 import DataContext from '../../contexts/DataContext';
-import { AddressBooleanStates, InputRef } from './index';
 
-type ComponentProps = {
-  hasFired: boolean;
-  setHasFired: Dispatch<SetStateAction<boolean>>;
-  validCEP: boolean;
-  alertCEPText: string;
-  setAlertCEPText: Dispatch<SetStateAction<string>>;
-  hasAutoFilled: AddressBooleanStates;
-  setHasAutoFilled: Dispatch<SetStateAction<AddressBooleanStates>>;
-  inputRef: MutableRefObject<InputRef>;
-  getAddressData: (value?: string | undefined) => Promise<void | null>;
-  handleInputFocus: (e: FocusEvent<HTMLInputElement>) => any;
-  handleInputBlur: (e: FocusEvent<HTMLInputElement>) => void | null;
-  handleKeyDown: (e: KeyboardEvent<HTMLInputElement>) => void;
-};
-
-export default function PostalCode(props: ComponentProps) {
-  const {
-    hasFired,
-    setHasFired,
-    validCEP,
-    alertCEPText,
-    setAlertCEPText,
-    hasAutoFilled,
-    setHasAutoFilled,
-    inputRef,
-    getAddressData,
-    handleInputFocus,
-    handleKeyDown,
-    handleInputBlur,
-  } = props;
-
+export default function PostalCode() {
   const [forceAlert, setForceAlert] = useState<boolean>(false);
 
   const { addressData: formData, setAddressData: setFormData } =
     useContext(DataContext);
+
+  const {
+    data: {
+      validCEP,
+      hasFired,
+      setHasFired,
+      hasAutoFilled,
+      setHasAutoFilled,
+      alertCEPText,
+      setAlertCEPText,
+    },
+    functions: { getAddressData },
+    handlers: { handleKeyDown, handleInputBlur, handleInputFocus },
+    refs: { postal_codeRef },
+  } = useContext(AddressContext);
 
   const onlyNumbersRegex = /^[\d\-\s]*$/;
 
@@ -83,7 +58,7 @@ export default function PostalCode(props: ComponentProps) {
             ? 'input-field--active'
             : ''
         }`}
-        ref={(element) => (inputRef.current['postal_code'] = element)}
+        ref={postal_codeRef}
         onChange={handleCEPInput}
         onFocus={handleInputFocus}
         onKeyDown={handleKeyDown}

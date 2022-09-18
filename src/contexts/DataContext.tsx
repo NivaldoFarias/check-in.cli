@@ -56,7 +56,7 @@ const initialDataContextValue = {
 
 const DataContext = createContext<DataContextGroup>(initialDataContextValue);
 
-function DataProvider(props: any) {
+export function DataProvider(props: any) {
   const { children } = props;
   const [selectInsurance, setSelectInsurance] = useState<boolean>(false);
   const [selectGender, setSelectGender] = useState<boolean>(false);
@@ -162,7 +162,6 @@ function DataProvider(props: any) {
   );
 }
 
-export { DataProvider };
 export default DataContext;
 
 // TODO refactor: split Contexts into cleaner, smaller Contexts

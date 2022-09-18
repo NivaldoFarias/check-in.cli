@@ -5,6 +5,7 @@ import type { AppProps } from 'next/app';
 import '../styles/index.scss';
 
 import { DataProvider } from '../contexts/DataContext';
+import { AddressDataProvider } from '../contexts/AddressContext';
 
 function MyApp(props: AppProps) {
   const {
@@ -14,12 +15,14 @@ function MyApp(props: AppProps) {
 
   return (
     <DataProvider>
-      <SessionProvider session={session}>
-        <Head>
-          <title>Check-in client</title>
-        </Head>
-        <Component {...pageProps} />
-      </SessionProvider>
+      <AddressDataProvider>
+        <SessionProvider session={session}>
+          <Head>
+            <title>Check-in client</title>
+          </Head>
+          <Component {...pageProps} />
+        </SessionProvider>
+      </AddressDataProvider>
     </DataProvider>
   );
 }
