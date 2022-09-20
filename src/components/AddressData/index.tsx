@@ -1,17 +1,18 @@
-import { useContext, useMemo, useEffect } from 'react';
+import { useContext, useMemo, useEffect } from "react";
 
-import {
-  MdCalendarViewDay,
-  MdViewHeadline,
-  MdFormatClear,
-} from 'react-icons/md';
-import { IoMdCheckmarkCircleOutline } from 'react-icons/io';
+import { MdCalendarViewDay, MdViewHeadline } from "react-icons/md";
+import { IoMdCheckmarkCircleOutline } from "react-icons/io";
 
-import DataContext from '../../contexts/DataContext';
-import PostalCode from './PostalCode';
-import AddressContext from '../../contexts/AddressContext';
+import AddressContext from "../../contexts/AddressContext";
+import DataContext from "../../contexts/DataContext";
 
-// TODO refactor: component has too many responsibilities
+import Neighborhood from "./Neighborhood";
+import Complement from "./Complement";
+import PostalCode from "./PostalCode";
+import Street from "./Street";
+import Number from "./Number";
+import State from "./State";
+import City from "./City";
 
 function AddressData() {
   const {
@@ -31,12 +32,6 @@ function AddressData() {
       setAlertCEPText,
     },
     functions: { toggleSection },
-    handlers: {
-      handleReset,
-      handleInputBlur,
-      handleInputFocus,
-      handleInputChange,
-    },
     refs: {
       streetRef,
       numberRef,
@@ -55,7 +50,7 @@ function AddressData() {
         ? sectionRef.current.getBoundingClientRect().height
         : 0,
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [expandSection, updateHeight],
+    [expandSection, updateHeight]
   );
 
   useMemo(() => {
@@ -91,7 +86,7 @@ function AddressData() {
     const interval = setInterval(() => {
       if (
         postal_codeRef?.current &&
-        postal_codeRef?.current?.matches(':-internal-autofill-selected') &&
+        postal_codeRef?.current?.matches(":-internal-autofill-selected") &&
         !hasAutoFilled.postal_code
       ) {
         setSectionState(true);
@@ -100,7 +95,7 @@ function AddressData() {
 
       if (
         streetRef?.current &&
-        streetRef?.current?.matches(':-internal-autofill-selected') &&
+        streetRef?.current?.matches(":-internal-autofill-selected") &&
         !hasAutoFilled.street
       ) {
         setSectionState(true);
@@ -109,7 +104,7 @@ function AddressData() {
 
       if (
         numberRef?.current &&
-        numberRef?.current?.matches(':-internal-autofill-selected') &&
+        numberRef?.current?.matches(":-internal-autofill-selected") &&
         !hasAutoFilled.number
       ) {
         setSectionState(true);
@@ -118,7 +113,7 @@ function AddressData() {
 
       if (
         complementRef?.current &&
-        complementRef?.current?.matches(':-internal-autofill-selected') &&
+        complementRef?.current?.matches(":-internal-autofill-selected") &&
         !hasAutoFilled.complement
       ) {
         setSectionState(true);
@@ -127,7 +122,7 @@ function AddressData() {
 
       if (
         neighborhoodRef?.current &&
-        neighborhoodRef?.current?.matches(':-internal-autofill-selected') &&
+        neighborhoodRef?.current?.matches(":-internal-autofill-selected") &&
         !hasAutoFilled.neighborhood
       ) {
         setSectionState(true);
@@ -136,7 +131,7 @@ function AddressData() {
 
       if (
         cityRef?.current &&
-        cityRef?.current?.matches(':-internal-autofill-selected') &&
+        cityRef?.current?.matches(":-internal-autofill-selected") &&
         !hasAutoFilled.city
       ) {
         setSectionState(true);
@@ -145,7 +140,7 @@ function AddressData() {
 
       if (
         stateRef?.current &&
-        stateRef?.current?.matches(':-internal-autofill-selected') &&
+        stateRef?.current?.matches(":-internal-autofill-selected") &&
         !hasAutoFilled.state
       ) {
         setSectionState(true);
@@ -178,11 +173,11 @@ function AddressData() {
     const regexCEP = /^\d{5}-\d{3}$/;
 
     if (formData?.postal_code.length === 9) {
-      setAlertCEPText('CEP inválido');
+      setAlertCEPText("CEP inválido");
       setValidCEP(regexCEP.test(formData?.postal_code));
     } else {
-      if (alertCEPText !== 'Insira apenas números')
-        setAlertCEPText('Insira apenas números');
+      if (alertCEPText !== "Insira apenas números")
+        setAlertCEPText("Insira apenas números");
       setValidCEP(onlyNumbersRegex.test(formData?.postal_code));
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -191,31 +186,31 @@ function AddressData() {
   const addressDataComponent = buildAddressDataComponent();
 
   return (
-    <section className='section-container'>
-      <div className='section-header'>
-        <h2 className='section-header__subtitle' onClick={toggleSection}>
+    <section className="section-container">
+      <div className="section-header">
+        <h2 className="section-header__subtitle" onClick={toggleSection}>
           Dados Locais
         </h2>
         {expandSection ? (
           <MdCalendarViewDay
             onClick={toggleSection}
-            className={`section-header__icon${expandSection ? '--active' : ''}`}
+            className={`section-header__icon${expandSection ? "--active" : ""}`}
           />
         ) : (
           <>
             <MdViewHeadline
               onClick={toggleSection}
               className={`section-header__icon${
-                isSectionComplete.address ? '--complete' : ''
+                isSectionComplete.address ? "--complete" : ""
               }`}
             />
             {isSectionComplete.address ? (
-              <IoMdCheckmarkCircleOutline className='section-header__complete-checkmark' />
+              <IoMdCheckmarkCircleOutline className="section-header__complete-checkmark" />
             ) : null}
           </>
         )}
       </div>
-      <div className='register-data-section' style={{ height }}>
+      <div className="register-data-section" style={{ height }}>
         {addressDataComponent}
       </div>
     </section>
@@ -223,187 +218,14 @@ function AddressData() {
 
   function buildAddressDataComponent() {
     return (
-      <div ref={sectionRef} className='form-group'>
+      <div ref={sectionRef} className="form-group">
         <PostalCode />
-        <section className='input-section'>
-          <MdFormatClear
-            className={`input-section__reset-icon ${
-              hasAutoFilled.street && formData?.street?.length > 0
-                ? ''
-                : 'hidden'
-            }`}
-            onClick={() => handleReset('street')}
-          />
-          <input
-            type='text'
-            name='street'
-            maxLength={40}
-            value={formData?.street}
-            ref={streetRef}
-            className={`input-field ${
-              hasAutoFilled.street && formData?.street.length > 0
-                ? 'input-field--active'
-                : ''
-            }`}
-            onChange={handleInputChange}
-            onFocus={handleInputFocus}
-            onBlur={handleInputBlur}
-            disabled={hasAutoFilled.street && formData?.street.length > 0}
-          />
-          <span className='highlight'></span>
-          <span className='bar'></span>
-          <label className='label-text'>Logradouro</label>
-        </section>
-        <section className='input-section'>
-          <MdFormatClear
-            className={`input-section__reset-icon ${
-              hasAutoFilled.number && formData?.number?.length > 0
-                ? ''
-                : 'hidden'
-            }`}
-            onClick={() => handleReset('number')}
-          />
-          <input
-            type='text'
-            name='number'
-            maxLength={10}
-            inputMode='numeric'
-            value={formData?.number}
-            ref={numberRef}
-            className={`input-field input-spacedout-field ${
-              hasAutoFilled.number && formData?.number.length > 0
-                ? 'input-field--active'
-                : ''
-            }`}
-            onChange={handleInputChange}
-            onFocus={handleInputFocus}
-            onBlur={handleInputBlur}
-            disabled={hasAutoFilled.number && formData?.number.length > 0}
-            required
-          />
-          <span className='highlight'></span>
-          <span className='bar'></span>
-          <label className='label-text'>Número</label>
-        </section>
-        <section className='input-section'>
-          <MdFormatClear
-            className={`input-section__reset-icon ${
-              hasAutoFilled.neighborhood && formData?.neighborhood?.length > 0
-                ? ''
-                : 'hidden'
-            }`}
-            onClick={() => handleReset('neighborhood')}
-          />
-          <input
-            type='text'
-            name='neighborhood'
-            maxLength={40}
-            value={formData?.neighborhood}
-            ref={neighborhoodRef}
-            className={`input-field input-spacedout-field ${
-              hasAutoFilled.neighborhood && formData?.neighborhood.length > 0
-                ? 'input-field--active'
-                : ''
-            }`}
-            onChange={handleInputChange}
-            onFocus={handleInputFocus}
-            onBlur={handleInputBlur}
-            disabled={
-              hasAutoFilled.neighborhood && formData?.neighborhood.length > 0
-            }
-            required
-          />
-          <span className='highlight'></span>
-          <span className='bar'></span>
-          <label className='label-text'>Bairro</label>
-        </section>
-        <section className='input-section'>
-          <MdFormatClear
-            className={`input-section__reset-icon ${
-              hasAutoFilled.city && formData?.city?.length > 0 ? '' : 'hidden'
-            }`}
-            onClick={() => handleReset('city')}
-          />
-          <input
-            type='text'
-            name='city'
-            maxLength={10}
-            value={formData?.city}
-            ref={cityRef}
-            className={`input-field input-spacedout-field ${
-              hasAutoFilled.city && formData?.city.length > 0
-                ? 'input-field--active'
-                : ''
-            }`}
-            onChange={handleInputChange}
-            onFocus={handleInputFocus}
-            onBlur={handleInputBlur}
-            disabled={hasAutoFilled.city && formData?.city.length > 0}
-            required
-          />
-          <span className='highlight'></span>
-          <span className='bar'></span>
-          <label className='label-text'>Cidade</label>
-        </section>
-        <section className='input-section'>
-          <MdFormatClear
-            className={`input-section__reset-icon ${
-              hasAutoFilled.state && formData?.state?.length > 0 ? '' : 'hidden'
-            }`}
-            onClick={() => handleReset('state')}
-          />
-          <input
-            type='text'
-            name='state'
-            maxLength={10}
-            value={formData?.state}
-            ref={stateRef}
-            className={`input-field input-spacedout-field ${
-              hasAutoFilled.state && formData?.state.length > 0
-                ? 'input-field--active'
-                : ''
-            }`}
-            onChange={handleInputChange}
-            onFocus={handleInputFocus}
-            onBlur={handleInputBlur}
-            disabled={hasAutoFilled.state && formData?.state.length > 0}
-            required
-          />
-          <span className='highlight'></span>
-          <span className='bar'></span>
-          <label className='label-text'>Estado</label>
-        </section>
-        <section className='input-section'>
-          <MdFormatClear
-            className={`input-section__reset-icon ${
-              hasAutoFilled.complement && formData?.complement?.length > 0
-                ? ''
-                : 'hidden'
-            }`}
-            onClick={() => handleReset('complement')}
-          />
-          <input
-            type='text'
-            name='complement'
-            maxLength={25}
-            value={formData?.complement}
-            className={`input-field input-spacedout-field ${
-              hasAutoFilled.complement && formData?.complement.length > 0
-                ? 'input-field--active'
-                : ''
-            }`}
-            ref={complementRef}
-            onChange={handleInputChange}
-            onFocus={handleInputFocus}
-            onBlur={handleInputBlur}
-            disabled={
-              hasAutoFilled.complement && formData?.complement.length > 0
-            }
-          />
-          <span className='highlight'></span>
-          <span className='bar'></span>
-          <label className='label-text'>Complemento</label>
-        </section>
+        <Street />
+        <Number />
+        <Neighborhood />
+        <City />
+        <State />
+        <Complement />
       </div>
     );
   }

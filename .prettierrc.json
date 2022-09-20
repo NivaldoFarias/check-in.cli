@@ -1,0 +1,12 @@
+{
+  "overrides": [
+    {
+      "files": "**/*.d.ts",
+      "options": {
+        "useTabs": false,
+        "tabWidth": 4,
+        "singleQuote": false
+      }
+    }
+  ]
+}
