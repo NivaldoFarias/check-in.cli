@@ -1,12 +1,12 @@
-@import './sass/variables';
-@import './sass/resets';
-@import './sass/mixins';
+@import "./sass/variables";
+@import "./sass/resets";
+@import "./sass/mixins";
 
-@import './plugins/LoadingDots';
-@import './plugins/ConfirmAlert';
-@import './plugins/DatePicker';
-@import './plugins/Calendar';
-@import './plugins/Dropdown';
+@import "./plugins/LoadingDots";
+@import "./plugins/ConfirmAlert";
+@import "./plugins/DatePicker";
+@import "./plugins/Calendar";
+@import "./plugins/Dropdown";
 
 body {
   height: 100vh;
@@ -117,7 +117,7 @@ body {
         height: 2px;
         width: 0;
 
-        content: '';
+        content: "";
         background: $tertiary;
       }
       &:before {
@@ -296,6 +296,9 @@ body {
     height: min-content;
     width: 100%;
   }
+  .letter-spacing {
+    letter-spacing: 2px;
+  }
 }
 .background-image {
   pointer-events: none;
@@ -354,6 +357,9 @@ body {
   padding: 80px 0;
   overflow-y: scroll;
 
+  > span {
+    pointer-events: none;
+  }
   .section-header {
     @include flex(row, space-between, center, 15px);
     position: relative;

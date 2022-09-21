@@ -13,6 +13,7 @@ import Street from "./Street";
 import Number from "./Number";
 import State from "./State";
 import City from "./City";
+import { isMobile } from "react-device-detect";
 
 function AddressData() {
   const {
@@ -168,28 +169,27 @@ function AddressData() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [hasAutoFilled]);
 
-  useMemo(() => {
-    const onlyNumbersRegex = /^[\d\-\s]*$/;
-    const regexCEP = /^\d{5}-\d{3}$/;
-
-    if (formData?.postal_code.length === 9) {
-      setAlertCEPText("CEP inválido");
-      setValidCEP(regexCEP.test(formData?.postal_code));
-    } else {
-      if (alertCEPText !== "Insira apenas números")
-        setAlertCEPText("Insira apenas números");
-      setValidCEP(onlyNumbersRegex.test(formData?.postal_code));
+  useEffect(() => {
+    if (
+      !expandSection &&
+      (!isMobile ||
+        (typeof window !== "undefined" && window.innerWidth >= 1440))
+    ) {
+      setSectionState(true);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [formData?.postal_code]);
+  }, []);
 
   const addressDataComponent = buildAddressDataComponent();
 
   return (
     <section className="section-container">
       <div className="section-header">
-        <h2 className="section-header__subtitle" onClick={toggleSection}>
-          Dados Locais
+        <h2
+          className="section-header__subtitle letter-spacing"
+          onClick={toggleSection}
+        >
+          Endereço
         </h2>
         {expandSection ? (
           <MdCalendarViewDay

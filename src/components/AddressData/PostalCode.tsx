@@ -1,6 +1,6 @@
 import { FaMapMarkerAlt } from "react-icons/fa";
 import { MdLayersClear } from "react-icons/md";
-import { useContext } from "react";
+import { useContext, useMemo } from "react";
 
 import AddressContext from "../../contexts/AddressContext";
 import DataContext from "../../contexts/DataContext";
@@ -9,7 +9,13 @@ export default function PostalCode() {
   const { addressData: formData } = useContext(DataContext);
 
   const {
-    data: { hasFired, hasAutoFilled, alertCEPText },
+    data: {
+      hasFired,
+      hasAutoFilled,
+      alertCEPText,
+      setAlertCEPText,
+      setValidCEP,
+    },
     functions: { alertCEPTextClassName },
     handlers: {
       handleKeyDown,
@@ -21,6 +27,21 @@ export default function PostalCode() {
     },
     refs: { postal_codeRef },
   } = useContext(AddressContext);
+
+  useMemo(() => {
+    const onlyNumbersRegex = /^[\d\-\s]*$/;
+    const regexCEP = /^\d{5}-\d{3}$/;
+
+    if (formData?.postal_code.length === 9) {
+      setAlertCEPText("CEP inválido");
+      setValidCEP(regexCEP.test(formData?.postal_code));
+    } else {
+      if (alertCEPText !== "Insira apenas números")
+        setAlertCEPText("Insira apenas números");
+      setValidCEP(onlyNumbersRegex.test(formData?.postal_code));
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [formData?.postal_code]);
 
   return (
     <section className="input-section postal-code-input">

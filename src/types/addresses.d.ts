@@ -51,7 +51,7 @@ export type AddressContextHandlers = {
     handleKeyDown(e: KeyboardEvent<HTMLInputElement>): void;
     handleInputChange(e: ChangeEvent<HTMLInputElement>): void;
     handleInputBlur(e: FocusEvent<HTMLInputElement>): void | null;
-    handleInputFocus(e: FocusEvent<HTMLInputElement>): void | undefined;
+    handleInputFocus(e: FocusEvent<HTMLInputElement>): void | null;
 };
 export type AddressContextRefs = {
     [x in RefKeys]: InputRef;

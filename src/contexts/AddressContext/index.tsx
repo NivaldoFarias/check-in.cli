@@ -16,7 +16,6 @@ import type {
   AddressContextType,
   AddressKeys,
   HasAutoFilled,
-  RefKeys,
 } from "../../types/addresses";
 import initialValue, { data, refs } from "./value";
 import STATES_MAP from "../../data/states";
@@ -187,9 +186,34 @@ export function AddressDataProvider(props: PropsWithChildren) {
   }
 
   function handleInputFocus(e: FocusEvent<HTMLInputElement>) {
-    const ref = (e.target.name + "Ref") as RefKeys;
-    // @ts-ignore
-    return ref.current?.classList.add("input-field--active");
+    const name = e.target.name;
+
+    switch (name) {
+      case "postal_code": {
+        return postal_codeRef.current?.classList.add("input-field--active");
+      }
+      case "street": {
+        return streetRef.current?.classList.add("input-field--active");
+      }
+      case "number": {
+        return numberRef.current?.classList.add("input-field--active");
+      }
+      case "complement": {
+        return complementRef.current?.classList.add("input-field--active");
+      }
+      case "neighborhood": {
+        return neighborhoodRef.current?.classList.add("input-field--active");
+      }
+      case "city": {
+        return cityRef.current?.classList.add("input-field--active");
+      }
+      case "state": {
+        return stateRef.current?.classList.add("input-field--active");
+      }
+      default: {
+        return null;
+      }
+    }
   }
 
   function handleInputBlur(e: FocusEvent<HTMLInputElement>) {
@@ -203,9 +227,34 @@ export function AddressDataProvider(props: PropsWithChildren) {
 
     if (e.target.value.length !== 0) return null;
 
-    const ref = (e.target.name + "Ref") as RefKeys;
-    // @ts-ignore
-    return ref.current?.classList.remove("input-field--active");
+    const name = e.target.name;
+
+    switch (name) {
+      case "postal_code": {
+        return postal_codeRef.current?.classList.remove("input-field--active");
+      }
+      case "street": {
+        return streetRef.current?.classList.remove("input-field--active");
+      }
+      case "number": {
+        return numberRef.current?.classList.remove("input-field--active");
+      }
+      case "complement": {
+        return complementRef.current?.classList.remove("input-field--active");
+      }
+      case "neighborhood": {
+        return neighborhoodRef.current?.classList.remove("input-field--active");
+      }
+      case "city": {
+        return cityRef.current?.classList.remove("input-field--active");
+      }
+      case "state": {
+        return stateRef.current?.classList.remove("input-field--active");
+      }
+      default: {
+        return null;
+      }
+    }
   }
 
   function handleClick(_e: MouseEvent<HTMLOrSVGElement>) {
