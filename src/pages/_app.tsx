@@ -1,11 +1,12 @@
-import { SessionProvider } from 'next-auth/react';
-import Head from 'next/head';
+import { SessionProvider } from "next-auth/react";
+import Head from "next/head";
 
-import type { AppProps } from 'next/app';
-import '../styles/index.scss';
+import type { AppProps } from "next/app";
+import "../styles/index.scss";
 
-import { DataProvider } from '../contexts/DataContext';
-import { AddressDataProvider } from '../contexts/AddressContext';
+import { CheckInContextProvider } from "../contexts/CheckInContext";
+import { AddressDataProvider } from "../contexts/AddressContext";
+import { DataProvider } from "../contexts/DataContext";
 
 function MyApp(props: AppProps) {
   const {
@@ -15,14 +16,16 @@ function MyApp(props: AppProps) {
 
   return (
     <DataProvider>
-      <AddressDataProvider>
-        <SessionProvider session={session}>
-          <Head>
-            <title>Check-in client</title>
-          </Head>
-          <Component {...pageProps} />
-        </SessionProvider>
-      </AddressDataProvider>
+      <CheckInContextProvider>
+        <AddressDataProvider>
+          <SessionProvider session={session}>
+            <Head>
+              <title>Check-in client</title>
+            </Head>
+            <Component {...pageProps} />
+          </SessionProvider>
+        </AddressDataProvider>
+      </CheckInContextProvider>
     </DataProvider>
   );
 }

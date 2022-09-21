@@ -1,4 +1,3 @@
-import { AddressContextType } from '../../types/addresses';
 export const hasAutoFilled = {
   street: false,
   number: false,
@@ -14,7 +13,7 @@ export const data = {
   expandSection: false,
   hasFired: false,
   hasAutoFilled,
-  alertCEPText: 'Insira apenas números',
+  alertCEPText: "Insira apenas números",
   setValidCEP: () => {},
   setSectionState: () => {},
   setHasFired: () => {},
@@ -47,11 +46,11 @@ export const refs = {
   sectionRef: null,
 };
 
-const initialValue: AddressContextType = {
+const defaultValue: unknown = {
   data,
   functions,
   handlers,
   refs,
 };
 
-export default initialValue;
+export default defaultValue;

@@ -1,15 +1,16 @@
-import { Dispatch, useReducer } from 'react';
+import { Dispatch, useReducer } from "react";
 
-import { CheckInReducerAction, InitialState } from '../types/checkIn';
+import { CheckInReducerAction, ReducerState } from "../types/checkIn";
+import { checkCpf } from "../utils/functions.util";
 
-export const initialState: InitialState = {
+export const initialState: ReducerState = {
   cpf: {
-    value: '',
+    value: "",
     hasAutoFilled: false,
-    isValid: false,
+    isValid: true,
   },
   password: {
-    value: '',
+    value: "",
     hasAutoFilled: false,
   },
   hasSubmitted: false,
@@ -18,34 +19,54 @@ export const initialState: InitialState = {
 };
 
 export function checkInReducer(
-  state: InitialState,
-  action: CheckInReducerAction,
+  state: ReducerState,
+  action: CheckInReducerAction
 ) {
   switch (action.type) {
-    case 'forms':
-      return {
+    case "forms": {
+      const { key, field, payload } = action;
+      const output = {
         ...state,
-        [action.key]: {
-          ...state[action.key],
-          [action.field]: action.payload,
+        [key]: {
+          ...state[key],
+          [field]: payload,
         },
       };
-    case 'boolean': {
+
+      const cpfInput =
+        key === "cpf" && field === "value" && typeof payload === "string";
+      if (cpfInput) {
+        const isValid = checkCpf(payload);
+        output.cpf.isValid = isValid;
+
+        const forceInputStyling =
+          isValid && payload.length === 14 && !state.cpf.hasAutoFilled;
+        if (forceInputStyling) output.cpf.hasAutoFilled = true;
+
+        return output;
+      }
+
+      return output;
+    }
+    case "boolean": {
+      const { key, payload } = action;
       return {
         ...state,
-        [action.key]: action.payload,
+        [key]: payload,
       };
     }
-    case 'error': {
+    case "error": {
+      const { payload } = action;
       return {
         ...state,
-        error: action.payload,
+        error: payload,
       };
     }
-    case 'reset': {
+    case "reset": {
+      const { key } = action;
       return {
         ...state,
-        [action.key]: initialState[action.key],
+        [key]: initialState[key],
       };
     }
     default:
@@ -55,8 +76,8 @@ export function checkInReducer(
 
 export default function useCheckInReducer() {
   const [state, dispatch]: [
-    state: InitialState,
-    dispatch: Dispatch<CheckInReducerAction>,
+    state: ReducerState,
+    dispatch: Dispatch<CheckInReducerAction>
   ] = useReducer(checkInReducer, initialState);
   return { state, dispatch };
 }

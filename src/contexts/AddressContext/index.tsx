@@ -17,11 +17,13 @@ import type {
   AddressKeys,
   HasAutoFilled,
 } from "../../types/addresses";
-import initialValue, { data, refs } from "./value";
+import defaultValue, { data, refs } from "./defaultValue";
 import STATES_MAP from "../../data/states";
 import DataContext from "../DataContext";
 
-const AddressContext = createContext<AddressContextType>(initialValue);
+const AddressContext = createContext<AddressContextType>(
+  defaultValue as AddressContextType
+);
 
 export function AddressDataProvider(props: PropsWithChildren) {
   const { children } = props;

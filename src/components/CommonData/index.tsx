@@ -2,12 +2,10 @@ import {
   ChangeEvent,
   FocusEvent,
   useContext,
-  useEffect,
   useState,
   useMemo,
   useRef,
 } from "react";
-import { isMobile } from "react-device-detect";
 
 import {
   MdViewHeadline,
