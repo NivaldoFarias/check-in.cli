@@ -1,25 +1,25 @@
-import { FormEvent, useContext, useRef, useState, useEffect } from 'react';
-import Image from 'next/image';
-import Link from 'next/link';
-import { confirmAlert } from 'react-confirm-alert';
+import { FormEvent, useContext, useRef, useState, useEffect } from "react";
+import { confirmAlert } from "react-confirm-alert";
+import { useRouter } from "next/router";
+import Image from "next/image";
+import Link from "next/link";
 
-import backgroundImage from '../../../public/background-alt.svg';
+import DataContext from "../../contexts/DataContext";
+import type { Forms } from "../../types";
 
-import DataContext from '../../contexts/DataContext';
-import CommonData from '../../components/CommonData';
-import RegistryData from '../../components/RegistryData';
-import AddressData from '../../components/AddressData/index';
-import CreatePassword from '../../components/CreatePassword';
-import { Forms } from '../../types';
-import { useRouter } from 'next/router';
+import backgroundImage from "../../../public/background-alt.svg";
+import CreatePassword from "../../components/CreatePassword";
+import AddressData from "../../components/AddressData/index";
+import RegistryData from "../../components/RegistryData";
+import CommonData from "../../components/CommonData";
 
 function Register() {
   const [password, setPassword] = useState<{
     password: string;
     confirm: string;
   }>({
-    password: '',
-    confirm: '',
+    password: "",
+    confirm: "",
   });
   const {
     mockData,
@@ -31,7 +31,7 @@ function Register() {
   } = useContext(DataContext);
   const pageRef = useRef<HTMLDivElement>(null);
   const [toggleActiveSection, setActiveSection] = useState<boolean>(
-    mockData ? true : false,
+    mockData ? true : false
   );
 
   const router = useRouter();
@@ -40,9 +40,9 @@ function Register() {
     setTimeout(() => {
       if (
         pageRef.current &&
-        !pageRef.current.classList.contains('has-loaded')
+        !pageRef.current.classList.contains("has-loaded")
       ) {
-        pageRef.current.classList.add('has-loaded');
+        pageRef.current.classList.add("has-loaded");
       }
     }, 100);
   }, []);
@@ -52,33 +52,33 @@ function Register() {
   return (
     <div
       ref={pageRef}
-      id='register-page'
-      className='auth-page'
+      id="register-page"
+      className="auth-page"
       onLoadCapture={handleLoadCapture}
     >
       <Image
-        className='background-image'
-        objectFit='cover'
+        className="background-image"
+        objectFit="cover"
         src={backgroundImage}
-        alt='background image'
+        alt="background image"
         priority={true}
         quality={100}
-        layout='fill'
+        layout="fill"
       />
       {registerPage}
     </div>
   );
 
   function handleLoadCapture() {
-    return pageRef.current?.classList.add('has-loaded');
+    return pageRef.current?.classList.add("has-loaded");
   }
 
   async function registerPatient(data: Forms) {
     try {
-      const response = await fetch('/api/register', {
-        method: 'POST',
+      const response = await fetch("/api/register", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify(data),
       });
@@ -94,8 +94,8 @@ function Register() {
       message: `Tudo pronto!`,
       buttons: [
         {
-          label: 'Fazer check-in',
-          onClick: () => router.push('/auth/check-in'),
+          label: "Fazer check-in",
+          onClick: () => router.push("/auth/check-in"),
         },
       ],
     });
@@ -107,7 +107,7 @@ function Register() {
       message: `Ops! Algo deu errado. Por favor, tente novamente.`,
       buttons: [
         {
-          label: 'OK',
+          label: "OK",
           onClick: () => null,
         },
       ],
@@ -116,21 +116,21 @@ function Register() {
 
   function buildRegisterPage() {
     return (
-      <form className='auth-page__container' onSubmit={handleSubmit}>
-        <h1 className='title-card'>Cadastro</h1>
+      <form className="auth-page__container" onSubmit={handleSubmit}>
+        <h1 className="title-card">Cadastro</h1>
         {toggleActiveSection ? (
           <CreatePassword password={password} setPassword={setPassword} />
         ) : (
-          <div className='form-sections-wrapper'>
+          <div className="form-sections-wrapper">
             <CommonData />
             <RegistryData />
             <AddressData />
           </div>
         )}
 
-        <div className='footer-section'>
+        <div className="footer-section">
           {toggleActiveSection ? (
-            <button className={validateForm()} type='submit'>
+            <button className={validateForm()} type="submit">
               Cadastrar
             </button>
           ) : (
@@ -140,11 +140,11 @@ function Register() {
           )}
 
           {toggleActiveSection ? (
-            <div className='return-btn' onClick={() => setActiveSection(false)}>
-              {'Editar meus dados'}
+            <div className="return-btn" onClick={() => setActiveSection(false)}>
+              {"Editar meus dados"}
             </div>
           ) : (
-            <Link href='/auth/check-in'>Já possuo cadastro</Link>
+            <Link href="/auth/check-in">Já possuo cadastro</Link>
           )}
         </div>
       </form>
@@ -155,14 +155,14 @@ function Register() {
         return password.password.length > 0 &&
           password.confirm.length > 0 &&
           password.confirm === password.password
-          ? 'submit-btn'
-          : 'submit-btn disabled';
+          ? "submit-btn"
+          : "submit-btn disabled";
       } else {
         return isSectionComplete.address &&
           isSectionComplete.common &&
           isSectionComplete.registry
-          ? 'submit-btn'
-          : 'submit-btn disabled';
+          ? "submit-btn"
+          : "submit-btn disabled";
       }
     }
 
@@ -173,19 +173,19 @@ function Register() {
 
       const common = {
         ...commonData,
-        cpf: commonData.cpf.replace(/\D/g, ''),
+        cpf: commonData.cpf.replace(/\D/g, ""),
         password: password.password,
       };
       const registry = {
         ...registryData,
-        phone_number: registryData.phone_number.replace(/\D/g, ''),
+        phone_number: registryData.phone_number.replace(/\D/g, ""),
         gender:
-          registryData.gender === 'SELF_DESCRIBED'
-            ? registryData.described_identity ?? 'Não informado'
+          registryData.gender === "SELF_DESCRIBED"
+            ? registryData.described_identity ?? "Não informado"
             : registryData.gender,
         assigned_at_birth:
-          registryData.assigned_at_birth === 'SELF_DESCRIBED'
-            ? registryData.described_assigned ?? 'Não informado'
+          registryData.assigned_at_birth === "SELF_DESCRIBED"
+            ? registryData.described_assigned ?? "Não informado"
             : registryData.assigned_at_birth,
       };
       delete registryData.described_identity;
@@ -193,7 +193,7 @@ function Register() {
 
       const address = {
         ...addressData,
-        postal_code: addressData.postal_code.replace(/\D/g, ''),
+        postal_code: addressData.postal_code.replace(/\D/g, ""),
       };
 
       const data: Forms = {
@@ -211,7 +211,7 @@ function Register() {
         message: `Quase lá! Agora só precisamos de uma senha para você conseguir acessar sua conta.`,
         buttons: [
           {
-            label: 'Definir senha',
+            label: "Definir senha",
             onClick: () => setActiveSection(true),
           },
         ],

@@ -311,33 +311,58 @@ function RegistryData() {
     function handleCPFInput(e: ChangeEvent<HTMLInputElement>) {
       const { value } = e.target;
 
-      if (value.length === 4 || value.length === 8) {
+      const firstDot = value.length === 4 || value.length === 8;
+      const secondDot = value.length === 11 && !value.includes(".");
+      const hyphenSeparator = value.length === 12;
+
+      if (firstDot) {
         setCommonData({
           ...commonData,
-          cpf:
-            value.slice(0, -1) +
-            "." +
-            (value.slice(-1) === "." ? "" : value.slice(-1)),
+          cpf: __insertDot(value, "first_dot"),
         });
-      } else if (value.length === 11 && !value.includes(".")) {
+      } else if (secondDot) {
         setHasCpfAutoFilled(true);
         setCommonData({
           ...commonData,
-          cpf: `${value.slice(0, 3)}.${value.slice(3, 6)}.${value.slice(
-            6,
-            9
-          )}-${value.slice(9)}`,
+          cpf: __insertDot(value, "second_dot"),
         });
-      } else if (value.length === 12) {
+      } else if (hyphenSeparator) {
         setCommonData({
           ...commonData,
-          cpf:
-            value.slice(0, -1) +
-            "-" +
-            (value.slice(-1) === "-" ? "" : value.slice(-1)),
+          cpf: __insertHypen(),
         });
-      } else {
-        setCommonData({ ...commonData, cpf: value });
+      } else setCommonData({ ...commonData, cpf: value });
+
+      function __insertDot(
+        value: string,
+        sequence: "first_dot" | "second_dot"
+      ) {
+        switch (sequence) {
+          case "first_dot": {
+            return (
+              value.slice(0, -1) +
+              "." +
+              (value.slice(-1) === "." ? "" : value.slice(-1))
+            );
+          }
+          case "second_dot": {
+            return `${value.slice(0, 3)}.${value.slice(3, 6)}.${value.slice(
+              6,
+              9
+            )}-${value.slice(9)}`;
+          }
+          default: {
+            return value;
+          }
+        }
+      }
+
+      function __insertHypen() {
+        return (
+          value.slice(0, -1) +
+          "-" +
+          (value.slice(-1) === "-" ? "" : value.slice(-1))
+        );
       }
     }
 
