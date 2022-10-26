@@ -339,11 +339,11 @@ function RegistryData() {
       ) {
         switch (sequence) {
           case "first_dot": {
-            return (
-              value.slice(0, -1) +
-              "." +
-              (value.slice(-1) === "." ? "" : value.slice(-1))
-            );
+            const eraseDotOnBackspace =
+              value.slice(-1) === "." ? "" : value.slice(-1);
+            const output = value.slice(0, -1) + ".";
+
+            return output + eraseDotOnBackspace;
           }
           case "second_dot": {
             return `${value.slice(0, 3)}.${value.slice(3, 6)}.${value.slice(
@@ -358,11 +358,11 @@ function RegistryData() {
       }
 
       function __insertHypen() {
-        return (
-          value.slice(0, -1) +
-          "-" +
-          (value.slice(-1) === "-" ? "" : value.slice(-1))
-        );
+        const eraseHyphenOnBackspace =
+          value.slice(-1) === "-" ? "" : value.slice(-1);
+        const output = value.slice(0, -1) + "-";
+
+        return output + eraseHyphenOnBackspace;
       }
     }
 

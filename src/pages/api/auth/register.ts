@@ -1,0 +1,61 @@
+import type { NextApiRequest, NextApiResponse } from "next";
+import type { RegisterRequest } from "../../../types/patient";
+import bcrypt from "bcrypt";
+
+import exceptionHandler from "../../../utils/exception.util";
+import { env } from "../../../utils/constants.util";
+
+import AppError from "../../../config/error.config";
+import prisma from "../../../config/database.config";
+
+type ResponseData = {
+  message: string;
+};
+
+async function handler(
+  req: NextApiRequest,
+  res: NextApiResponse<ResponseData>
+) {
+  if (req.method !== "POST") {
+    throw new AppError({
+      statusCode: 405,
+      message: "Method not allowed",
+      detail: "Endpoint only accepts POST requests",
+    });
+  }
+
+  const { common, registry, address }: RegisterRequest = req.body;
+  if (!common || !registry || !address || !common.password) {
+    throw new AppError({
+      statusCode: 400,
+      message: "Bad Request",
+      detail: "Ensure to provide all required fields",
+    });
+  }
+
+  const encrypted = bcrypt.hashSync(common.password, env.BCRYPT_SALT_ROUNDS);
+  const code = createCode();
+  common.created_at = new Date();
+  common.last_updated = new Date();
+
+  registry.code = code;
+  common.password = encrypted;
+  await prisma.patient.create({
+    data: {
+      ...common,
+      Registry: { create: registry },
+      Address: { create: address },
+    },
+  });
+
+  return res.status(201).json({ message: "Created" });
+}
+
+function createCode() {
+  const code = Math.floor(Math.random() * 99999999) + 1;
+  const str = code.toString().padStart(8, "0");
+
+  return str;
+}
+
+export default exceptionHandler(handler);
